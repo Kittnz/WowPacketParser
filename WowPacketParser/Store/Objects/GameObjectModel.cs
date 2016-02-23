@@ -14,7 +14,7 @@ namespace WowPacketParser.Store.Objects
         public uint? ID;
 
         [DBFieldName("map")]
-        public uint? Map;
+        public int? Map;
 
         [DBFieldName("zoneId")]
         public uint? ZoneID;

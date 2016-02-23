@@ -262,12 +262,12 @@ namespace WowPacketParser.SQL.Builders
 
                 row.Data.ID = entry;
                 if (!go.IsOnTransport())
-                    row.Data.Map = go.Map;
+                    row.Data.Map = (int)go.Map;
                 else
                 {
                     int mapId;
                     badTransport = !GetTransportMap(go, out mapId);
-                    row.Data.Map = (uint)mapId;
+                    row.Data.Map = mapId;
                 }
 
                 row.Data.SpawnMask = (uint)go.GetDefaultSpawnMask();
