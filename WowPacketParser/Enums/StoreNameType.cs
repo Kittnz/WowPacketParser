@@ -2,7 +2,7 @@
 
 namespace WowPacketParser.Enums
 {
-    public enum StoreNameType
+    /*public enum StoreNameType
     {
         None,
         Spell,
@@ -26,8 +26,56 @@ namespace WowPacketParser.Enums
         Player,
         Currency,
         Achievement
+    }*/
+    public enum StoreNameType
+    {
+        None = 1,
+        Spell = 2,
+        Map = 3,
+        LFGDungeon = 4,
+        Battleground = 5,
+        Unit = 6,
+        GameObject = 7,
+        Item = 8,
+        Quest = 9,
+        QuestObjective = 10,
+        QuestGreeting = 11,
+        Opcode = 12, // Packet
+        PageText = 13,
+        NpcText = 14,
+        Gossip = 15,
+        Zone = 16,
+        Area = 17,
+        AreaTrigger = 18,
+        Phase = 19,
+        Player = 20,
+        Currency = 21,
+        Achievement = 22
     }
 
+    /*
+    'None',
+    'Spell',
+    'Map',
+    'LFGDungeon'
+    ,'Battleground'
+    ,'Unit',
+    'GameObject',
+    'CreatureDifficulty'
+    ,'Item'
+    ,'Quest',
+    'Opcode',
+    'PageText',
+    'NpcText',
+    'BroadcastText',
+    'Gossip','Zone',
+    'Area',
+    'AreaTrigger',
+    'Phase',
+    'Player',
+    'Achievement'
+
+    */
     public static class StoreName
     {
         public static StoreNameType ToEnum<T>() where T : IId

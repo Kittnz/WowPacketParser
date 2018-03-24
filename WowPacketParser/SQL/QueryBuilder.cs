@@ -269,7 +269,8 @@ namespace WowPacketParser.SQL
         {
             _rows = rows;
             _insertHeader = new SQLInsertHeader<T>(ignore).Build();
-            _withDelete = withDelete;
+            //_withDelete = withDelete;
+            _withDelete = false;
         }
 
         /// <summary>
@@ -321,7 +322,8 @@ namespace WowPacketParser.SQL
         public SQLInsertHeader(bool ignore = false)
         {
             //TableStructure = fields;
-            _ignore = ignore;
+            //_ignore = ignore;
+            _ignore = true;
         }
 
         /// <summary>
@@ -496,7 +498,7 @@ namespace WowPacketParser.SQL
             {
                 var pk = _databaseFields.Single(f => f.Item2 == _primaryKeyReflectionField);
 
-                query.Append("DELETE FROM ");
+                query.Append("-- DELETE FROM ");
                 query.Append(SQLUtil.GetTableName<T>());
                 query.Append(" WHERE ");
 
@@ -509,7 +511,7 @@ namespace WowPacketParser.SQL
             }
             else
             {
-                query.Append("DELETE FROM ");
+                query.Append("-- DELETE FROM ");
                 query.Append(SQLUtil.GetTableName<T>());
                 query.Append(" WHERE ");
                 query.Append(new SQLWhere<T>(_rows, true).Build());
