@@ -383,4 +383,36 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("offnote")]
         public string offnote = "";
     }
+
+    [DBTableName("character_skills")]
+    public sealed class CharacterSkills : IDataModel
+    {
+        [DBFieldName("guid", true, true)]
+        public string guid;
+
+        [DBFieldName("skill", true)]
+        public uint skill;
+
+        [DBFieldName("value")]
+        public uint value = 1;
+
+        [DBFieldName("max")]
+        public uint max;
+    }
+
+    [DBTableName("account")]
+    public sealed class AccountCreation : IDataModel
+    {
+        [DBFieldName("id", true, true)]
+        public string id;
+
+        [DBFieldName("username", true, false)]
+        public string username;
+
+        [DBFieldName("sha_pass_hash", false, false)]
+        public string sha_pass_hash;
+
+        [DBFieldName("joindate", false, true)]
+        public string joindate;
+    }
 }
