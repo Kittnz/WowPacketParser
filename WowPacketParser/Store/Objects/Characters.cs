@@ -384,22 +384,6 @@ namespace WowPacketParser.Store.Objects
         public string offnote = "";
     }
 
-    [DBTableName("character_skills")]
-    public sealed class CharacterSkills : IDataModel
-    {
-        [DBFieldName("guid", true, true)]
-        public string guid;
-
-        [DBFieldName("skill", true)]
-        public uint skill;
-
-        [DBFieldName("value")]
-        public uint value = 1;
-
-        [DBFieldName("max")]
-        public uint max;
-    }
-
     [DBTableName("account")]
     public sealed class AccountCreation : IDataModel
     {

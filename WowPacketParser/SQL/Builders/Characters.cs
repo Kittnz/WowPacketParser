@@ -519,7 +519,6 @@ namespace WowPacketParser.SQL.Builders
                 {
                     int classid = player.UnitDataOriginal.ClassId;
                     string GUID = objPair.Key.Low.ToString();
-
                     result.Append("DELETE FROM `character_skills` WHERE `guid`= " + GUID + ";\n");
 
                     if (classid == (int)Class.Warrior)
@@ -640,18 +639,18 @@ namespace WowPacketParser.SQL.Builders
                 // Delete existing before adding new gear
                 foreach (var row in characterRows)
                 {
-                    string item_delete1 = "DELETE FROM `item_instance` WHERE `owner_guid`= " + row.Data.Guid + ";\n";
-                    string item_delete2 = "DELETE FROM `character_inventory` WHERE `guid`= " + row.Data.Guid + ";\n";
+                    result.Append("DELETE FROM `item_instance` WHERE `owner_guid`= " + row.Data.Guid + ";\n");
+                    result.Append("DELETE FROM `character_inventory` WHERE `guid`= " + row.Data.Guid + ";\n");
                 }
 
-                var inventoryDelete = new SQLDelete<CharacterInventory>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
-                result.Append(inventoryDelete.Build());
+                //var inventoryDelete = new SQLDelete<CharacterInventory>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
+                //result.Append(inventoryDelete.Build());
                 var inventorySql = new SQLInsert<CharacterInventory>(characterInventoryRows, false);
                 result.Append(inventorySql.Build());
                 result.AppendLine();
 
-                var itemInstanceDelete = new SQLDelete<CharacterItemInstance>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
-                result.Append(itemInstanceDelete.Build());
+                //var itemInstanceDelete = new SQLDelete<CharacterItemInstance>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
+                //result.Append(itemInstanceDelete.Build());
                 var itemInstanceSql = new SQLInsert<CharacterItemInstance>(characterItemInstaceRows, false);
                 result.Append(itemInstanceSql.Build());
                 result.AppendLine();
