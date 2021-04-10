@@ -490,7 +490,7 @@ namespace WowPacketParser.SQL.Builders
                     if (player.UnitData.GuildGUID.Low != 0)
                     {
                         var guildRow = new Row<GuildMember>();
-                        guildRow.Data.GuildGUID = player.UnitData.GuildGUID.Low.ToString();
+                        guildRow.Data.GuildGUID = player.UnitData.GuildGUID.Low;
                         //guildRow.Data.Guid = "@PGUID+" + player.DbGuid;
                         guildRow.Data.Guid = objPair.Key.Low.ToString();
                         guildRow.Data.GuildRank = player.PlayerDataOriginal.GuildRank;

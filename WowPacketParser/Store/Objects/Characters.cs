@@ -493,25 +493,6 @@ namespace WowPacketParser.Store.Objects
         public string offnote = "";
     }
 
-    [DBTableName("guild_member")]
-    public sealed class GuildMember : IDataModel
-    {
-        [DBFieldName("guildid")]
-        public string GuildGUID = "";
-
-        [DBFieldName("guid", true, true)]
-        public string Guid;
-
-        [DBFieldName("rank")]
-        public uint GuildRank = 0;
-
-        [DBFieldName("pnote")]
-        public string pnote = "";
-
-        [DBFieldName("offnote")]
-        public string offnote = "";
-    }
-
     [DBTableName("account")]
     public sealed class AccountCreation : IDataModel
     {
