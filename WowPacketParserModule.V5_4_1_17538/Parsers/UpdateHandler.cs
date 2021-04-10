@@ -57,7 +57,7 @@ namespace WowPacketParserModule.V5_4_1_17538.Parsers
         {
             ObjectType objType = ObjectTypeConverter.Convert(packet.ReadByteE<ObjectTypeLegacy>("Object Type", index));
             var moves = ReadMovementUpdateBlock(packet, guid, index);
-            Storage.StoreObjectCreateTime(guid, moves, packet.Time, type);
+            Storage.StoreObjectCreateTime(guid, map, moves, packet.Time, type);
             var updates = CoreParsers.UpdateHandler.ReadValuesUpdateBlockOnCreate(packet, objType, index);
             var dynamicUpdates = CoreParsers.UpdateHandler.ReadDynamicValuesUpdateBlockOnCreate(packet, objType, index);
 
@@ -99,7 +99,7 @@ namespace WowPacketParserModule.V5_4_1_17538.Parsers
                 obj.Zone = CoreParsers.WorldStateHandler.CurrentZoneId;
                 obj.PhaseMask = (uint)CoreParsers.MovementHandler.CurrentPhaseMask;
                 obj.Phases = new HashSet<ushort>(CoreParsers.MovementHandler.ActivePhases.Keys);
-                Storage.StoreNewObject(guid, obj, packet);
+                Storage.StoreNewObject(guid, obj, type, packet);
             }
 
             if (guid.HasEntry() && (objType == ObjectType.Unit || objType == ObjectType.GameObject))

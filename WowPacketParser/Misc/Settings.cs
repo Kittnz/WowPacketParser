@@ -14,7 +14,8 @@ namespace WowPacketParser.Misc
         public static readonly string[] AreaFilters = Conf.GetStringList("AreaFilters", new string[0]);
         public static readonly int FilterPacketsNum = Conf.GetInt("FilterPacketsNum", 0);
         public static readonly ClientVersionBuild ClientBuild = Conf.GetEnum("ClientBuild", ClientVersionBuild.Zero);
-        public static readonly TargetedDatabase TargetedDatabase = Conf.GetEnum("TargetedDatabase", TargetedDatabase.WrathOfTheLichKing);
+        public static readonly TargetedDbExpansion TargetedDbExpansion = Conf.GetEnum("TargetedDbExpansion", TargetedDbExpansion.WrathOfTheLichKing);
+        public static readonly TargetedDbType TargetedDbType = Conf.GetEnum("TargetedDbType", TargetedDbType.WPP);
         public static readonly DumpFormatType DumpFormat = Conf.GetEnum("DumpFormat", DumpFormatType.Text);
         public static readonly ulong SQLOutputFlag = GetSQLOutputFlag();
         public static readonly bool SQLOrderByKey = Conf.GetBoolean("SqlOrderByKey", false);
@@ -121,11 +122,13 @@ namespace WowPacketParser.Misc
             public static readonly bool creature_speed_update = Conf.GetBoolean("creature_speed_update", false);
             public static readonly bool creature_text = Conf.GetBoolean("creature_text", false);
             public static readonly bool creature_text_template = Conf.GetBoolean("creature_text_template", false);
+            public static readonly bool creature_threat_update = Conf.GetBoolean("creature_threat_update", false);
             public static readonly bool creature_values_update = Conf.GetBoolean("creature_values_update", false);
             public static readonly bool dynamicobject = Conf.GetBoolean("dynamicobject", false);
             public static readonly bool dynamicobject_create1_time = Conf.GetBoolean("dynamicobject_create1_time", false);
             public static readonly bool dynamicobject_create2_time = Conf.GetBoolean("dynamicobject_create2_time", false);
             public static readonly bool dynamicobject_destroy_time = Conf.GetBoolean("dynamicobject_destroy_time", false);
+            public static readonly bool faction_standing_update = Conf.GetBoolean("faction_standing_update", false);
             public static readonly bool gameobject = Conf.GetBoolean("gameobject", false);
             public static readonly bool gameobject_create1_time = Conf.GetBoolean("gameobject_create1_time", false);
             public static readonly bool gameobject_create2_time = Conf.GetBoolean("gameobject_create2_time", false);
@@ -167,6 +170,8 @@ namespace WowPacketParser.Misc
             public static readonly bool world_state_init = Conf.GetBoolean("world_state_init", false);
             public static readonly bool world_state_update = Conf.GetBoolean("world_state_update", false);
             public static readonly bool world_text = Conf.GetBoolean("world_text", false);
+            public static readonly bool xp_gain_aborted = Conf.GetBoolean("xp_gain_aborted", false);
+            public static readonly bool xp_gain_log = Conf.GetBoolean("xp_gain_log", false);
 
             public static readonly bool characters = Conf.GetBoolean("characters", false);
             public static readonly bool character_inventory = Conf.GetBoolean("character_inventory", false);
@@ -188,6 +193,8 @@ namespace WowPacketParser.Misc
             public static readonly bool creature_equip_template = Conf.GetBoolean("creature_equip_template", false);
             public static readonly bool creature_gossip = Conf.GetBoolean("creature_gossip", false);
             public static readonly bool creature_loot = Conf.GetBoolean("creature_loot", false);
+            public static readonly bool creature_pet_actions = Conf.GetBoolean("creature_pet_actions", false);
+            public static readonly bool creature_pet_cooldown = Conf.GetBoolean("creature_pet_cooldown", false);
             public static readonly bool creature_stats = Conf.GetBoolean("creature_stats", false);
             public static readonly bool creature_template = Conf.GetBoolean("creature_template", false);
             public static readonly bool creature_template_addon = Conf.GetBoolean("creature_template_addon", false);
@@ -213,6 +220,9 @@ namespace WowPacketParser.Misc
             public static readonly bool playerchoice_locale = Conf.GetBoolean("playerchoice_locale", false);
             public static readonly bool playercreateinfo = Conf.GetBoolean("playercreateinfo", false);
             public static readonly bool playercreateinfo_action = Conf.GetBoolean("playercreateinfo_action", false);
+            public static readonly bool player_classlevelstats = Conf.GetBoolean("player_classlevelstats", false);
+            public static readonly bool player_levelstats = Conf.GetBoolean("player_levelstats", false);
+            public static readonly bool player_levelup_info = Conf.GetBoolean("player_levelup_info", false);
             public static readonly bool points_of_interest = Conf.GetBoolean("points_of_interest", false);
             public static readonly bool quest_ender = Conf.GetBoolean("quest_ender", false); 
             public static readonly bool quest_poi = Conf.GetBoolean("quest_poi", false);
@@ -222,9 +232,8 @@ namespace WowPacketParser.Misc
             public static readonly bool scenario_poi = Conf.GetBoolean("scenario_poi", false);
             public static readonly bool scene_template = Conf.GetBoolean("scene_template", false);
             public static readonly bool spell_areatrigger = Conf.GetBoolean("spell_areatrigger", false);
-            public static readonly bool spell_pet_action = Conf.GetBoolean("spell_pet_action", false);
-            public static readonly bool spell_pet_cooldown = Conf.GetBoolean("spell_pet_cooldown", false);
             public static readonly bool spell_target_position = Conf.GetBoolean("spell_target_position", false);
+            public static readonly bool spell_unique_caster = Conf.GetBoolean("spell_unique_caster", false);
             public static readonly bool trainer = Conf.GetBoolean("trainer", false);
             public static readonly bool vehicle_template_accessory = Conf.GetBoolean("vehicle_template_accessory", false);
             

@@ -112,6 +112,19 @@ namespace WowPacketParser.Store.Objects
         public DateTime Time;
     }
 
+    [DBTableName("spell_unique_caster")]
+    public sealed class SpellUniqueCaster : IDataModel
+    {
+        [DBFieldName("caster_id", true)]
+        public uint CasterId;
+
+        [DBFieldName("caster_type", true)]
+        public string CasterType;
+
+        [DBFieldName("spell_id", true)]
+        public uint SpellId;
+    }
+
     [DBTableName("spell_cast_start")]
     public sealed class SpellCastStart : IDataModel
     {
@@ -267,6 +280,9 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("dst_position_id")]
         public uint DstPositionId;
+
+        [DBFieldName("orientation")]
+        public float Orientation;
     }
 
     public sealed class SpellCastData : IDataModel
@@ -313,11 +329,13 @@ namespace WowPacketParser.Store.Objects
         }
         public Vector3 SrcPosition;
         public Vector3 DstPosition;
+        public float Orientation;
     }
 
-    public sealed class SpellPetCooldown : IDataModel
+    [DBTableName("creature_pet_cooldown")]
+    public sealed class CreaturePetCooldown : IDataModel
     {
-        [DBFieldName("creature_id", true)]
+        [DBFieldName("entry", true)]
         public uint? CasterID;
 
         [DBFieldName("flags")]
@@ -336,9 +354,10 @@ namespace WowPacketParser.Store.Objects
         public float? ModRate;
     }
 
-    public sealed class SpellPetActions : IDataModel
+    [DBTableName("creature_pet_actions")]
+    public sealed class CreaturePetActions : IDataModel
     {
-        [DBFieldName("creature_id", true)]
+        [DBFieldName("entry", true)]
         public uint? CasterID;
 
         [DBFieldName("slot", 10)]

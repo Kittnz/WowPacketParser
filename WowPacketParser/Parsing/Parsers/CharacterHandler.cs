@@ -1055,18 +1055,23 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_LOG_XP_GAIN)]
         public static void HandleLogXPGain(Packet packet)
         {
-            packet.ReadGuid("GUID");
-            packet.ReadUInt32("Total XP");
+            XpGainLog log = new XpGainLog();
+            log.GUID = packet.ReadGuid("GUID");
+            log.OriginalAmount = packet.ReadUInt32("Total XP");
             var type = packet.ReadByte("XP type"); // Need enum
+            log.Reason = type;
 
             if (type == 0) // kill
             {
-                packet.ReadUInt32("Base XP");
-                packet.ReadSingle("Group rate (unk)");
+                log.Amount = packet.ReadUInt32("Base XP");
+                log.GroupBonus = packet.ReadSingle("Group rate (unk)");
             }
 
             if (ClientVersion.AddedInVersion(ClientType.TheBurningCrusade))
-                packet.ReadBool("RAF Bonus");
+                log.RAFBonus = packet.ReadBool("RAF Bonus");
+
+            log.Time = packet.Time;
+            Storage.XpGainLogs.Add(log);
         }
 
         [Parser(Opcode.SMSG_TITLE_EARNED)]
@@ -1300,8 +1305,10 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_LEVEL_UP_INFO)]
         public static void HandleLevelUp(Packet packet)
         {
-            packet.ReadInt32("Level");
-            packet.ReadInt32("Health");
+            PlayerLevelupInfo info = new PlayerLevelupInfo();
+            info.GUID = Storage.CurrentActivePlayer;
+            info.Level = packet.ReadInt32("Level");
+            info.Health = packet.ReadInt32("Health");
 
             var powerCount = 5;
             if (ClientVersion.AddedInVersion(ClientType.WrathOfTheLichKing))
@@ -1310,14 +1317,17 @@ namespace WowPacketParser.Parsing.Parsers
                 powerCount = 5;
 
             // TODO: Exclude happiness on Cata
+            info.Power = new int?[powerCount];
             for (var i = 0; i < powerCount; i++)
-                packet.ReadInt32("Power", (PowerType) i);
+                info.Power[i] = packet.ReadInt32("Power", (PowerType) i);
 
+            info.Stat = new int?[5];
             for (var i = 0; i < 5; i++)
-                packet.ReadInt32("Stat", (StatType)i);
+                info.Stat[i] = packet.ReadInt32("Stat", (StatType)i);
 
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V5_1_0_16309))
                 packet.ReadInt32("Talent Level"); // 0 - No Talent gain / 1 - Talent Point gain
+            Storage.PlayerLevelupInfos.Add(info);
         }
 
         [Parser(Opcode.SMSG_HEALTH_UPDATE)]

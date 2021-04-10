@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using WowPacketParser.Enums;
 using WowPacketParser.Misc;
 using WowPacketParser.Store;
@@ -63,9 +65,15 @@ namespace WowPacketParser.SQL.Builders
                 if (!Settings.SqlTables.SniffData && !Settings.SqlTables.SniffDataOpcodes)
                     return string.Empty;
 
-            var templateDb = SQLDatabase.Get(Storage.SniffData, Settings.WPPDatabase);
+            var rows = new RowList<SniffData>();
+            foreach (var data in Storage.SniffData)
+            {
+                Row<SniffData> row = new Row<SniffData>();
+                row.Data = data.Item1;
+                rows.Add(row);
+            }
 
-            return SQLUtil.Compare(Storage.SniffData, templateDb, x => string.Empty);
+            return new SQLInsert<SniffData>(rows, false, true).Build();
         }
 
         // Non-WDB data but nevertheless data that should be saved to gameobject_template
@@ -157,37 +165,47 @@ namespace WowPacketParser.SQL.Builders
 
         public static string BuildLootQuery(Dictionary<uint, Dictionary<WowGuid, LootEntry>> storage, string entryTable, string itemTable)
         {
-            uint rowsCount = 0;
-            uint rowsCount2 = 0;
-            string query = "INSERT INTO `" + entryTable + "` (`entry`, `loot_id`, `money`, `items_count`) VALUES\n";
-            string query2 = "";
+            var lootTemplateRows = new RowList<LootEntry>();
+            var lootItemRows = new RowList<LootItem>();
+            uint maxLootId = 0;
             foreach (var pair1 in storage)
             {
                 foreach (var pair2 in pair1.Value)
                 {
-                    if (rowsCount > 0)
-                        query += ",\n";
-                    query += "(" + pair2.Value.Entry + ", " + pair2.Value.LootId + ", " + pair2.Value.Money + ", " + pair2.Value.ItemsCount + ")";
-                    rowsCount++;
+                    Row<LootEntry> row = new Row<LootEntry>();
+                    row.Data = pair2.Value;
+                    row.Data.LootIdString = "@LOOTID+" + row.Data.LootId;
+                    lootTemplateRows.Add(row);
 
                     foreach (var itr in pair2.Value.ItemsList)
                     {
-                        if (rowsCount2 > 0)
-                            query2 += ",\n";
-                        query2 += "(" + itr.LootId + ", " + itr.ItemId + ", " + itr.Count + ")";
-                        rowsCount2++;
+                        Row<LootItem> row2 = new Row<LootItem>();
+                        row2.Data = itr;
+                        row2.Data.LootIdString = "@LOOTID+" + row2.Data.LootId;
+                        lootItemRows.Add(row2);
                     }
+
+                    if (pair2.Value.LootId > maxLootId)
+                        maxLootId = pair2.Value.LootId;
                 }
             }
-            query += ";\n";
-            if (query2 != "")
+            StringBuilder result = new StringBuilder();
+
+            if (lootTemplateRows.Count != 0)
             {
-                query += "INSERT INTO `" + itemTable + "` (`loot_id`, `item_id`, `count`) VALUES\n";
-                query += query2;
-                query += ";\n\n";
+                result.AppendLine("DELETE FROM `" + entryTable + "` WHERE `loot_id` BETWEEN @LOOTID+0 AND @LOOTID+" + maxLootId + ";");
+                var templateSql = new SQLInsert<LootEntry>(lootTemplateRows, false, false, entryTable);
+                result.Append(templateSql.Build());
             }
             
-            return query;
+            if (lootItemRows.Count != 0)
+            {
+                result.AppendLine("DELETE FROM `" + itemTable + "` WHERE `loot_id` BETWEEN @LOOTID+0 AND @LOOTID+" + maxLootId + ";");
+                var itemSql = new SQLInsert<LootItem>(lootItemRows, false, false, itemTable);
+                result.Append(itemSql.Build());
+            }
+            
+            return result.ToString();
         }
 
         [BuilderMethod]
@@ -202,6 +220,9 @@ namespace WowPacketParser.SQL.Builders
 
             if (Storage.GameObjectLoot.Count > 0 && Settings.SqlTables.gameobject_loot)
             {
+                if (!String.IsNullOrEmpty(query))
+                    query += Environment.NewLine;
+
                 query += BuildLootQuery(Storage.GameObjectLoot, "gameobject_loot", "gameobject_loot_item");
             }
 
@@ -290,6 +311,74 @@ namespace WowPacketParser.SQL.Builders
             var templateDb = SQLDatabase.Get(Storage.WorldStateUpdates, Settings.TDBDatabase);
 
             return SQLUtil.Compare(Storage.WorldStateUpdates, templateDb, StoreNameType.None);
+        }
+
+        [BuilderMethod]
+        public static string XpGainLogs()
+        {
+            if (Storage.XpGainLogs.IsEmpty())
+                return string.Empty;
+
+            if (!Settings.SqlTables.xp_gain_log)
+                return string.Empty;
+
+            var rows = new RowList<XpGainLog>();
+            foreach (var log in Storage.XpGainLogs)
+            {
+                Row<XpGainLog> row = new Row<XpGainLog>();
+                row.Data = log.Item1;
+                Storage.GetObjectDbGuidEntryType(row.Data.GUID, out row.Data.VictimGuid, out row.Data.VictimId, out row.Data.VictimType);
+                row.Data.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(row.Data.Time);
+                rows.Add(row);
+            }
+
+            var sql = new SQLInsert<XpGainLog>(rows, false);
+            return sql.Build();
+        }
+
+        [BuilderMethod]
+        public static string XpGainAborted()
+        {
+            if (Storage.XpGainAborted.IsEmpty())
+                return string.Empty;
+
+            if (!Settings.SqlTables.xp_gain_aborted)
+                return string.Empty;
+
+            var rows = new RowList<XpGainAborted>();
+            foreach (var log in Storage.XpGainAborted)
+            {
+                Row<XpGainAborted> row = new Row<XpGainAborted>();
+                row.Data = log.Item1;
+                Storage.GetObjectDbGuidEntryType(row.Data.GUID, out row.Data.VictimGuid, out row.Data.VictimId, out row.Data.VictimType);
+                row.Data.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(row.Data.Time);
+                rows.Add(row);
+            }
+
+            var sql = new SQLInsert<XpGainAborted>(rows, false);
+            return sql.Build();
+        }
+
+        [BuilderMethod]
+        public static string FactionStandingUpdates()
+        {
+            if (Storage.FactionStandingUpdates.IsEmpty())
+                return string.Empty;
+
+            if (!Settings.SqlTables.faction_standing_update)
+                return string.Empty;
+
+            var rows = new RowList<FactionStandingUpdate>();
+            foreach (var log in Storage.FactionStandingUpdates)
+            {
+                Row<FactionStandingUpdate> row = new Row<FactionStandingUpdate>();
+                row.Data = log.Item1;
+                row.Data.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(row.Data.Time);
+                rows.Add(row);
+            }
+
+            var sql = new SQLInsert<FactionStandingUpdate>(rows, false);
+            return sql.Build();
         }
     }
 }

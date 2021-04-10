@@ -14,6 +14,7 @@ namespace WowPacketParser.Store.Objects.UpdateFields
         WowGuid SummonedBy { get; }
         WowGuid CreatedBy { get; }
         WowGuid Target { get; }
+        WowGuid DemonCreator { get; }
         byte ClassId { get; }
         byte RaceId { get; }
         byte Sex { get; }
@@ -28,10 +29,16 @@ namespace WowPacketParser.Store.Objects.UpdateFields
         uint HealthPercent { get; }
         int CurMana { get; }
         int MaxMana { get; }
+        int[] Stats { get; }
+        int[] StatPosBuff { get; }
+        int[] StatNegBuff { get; }
+        int BaseMana { get; }
+        int BaseHealth { get; }
         IVisibleItem[] VirtualItems { get; }
         uint Flags { get; }
         uint Flags2 { get; }
         uint Flags3 { get; }
+        uint DynamicFlags { get; }
         uint[] AttackRoundBaseTime { get; }
         uint RangedAttackRoundBaseTime { get; }
         float BoundingRadius { get; }
@@ -51,6 +58,7 @@ namespace WowPacketParser.Store.Objects.UpdateFields
         byte ShapeshiftForm { get; }
         float HoverHeight { get; }
         int InteractSpellID { get; }
+        IUnitChannel ChannelData { get; }
         WowGuid GuildGUID { get; }
         IUnitData Clone();
     }

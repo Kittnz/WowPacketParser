@@ -81,7 +81,7 @@ namespace WowPacketParser.Parsing.Parsers
         {
             ObjectType objType = ObjectTypeConverter.Convert(packet.ReadByteE<ObjectTypeLegacy>("Object Type", index));
             var moves = ReadMovementUpdateBlock(packet, guid, index);
-            Storage.StoreObjectCreateTime(guid, moves, packet.Time, type);
+            Storage.StoreObjectCreateTime(guid, map, moves, packet.Time, type);
             var updates = ReadValuesUpdateBlockOnCreate(packet, objType, index);
             var dynamicUpdates = ReadDynamicValuesUpdateBlockOnCreate(packet, objType, index);
 
@@ -113,7 +113,7 @@ namespace WowPacketParser.Parsing.Parsers
                 obj.Area = WorldStateHandler.CurrentAreaId;
                 obj.Zone = WorldStateHandler.CurrentZoneId;
                 obj.PhaseMask = (uint)MovementHandler.CurrentPhaseMask;
-                Storage.StoreNewObject(guid, obj, packet);
+                Storage.StoreNewObject(guid, obj, type, packet);
             }
 
             if (guid.HasEntry() && (objType == ObjectType.Unit || objType == ObjectType.GameObject))
@@ -147,8 +147,10 @@ namespace WowPacketParser.Parsing.Parsers
             HandleMovementInfoChange(obj, guid, time, moveInfo);
             if (updates != null)
             {
-                StoreObjectUpdate(time, guid, updates);
+                bool savePlayerStats = StoreObjectUpdate(time, guid, updates);
                 ApplyUpdateFieldsChange(obj, updates, dynamicUpdates);
+                if (savePlayerStats)
+                    Storage.SavePlayerStats(obj, false);
             }
         }
 
@@ -175,9 +177,11 @@ namespace WowPacketParser.Parsing.Parsers
             if (Storage.Objects.TryGetValue(guid, out obj))
             {
                 var updates = ReadValuesUpdateBlock(packet, obj.Type, index, false, obj.UpdateFields);
-                StoreObjectUpdate(packet.Time, guid, updates);
+                bool savePlayerStats = StoreObjectUpdate(packet.Time, guid, updates);
                 var dynamicUpdates = ReadDynamicValuesUpdateBlock(packet, obj.Type, index, false, obj.DynamicUpdateFields);
                 ApplyUpdateFieldsChange(obj, updates, dynamicUpdates);
+                if (savePlayerStats)
+                    Storage.SavePlayerStats(obj, false);
             }
             else
             {
@@ -290,8 +294,10 @@ namespace WowPacketParser.Parsing.Parsers
             }
         }
 
-        public static void StoreObjectUpdate(DateTime time, WowGuid guid, Dictionary<int, UpdateField> updates)
+        // returns true if active player leveled up and we need to save stats
+        public static bool StoreObjectUpdate(DateTime time, WowGuid guid, Dictionary<int, UpdateField> updates)
         {
+            bool hasPlayerLevelup = false;
             if ((guid.GetObjectType() == ObjectType.Unit) ||
                 (guid.GetObjectType() == ObjectType.Player) ||
                 (guid.GetObjectType() == ObjectType.ActivePlayer))
@@ -321,6 +327,18 @@ namespace WowPacketParser.Parsing.Parsers
                             {
                                 hasData = true;
                                 creatureUpdate.Scale = update.Value.FloatValue;
+                            }
+                        }
+                    }
+                    else if (update.Key == UpdateFields.GetUpdateField(ObjectField.OBJECT_DYNAMIC_FLAGS))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as Unit;
+                            if (obj.ObjectData.DynamicFlags != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                creatureUpdate.DynamicFlags = update.Value.UInt32Value;
                             }
                         }
                     }
@@ -368,6 +386,7 @@ namespace WowPacketParser.Parsing.Parsers
                             if (obj.UnitData.Level != update.Value.UInt32Value)
                             {
                                 hasData = true;
+                                hasPlayerLevelup = obj.Type == ObjectType.Player || obj.Type == ObjectType.ActivePlayer;
                                 creatureUpdate.Level = update.Value.UInt32Value;
                             }
                         }
@@ -406,11 +425,13 @@ namespace WowPacketParser.Parsing.Parsers
                                 hasData = true;
                                 creatureUpdate.StandState = (update.Value.UInt32Value & 0xFF);
                             }
+                            /*
                             if (obj.UnitData.PetTalentPoints != ((update.Value.UInt32Value >> 8) & 0xFF))
                             {
                                 hasData = true;
                                 creatureUpdate.PetTalentPoints = ((update.Value.UInt32Value >> 8) & 0xFF);
                             }
+                            */
                             if (obj.UnitData.VisFlags != ((update.Value.UInt32Value >> 16) & 0xFF))
                             {
                                 hasData = true;
@@ -438,11 +459,13 @@ namespace WowPacketParser.Parsing.Parsers
                                 hasData = true;
                                 creatureUpdate.PvpFlags = ((update.Value.UInt32Value >> 8) & 0xFF);
                             }
+                            /*
                             if (obj.UnitData.PetFlags != ((update.Value.UInt32Value >> 16) & 0xFF))
                             {
                                 hasData = true;
                                 creatureUpdate.PetFlags = ((update.Value.UInt32Value >> 16) & 0xFF);
                             }
+                            */
                             if (obj.UnitData.ShapeshiftForm != ((update.Value.UInt32Value >> 24) & 0xFF))
                             {
                                 hasData = true;
@@ -483,6 +506,18 @@ namespace WowPacketParser.Parsing.Parsers
                             {
                                 hasData = true;
                                 creatureUpdate.UnitFlag2 = update.Value.UInt32Value;
+                            }
+                        }
+                    }
+                    else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_DYNAMIC_FLAGS))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as Unit;
+                            if (obj.UnitData.DynamicFlags != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                creatureUpdate.DynamicFlags = update.Value.UInt32Value;
                             }
                         }
                     }
@@ -574,18 +609,6 @@ namespace WowPacketParser.Parsing.Parsers
                             }
                         }
                     }
-                    else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_MOD_RANGED_HASTE))
-                    {
-                        if (Storage.Objects.ContainsKey(guid))
-                        {
-                            var obj = Storage.Objects[guid].Item1 as Unit;
-                            if (obj.UnitData.ModRangedHaste != update.Value.FloatValue)
-                            {
-                                hasData = true;
-                                creatureUpdate.ModRangedHaste = update.Value.FloatValue;
-                            }
-                        }
-                    }
                     else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_BASEATTACKTIME))
                     {
                         if (Storage.Objects.ContainsKey(guid))
@@ -594,19 +617,20 @@ namespace WowPacketParser.Parsing.Parsers
                             if (obj.UnitData.AttackRoundBaseTime[0] != update.Value.UInt32Value)
                             {
                                 hasData = true;
-                                creatureUpdate.BaseAttackTime = update.Value.UInt32Value;
+                                creatureUpdate.MainHandAttackTime = update.Value.UInt32Value;
                             }
                         }
                     }
-                    else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_RANGEDATTACKTIME))
+                    else if (UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_BASEATTACKTIME) > 0 &&
+                            update.Key == (UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_BASEATTACKTIME)+1))
                     {
                         if (Storage.Objects.ContainsKey(guid))
                         {
                             var obj = Storage.Objects[guid].Item1 as Unit;
-                            if (obj.UnitData.RangedAttackRoundBaseTime != update.Value.UInt32Value)
+                            if (obj.UnitData.AttackRoundBaseTime[1] != update.Value.UInt32Value)
                             {
                                 hasData = true;
-                                creatureUpdate.RangedAttackTime = update.Value.UInt32Value;
+                                creatureUpdate.OffHandAttackTime = update.Value.UInt32Value;
                             }
                         }
                     }
@@ -713,6 +737,56 @@ namespace WowPacketParser.Parsing.Parsers
                             }
                         }
                     }
+                    else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_CHANNEL_SPELL))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as Unit;
+                            if (obj.UnitData.ChannelData.SpellID != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                creatureUpdate.ChannelSpellId = update.Value.UInt32Value;
+                            }
+                        }
+                    }
+                    else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_CHANNEL_SPELL_X_SPELL_VISUAL))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as Unit;
+                            if (obj.UnitData.ChannelData.SpellVisual.SpellXSpellVisualID != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                creatureUpdate.ChannelVisualId = update.Value.UInt32Value;
+                            }
+                        }
+                    }
+                    else if (UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_CHANNEL_DATA) > 0 &&
+                             update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_CHANNEL_DATA))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as Unit;
+                            if (obj.UnitData.ChannelData.SpellID != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                creatureUpdate.ChannelSpellId = update.Value.UInt32Value;
+                            }
+                        }
+                    }
+                    else if (UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_CHANNEL_DATA) > 0 &&
+                             update.Key == (UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_CHANNEL_DATA)+1))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as Unit;
+                            if (obj.UnitData.ChannelData.SpellVisual.SpellXSpellVisualID != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                creatureUpdate.ChannelVisualId = update.Value.UInt32Value;
+                            }
+                        }
+                    }
                     else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_CHARM))
                     {
                         if (Storage.Objects.ContainsKey(guid))
@@ -788,6 +862,21 @@ namespace WowPacketParser.Parsing.Parsers
                             }
                         }
                     }
+                    else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_DEMON_CREATOR))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as Unit;
+                            if (obj.UnitData.DemonCreator != GetGuidValue(updates, UnitField.UNIT_FIELD_DEMON_CREATOR))
+                            {
+                                CreatureGuidValuesUpdate guidUpdate = new CreatureGuidValuesUpdate();
+                                guidUpdate.guid = GetGuidValue(updates, UnitField.UNIT_FIELD_DEMON_CREATOR);
+                                guidUpdate.time = time;
+                                guidUpdate.FieldName = "DemonCreator";
+                                Storage.StoreUnitGuidValuesUpdate(guid, guidUpdate);
+                            }
+                        }
+                    }
                     else if (update.Key == UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_TARGET))
                     {
                         if (Storage.Objects.ContainsKey(guid))
@@ -817,39 +906,49 @@ namespace WowPacketParser.Parsing.Parsers
                 GameObjectUpdate goUpdate = new GameObjectUpdate();
                 foreach (var update in updates)
                 {
-                    if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_DISPLAYID))
+                    if (update.Key == UpdateFields.GetUpdateField(ObjectField.OBJECT_DYNAMIC_FLAGS))
                     {
                         if (Storage.Objects.ContainsKey(guid))
                         {
                             var obj = Storage.Objects[guid].Item1 as GameObject;
-                            if (obj.GameObjectData.DisplayID != update.Value.UInt32Value)
+                            if ((obj.ObjectData.DynamicFlags & 0x0000FFFF) != (update.Value.UInt32Value & 0x0000FFFF))
                             {
                                 hasData = true;
-                                goUpdate.DisplayID = update.Value.UInt32Value;
+                                goUpdate.DynamicFlags = (update.Value.UInt32Value & 0x0000FFFF);
+                            }
+                            if (((obj.ObjectData.DynamicFlags & 0xFFFF0000) >> 16) != ((update.Value.UInt32Value & 0xFFFF0000) >> 16))
+                            {
+                                hasData = true;
+                                goUpdate.PathProgress = ((update.Value.UInt32Value & 0xFFFF0000) >> 16);
                             }
                         }
                     }
-                    else if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_LEVEL))
+                    else if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_DYN_FLAGS))
                     {
                         if (Storage.Objects.ContainsKey(guid))
                         {
                             var obj = Storage.Objects[guid].Item1 as GameObject;
-                            if (obj.GameObjectData.Level != update.Value.UInt32Value)
+                            if (obj.GameObjectData.DynamicFlags != update.Value.UInt32Value)
                             {
                                 hasData = true;
-                                goUpdate.Level = update.Value.UInt32Value;
+                                goUpdate.DynamicFlags = update.Value.UInt32Value;
                             }
                         }
                     }
-                    else if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_FACTION))
+                    else if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_DYNAMIC))
                     {
                         if (Storage.Objects.ContainsKey(guid))
                         {
                             var obj = Storage.Objects[guid].Item1 as GameObject;
-                            if (obj.GameObjectData.FactionTemplate != update.Value.UInt32Value)
+                            if ((obj.GameObjectData.DynamicFlags & 0x0000FFFF) != (update.Value.UInt32Value & 0x0000FFFF))
                             {
                                 hasData = true;
-                                goUpdate.Faction = update.Value.UInt32Value;
+                                goUpdate.DynamicFlags = (update.Value.UInt32Value & 0x0000FFFF);
+                            }
+                            if (((obj.GameObjectData.DynamicFlags & 0xFFFF0000) >> 16) != ((update.Value.UInt32Value & 0xFFFF0000) >> 16))
+                            {
+                                hasData = true;
+                                goUpdate.PathProgress = ((update.Value.UInt32Value & 0xFFFF0000) >> 16);
                             }
                         }
                     }
@@ -875,6 +974,11 @@ namespace WowPacketParser.Parsing.Parsers
                                 hasData = true;
                                 goUpdate.AnimProgress = ((update.Value.UInt32Value & 0xFF000000) >> 24);
                             }
+                            if (obj.GameObjectData.ArtKit != ((update.Value.UInt32Value & 0x00FF0000) >> 16))
+                            {
+                                hasData = true;
+                                goUpdate.ArtKit = ((update.Value.UInt32Value & 0x00FF0000) >> 16);
+                            }
                             if (obj.GameObjectData.State != (update.Value.UInt32Value & 0x000000FF))
                             {
                                 hasData = true;
@@ -894,6 +998,18 @@ namespace WowPacketParser.Parsing.Parsers
                             }
                         }
                     }
+                    else if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_ARTKIT))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as GameObject;
+                            if (obj.GameObjectData.ArtKit != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                goUpdate.ArtKit = update.Value.UInt32Value;
+                            }
+                        }
+                    }
                     else if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_ANIMPROGRESS))
                     {
                         if (Storage.Objects.ContainsKey(guid))
@@ -906,6 +1022,18 @@ namespace WowPacketParser.Parsing.Parsers
                             }
                         }
                     }
+                    else if (update.Key == UpdateFields.GetUpdateField(GameObjectField.GAMEOBJECT_FIELD_CUSTOM_PARAM))
+                    {
+                        if (Storage.Objects.ContainsKey(guid))
+                        {
+                            var obj = Storage.Objects[guid].Item1 as GameObject;
+                            if (obj.GameObjectData.CustomParam != update.Value.UInt32Value)
+                            {
+                                hasData = true;
+                                goUpdate.CustomParam = update.Value.UInt32Value;
+                            }
+                        }
+                    }
                 }
 
                 if (hasData)
@@ -914,6 +1042,7 @@ namespace WowPacketParser.Parsing.Parsers
                     Storage.StoreGameObjectUpdate(guid, goUpdate);
                 }
             }
+            return hasPlayerLevelup;
         }
 
         private static Dictionary<int, UpdateField> ReadValuesUpdateBlock(Packet packet, ObjectType type, object index, bool isCreating, Dictionary<int, UpdateField> oldValues)
@@ -1380,6 +1509,7 @@ namespace WowPacketParser.Parsing.Parsers
             var isSelf =  packet.ReadBit("Self", index);
             if (isSelf)
             {
+                Storage.CurrentActivePlayer = guid;
                 ActivePlayerCreateTime activePlayer = new ActivePlayerCreateTime
                 {
                     Guid = guid,
@@ -3601,6 +3731,7 @@ namespace WowPacketParser.Parsing.Parsers
                 flags = packet.ReadByteE<UpdateFlag>("Update Flags", index);
             if (flags.HasAnyFlag(UpdateFlag.Self))
             {
+                Storage.CurrentActivePlayer = guid;
                 ActivePlayerCreateTime activePlayer = new ActivePlayerCreateTime
                 {
                     Guid = guid,

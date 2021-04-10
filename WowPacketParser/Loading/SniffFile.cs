@@ -437,7 +437,7 @@ namespace WowPacketParser.Loading
                    "# File name: " + Path.GetFileName(fileName) + Environment.NewLine +
                    "# Detected build: " + ClientVersion.Build + Environment.NewLine +
                    "# Detected locale: " + ClientLocale.ClientLocaleString + Environment.NewLine +
-                   "# Targeted database: " + Settings.TargetedDatabase + Environment.NewLine +
+                   "# Targeted database: " + Settings.TargetedDbExpansion + Environment.NewLine +
                    "# Parsing date: " + DateTime.Now.ToString(CultureInfo.InvariantCulture) + Environment.NewLine + Environment.NewLine +
                    "SET @ACCID = 0; " + Environment.NewLine +
                    "SET @CGUID = 0; " + Environment.NewLine +
@@ -445,7 +445,9 @@ namespace WowPacketParser.Loading
                    "SET @IGUID = 0; " + Environment.NewLine +
                    "SET @OGUID = 0; " + Environment.NewLine +
                    "SET @PGUID = 0; " + Environment.NewLine +
-                   "SET @PID = 0; " + Environment.NewLine;
+                   "SET @POIID = 0; " + Environment.NewLine +
+                   "SET @LOOTID = 0; " + Environment.NewLine +
+                   "SET @SNIFFID = 0; " + Environment.NewLine;
         }
 
         private static long _lastPercent;

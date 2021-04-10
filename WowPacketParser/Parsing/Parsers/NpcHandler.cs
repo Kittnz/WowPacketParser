@@ -87,7 +87,7 @@ namespace WowPacketParser.Parsing.Parsers
             }
             else
             {
-                gossipPOI.ID = "@PID+" + LastGossipPOIEntry.ToString();
+                gossipPOI.ID = "@POIID+" + LastGossipPOIEntry.ToString();
                 ++LastGossipPOIEntry;
             }
 
@@ -508,13 +508,20 @@ namespace WowPacketParser.Parsing.Parsers
 
             if (menuId != 0 && guid.GetObjectType() == ObjectType.Unit)
             {
+                bool isDefault = false;
                 if (!Storage.CreatureDefaultGossips.ContainsKey(guid.GetEntry()))
-                    Storage.CreatureDefaultGossips.Add(guid.GetEntry(), menuId);
+                {
+                    isDefault = true;
+                    Storage.CreatureDefaultGossips.Add(guid.GetEntry(), (uint)menuId);
+                }
+                else if (Storage.CreatureDefaultGossips[guid.GetEntry()] == menuId)
+                    isDefault = true;
 
                 CreatureGossip newGossip = new CreatureGossip
                 {
                     CreatureId = gossip.ObjectEntry,
                     GossipMenuId = menuId,
+                    IsDefault = isDefault,
                 };
                 Storage.CreatureGossips.Add(newGossip, packet.TimeSpan);
             }
@@ -615,17 +622,28 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_HIGHEST_THREAT_UPDATE)]
         public static void HandleThreatlistUpdate(Packet packet)
         {
-            packet.ReadPackedGuid("GUID");
+            CreatureThreatUpdate update = new CreatureThreatUpdate();
+            WowGuid guid = packet.ReadPackedGuid("GUID");
 
             if (packet.Opcode == Opcodes.GetOpcode(Opcode.SMSG_HIGHEST_THREAT_UPDATE, Direction.ServerToClient))
                 packet.ReadPackedGuid("New Highest");
 
             var count = packet.ReadUInt32("Size");
-            for (int i = 0; i < count; i++)
+            update.TargetsCount = count;
+
+            if (count > 0)
             {
-                packet.ReadPackedGuid("Hostile", i);
-                packet.ReadUInt32("Threat", i);
+                update.TargetsList = new List<Tuple<WowGuid, long>>();
+                for (int i = 0; i < count; i++)
+                {
+                    WowGuid target = packet.ReadPackedGuid("Hostile", i);
+                    long threat = packet.ReadUInt32("Threat", i);
+                    update.TargetsList.Add(new Tuple<WowGuid, long>(target, threat));
+                }
             }
+
+            update.Time = packet.Time;
+            Storage.StoreCreatureThreatUpdate(guid, update);
         }
 
         [Parser(Opcode.SMSG_THREAT_CLEAR)]

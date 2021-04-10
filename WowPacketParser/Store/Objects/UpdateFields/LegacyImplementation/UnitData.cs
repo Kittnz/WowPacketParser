@@ -39,10 +39,70 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
         {
             get
             {
-                if (ClientVersion.AddedInVersion(ClientType.Legion))
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
                     return UpdateFields.GetArray<UnitField, uint>(UnitField.UNIT_NPC_FLAGS, 2);
                 else
                     return new uint[] { UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_NPC_FLAGS), 0 };
+            }
+        }
+
+        public int[] Stats
+        {
+            get
+            {
+                UnitField statsBegin;
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_STAT) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_STAT;
+                else if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_STAT0) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_STAT0;
+                else
+                    return new int[] { 0, 0, 0, 0, 0 };
+
+                int size = 5;
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
+                    size = 4;
+
+                return UpdateFields.GetArray<UnitField, int>(statsBegin, size);
+            }
+        }
+
+        public int[] StatPosBuff
+        {
+            get
+            {
+                UnitField statsBegin;
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_POSSTAT) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_POSSTAT;
+                else if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_POSSTAT0) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_POSSTAT0;
+                else
+                    return new int[] { 0, 0, 0, 0, 0 };
+
+                int size = 5;
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
+                    size = 4;
+
+                return UpdateFields.GetArray<UnitField, int>(statsBegin, size);
+            }
+        }
+
+        public int[] StatNegBuff
+        {
+            get
+            {
+                UnitField statsBegin;
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_NEGSTAT) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_NEGSTAT;
+                else if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_NEGSTAT0) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_NEGSTAT0;
+                else
+                    return new int[] { 0, 0, 0, 0, 0 };
+
+                int size = 5;
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
+                    size = 4;
+
+                return UpdateFields.GetArray<UnitField, int>(statsBegin, size);
             }
         }
 
@@ -55,6 +115,8 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
         public WowGuid SummonedBy => GetGuidValue(UnitField.UNIT_FIELD_SUMMONEDBY);
 
         public WowGuid CreatedBy => GetGuidValue(UnitField.UNIT_FIELD_CREATEDBY);
+
+        public WowGuid DemonCreator => GetGuidValue(UnitField.UNIT_FIELD_DEMON_CREATOR);
 
         public WowGuid Target => GetGuidValue(UnitField.UNIT_FIELD_TARGET);
 
@@ -79,11 +141,15 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
 
         public int FactionTemplate => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_FACTIONTEMPLATE);
 
+        public int BaseHealth => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_BASE_HEALTH);
+
         public long CurHealth => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_HEALTH);
 
         public long MaxHealth => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_MAXHEALTH);
 
         public uint HealthPercent => (uint)(((float)CurHealth / (float)MaxHealth) * 100);
+
+        public int BaseMana => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_BASE_MANA);
 
         public int CurMana => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_POWER);
 
@@ -119,11 +185,48 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
             }
         }
 
+        public class UnitChannel : IUnitChannel
+        {
+            public int SpellID { get; set; }
+            public ISpellCastVisual SpellVisual { get; set; }
+        }
+
+        public class SpellCastVisual : ISpellCastVisual
+        {
+            public int SpellXSpellVisualID { get; set; }
+        }
+
+        public IUnitChannel ChannelData
+        {
+            get
+            {
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_CHANNEL_SPELL) > 0)
+                {
+                    int spellId = UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_CHANNEL_SPELL);
+                    int visualId = UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_CHANNEL_SPELL_X_SPELL_VISUAL);
+                    var channelData = new UnitChannel();
+                    channelData.SpellID = spellId;
+                    channelData.SpellVisual = new SpellCastVisual { SpellXSpellVisualID = visualId };
+                    return channelData;
+                }
+                else
+                {
+                    var channelArray = UpdateFields.GetArray<UnitField, int>(UnitField.UNIT_FIELD_CHANNEL_DATA, 2);
+                    var channelData = new UnitChannel();
+                    channelData.SpellID = channelArray[0];
+                    channelData.SpellVisual = new SpellCastVisual { SpellXSpellVisualID = channelArray[1] };
+                    return channelData;
+                }
+            }
+        }
+
         public uint Flags => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_FIELD_FLAGS);
 
         public uint Flags2 => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_FIELD_FLAGS_2);
 
         public uint Flags3 => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_FIELD_FLAGS_3);
+
+        public uint DynamicFlags => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_DYNAMIC_FLAGS);
 
         public uint[] AttackRoundBaseTime => UpdateFields.GetArray<UnitField, uint?>(UnitField.UNIT_FIELD_BASEATTACKTIME, 2)
             .Select(maybeAttackTime => maybeAttackTime.GetValueOrDefault(2000)).ToArray();
@@ -211,10 +314,70 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
         {
             get
             {
-                if (ClientVersion.AddedInVersion(ClientType.Legion))
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
                     return UpdateFields.GetArray<UnitField, uint>(UnitField.UNIT_NPC_FLAGS, 2);
                 else
                     return new uint[] { UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_NPC_FLAGS), 0 };
+            }
+        }
+
+        public int[] Stats
+        {
+            get
+            {
+                UnitField statsBegin;
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_STAT) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_STAT;
+                else if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_STAT0) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_STAT0;
+                else
+                    return new int[] { 0, 0, 0, 0, 0 };
+
+                int size = 5;
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
+                    size = 4;
+
+                return UpdateFields.GetArray<UnitField, int>(statsBegin, size);
+            }
+        }
+
+        public int[] StatPosBuff
+        {
+            get
+            {
+                UnitField statsBegin;
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_POSSTAT) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_POSSTAT;
+                else if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_POSSTAT0) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_POSSTAT0;
+                else
+                    return new int[] { 0, 0, 0, 0, 0 };
+
+                int size = 5;
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
+                    size = 4;
+
+                return UpdateFields.GetArray<UnitField, int>(statsBegin, size);
+            }
+        }
+
+        public int[] StatNegBuff
+        {
+            get
+            {
+                UnitField statsBegin;
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_NEGSTAT) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_NEGSTAT;
+                else if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_FIELD_NEGSTAT0) > 0)
+                    statsBegin = UnitField.UNIT_FIELD_NEGSTAT0;
+                else
+                    return new int[] { 0, 0, 0, 0, 0 };
+
+                int size = 5;
+                if (ClientVersion.AddedInVersion(ClientType.Legion) && !ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
+                    size = 4;
+
+                return UpdateFields.GetArray<UnitField, int>(statsBegin, size);
             }
         }
 
@@ -227,6 +390,8 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
         public WowGuid SummonedBy => GetGuidValue(UnitField.UNIT_FIELD_SUMMONEDBY);
 
         public WowGuid CreatedBy => GetGuidValue(UnitField.UNIT_FIELD_CREATEDBY);
+
+        public WowGuid DemonCreator => GetGuidValue(UnitField.UNIT_FIELD_DEMON_CREATOR);
 
         public WowGuid Target => GetGuidValue(UnitField.UNIT_FIELD_TARGET);
 
@@ -251,11 +416,15 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
 
         public int FactionTemplate => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_FACTIONTEMPLATE);
 
+        public int BaseHealth => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_BASE_HEALTH);
+
         public long CurHealth => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_HEALTH);
 
         public long MaxHealth => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_MAXHEALTH);
 
         public uint HealthPercent => (uint)(((float)CurHealth / (float)MaxHealth) * 100);
+
+        public int BaseMana => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_BASE_MANA);
 
         public int CurMana => UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_FIELD_POWER);
 
@@ -291,11 +460,48 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
             }
         }
 
+        public class UnitChannel : IUnitChannel
+        {
+            public int SpellID { get; set; }
+            public ISpellCastVisual SpellVisual { get; set; }
+        }
+
+        public class SpellCastVisual : ISpellCastVisual
+        {
+            public int SpellXSpellVisualID { get; set; }
+        }
+
+        public IUnitChannel ChannelData
+        {
+            get
+            {
+                if (Enums.Version.UpdateFields.GetUpdateField(UnitField.UNIT_CHANNEL_SPELL) > 0)
+                {
+                    int spellId = UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_CHANNEL_SPELL);
+                    int visualId = UpdateFields.GetValue<UnitField, int>(UnitField.UNIT_CHANNEL_SPELL_X_SPELL_VISUAL);
+                    var channelData = new UnitChannel();
+                    channelData.SpellID = spellId;
+                    channelData.SpellVisual = new SpellCastVisual { SpellXSpellVisualID = visualId };
+                    return channelData;
+                }
+                else
+                {
+                    var channelArray = UpdateFields.GetArray<UnitField, int>(UnitField.UNIT_FIELD_CHANNEL_DATA, 2);
+                    var channelData = new UnitChannel();
+                    channelData.SpellID = channelArray[0];
+                    channelData.SpellVisual = new SpellCastVisual { SpellXSpellVisualID = channelArray[1] };
+                    return channelData;
+                }
+            }
+        }
+
         public uint Flags => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_FIELD_FLAGS);
 
         public uint Flags2 => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_FIELD_FLAGS_2);
 
         public uint Flags3 => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_FIELD_FLAGS_3);
+
+        public uint DynamicFlags => UpdateFields.GetValue<UnitField, uint>(UnitField.UNIT_DYNAMIC_FLAGS);
 
         public uint[] AttackRoundBaseTime => UpdateFields.GetArray<UnitField, uint?>(UnitField.UNIT_FIELD_BASEATTACKTIME, 2)
             .Select(maybeAttackTime => maybeAttackTime.GetValueOrDefault(2000)).ToArray();

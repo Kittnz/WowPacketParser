@@ -40,8 +40,10 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
             if (hasDstLoc)
                 dbdata.DstPosition = V6_0_2_19033.Parsers.SpellHandler.ReadLocation(packet, "DstLocation");
 
+            float orientation = 0;
             if (hasOrient)
-                packet.ReadSingle("Orientation", idx);
+                orientation = packet.ReadSingle("Orientation", idx);
+            dbdata.Orientation = orientation;
 
             int mapID = -1;
             if (hasMapID)
@@ -58,6 +60,7 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                     PositionX = dbdata.DstPosition.X,
                     PositionY = dbdata.DstPosition.Y,
                     PositionZ = dbdata.DstPosition.Z,
+                    Orientation = orientation,
                     MapID = (ushort)mapID,
                     EffectHelper = effectHelper
                 };
@@ -168,6 +171,8 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
 
             if (hasAmmoInventoryType)
                 dbdata.AmmoInventoryType = (int)packet.ReadInt32E<InventoryType>("AmmoInventoryType", idx);
+
+            packet.AddSniffData(StoreNameType.Spell, (int)dbdata.SpellID, "CAST");
         }
 
         [Parser(Opcode.SMSG_SPELL_START)]
@@ -259,6 +264,22 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
 
             var guid = packet.ReadPackedGuid128("UnitGUID");
             Storage.StoreUnitAurasUpdate(guid, auras, packet.Time);
+        }
+
+        [Parser(Opcode.SMSG_SPELL_UPDATE_CHAIN_TARGETS)]
+        public static void HandleUpdateChainTargets(Packet packet)
+        {
+            packet.ReadPackedGuid128("Caster GUID");
+            packet.ReadUInt32("SpellXSpellVisualID");
+            packet.ReadPackedGuid128("CastID");
+            packet.ReadPackedGuid128("Target GUID");
+            packet.ReadUInt32<SpellId>("SpellID");
+        }
+
+        [Parser(Opcode.CMSG_SELF_RES)]
+        public static void HandleCharacterNull(Packet packet)
+        {
+            packet.ReadUInt32<SpellId>("SpellID");
         }
     }
 }

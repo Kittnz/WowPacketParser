@@ -35,6 +35,10 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
 
         public uint Flags => UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_FLAGS);
 
+        public uint DynamicFlags => (ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)
+                ? UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_DYNAMIC)
+                : UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_DYN_FLAGS));
+
         public int Level => UpdateFields.GetValue<GameObjectField, int>(GameObjectField.GAMEOBJECT_LEVEL);
 
         public Quaternion ParentRotation
@@ -55,11 +59,17 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
 
         public sbyte TypeID => (sbyte)((UpdateFields.GetValue<GameObjectField, int>(GameObjectField.GAMEOBJECT_BYTES_1) & 0x0000FF00) >> 8);
 
+        public uint ArtKit => (byte)(ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)
+                ? ((UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_BYTES_1) & 0x00FF0000) >> 16)
+                : UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_ARTKIT));
+
         public byte PercentHealth => (byte)((UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_BYTES_1) & 0xFF000000) >> 24);
 
         public byte AnimProgress => (byte)(ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)
                 ? ((UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_BYTES_1) & 0xFF000000) >> 24)
                 : UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_ANIMPROGRESS));
+
+        public uint CustomParam => UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_FIELD_CUSTOM_PARAM);
 
         public IGameObjectData Clone() { return new GameObjectData(Object); }
     }
@@ -94,6 +104,10 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
 
         public uint Flags => UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_FLAGS);
 
+        public uint DynamicFlags => (ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)
+                ? UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_DYNAMIC)
+                : UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_DYN_FLAGS));
+
         public int Level => UpdateFields.GetValue<GameObjectField, int>(GameObjectField.GAMEOBJECT_LEVEL);
 
         public Quaternion ParentRotation
@@ -114,12 +128,18 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
 
         public sbyte TypeID => (sbyte)((UpdateFields.GetValue<GameObjectField, int>(GameObjectField.GAMEOBJECT_BYTES_1) & 0x0000FF00) >> 8);
 
+        public uint ArtKit => (byte)(ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)
+                ? ((UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_BYTES_1) & 0x00FF0000) >> 16)
+                : UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_ARTKIT));
+
         public byte PercentHealth => (byte)((UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_BYTES_1) & 0xFF000000) >> 24);
 
         public byte AnimProgress => (byte)(ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)
                 ? ((UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_BYTES_1) & 0xFF000000) >> 24)
                 : UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_ANIMPROGRESS));
 
-        public IGameObjectData Clone() { return new OriginalGameObjectData(Object); }
+        public uint CustomParam => UpdateFields.GetValue<GameObjectField, uint>(GameObjectField.GAMEOBJECT_FIELD_CUSTOM_PARAM);
+
+        public IGameObjectData Clone() { return new GameObjectData(Object); }
     }
 }

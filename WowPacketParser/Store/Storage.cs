@@ -14,16 +14,19 @@ namespace WowPacketParser.Store
         public static readonly DataBag<SniffData> SniffData = new DataBag<SniffData>(Settings.SqlTables.SniffData || Settings.SqlTables.SniffDataOpcodes);
 
         /* Key: Guid */
+        public static WowGuid CurrentActivePlayer = null;
 
         // Units, GameObjects, Players, Items
         public static readonly StoreDictionary<WowGuid, WoWObject> Objects = new StoreDictionary<WowGuid, WoWObject>(new List<SQLOutput>());
-        public static void StoreNewObject(WowGuid guid, WoWObject obj, Packet packet)
+        public static void StoreNewObject(WowGuid guid, WoWObject obj, ObjectCreateType type, Packet packet)
         {
             obj.OriginalMovement = obj.Movement != null ? obj.Movement.CopyFromMe() : null;
             obj.OriginalUpdateFields = obj.UpdateFields != null ? new Dictionary<int, UpdateField>(obj.UpdateFields) : null;
             if (!string.IsNullOrWhiteSpace(Settings.SQLFileName) && Settings.DumpFormatWithSQL())
                 obj.SourceSniffId = Program.sniffFileNames.IndexOf(packet.FileName);
             obj.SourceSniffBuild = ClientVersion.BuildInt;
+            obj.FirstCreateTime = packet.Time;
+            obj.FirstCreateType = type;
             Storage.Objects.Add(guid, obj, packet.TimeSpan);
         }
         public static string GetObjectDbGuid(WowGuid guid)
@@ -182,7 +185,7 @@ namespace WowPacketParser.Store
             }
         }
         public static readonly Dictionary<WowGuid, List<ObjectCreate>> ObjectCreate1Times = new Dictionary<WowGuid, List<ObjectCreate>>();
-        public static void StoreObjectCreate1Time(WowGuid guid, MovementInfo movement, DateTime time)
+        public static void StoreObjectCreate1Time(WowGuid guid, uint map, MovementInfo movement, DateTime time)
         {
             if (guid.GetObjectType() != ObjectType.Unit &&
                 guid.GetObjectType() != ObjectType.GameObject &&
@@ -212,6 +215,7 @@ namespace WowPacketParser.Store
                 createData.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(time);
                 if (movement != null)
                 {
+                    createData.Map = map;
                     createData.PositionX = movement.Position.X;
                     createData.PositionY = movement.Position.Y;
                     createData.PositionZ = movement.Position.Z;
@@ -226,6 +230,7 @@ namespace WowPacketParser.Store
                 createData.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(time);
                 if (movement != null)
                 {
+                    createData.Map = map;
                     createData.PositionX = movement.Position.X;
                     createData.PositionY = movement.Position.Y;
                     createData.PositionZ = movement.Position.Z;
@@ -236,7 +241,7 @@ namespace WowPacketParser.Store
             }
         }
         public static readonly Dictionary<WowGuid, List<ObjectCreate>> ObjectCreate2Times = new Dictionary<WowGuid, List<ObjectCreate>>();
-        public static void StoreObjectCreate2Time(WowGuid guid, MovementInfo movement, DateTime time)
+        public static void StoreObjectCreate2Time(WowGuid guid, uint map, MovementInfo movement, DateTime time)
         {
             if (guid.GetObjectType() != ObjectType.Unit &&
                 guid.GetObjectType() != ObjectType.GameObject &&
@@ -266,6 +271,7 @@ namespace WowPacketParser.Store
                 createData.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(time);
                 if (movement != null)
                 {
+                    createData.Map = map;
                     createData.PositionX = movement.Position.X;
                     createData.PositionY = movement.Position.Y;
                     createData.PositionZ = movement.Position.Z;
@@ -280,6 +286,7 @@ namespace WowPacketParser.Store
                 createData.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(time);
                 if (movement != null)
                 {
+                    createData.Map = map;
                     createData.PositionX = movement.Position.X;
                     createData.PositionY = movement.Position.Y;
                     createData.PositionZ = movement.Position.Z;
@@ -289,12 +296,12 @@ namespace WowPacketParser.Store
                 Storage.ObjectCreate2Times.Add(guid, createList);
             }
         }
-        public static void StoreObjectCreateTime(WowGuid guid, MovementInfo movement, DateTime time, ObjectCreateType type)
+        public static void StoreObjectCreateTime(WowGuid guid, uint map, MovementInfo movement, DateTime time, ObjectCreateType type)
         {
             if (type == ObjectCreateType.Create1)
-                StoreObjectCreate1Time(guid, movement, time);
+                StoreObjectCreate1Time(guid, map, movement, time);
             else if (type == ObjectCreateType.Create2)
-                StoreObjectCreate2Time(guid, movement, time);
+                StoreObjectCreate2Time(guid, map, movement, time);
 
         }
         public static readonly Dictionary<WowGuid, List<Tuple<List<Aura>, DateTime>>> UnitAurasUpdates = new Dictionary<WowGuid, List<Tuple<List<Aura>, DateTime>>>();
@@ -307,7 +314,7 @@ namespace WowPacketParser.Store
                 {
                     // If this is the first packet that sends auras
                     // (hopefully at spawn time) add it to the "Auras" field
-                    if (unit.Auras == null)
+                    if (unit.Auras == null && unit.FirstCreateTime != null && ((time - unit.FirstCreateTime).TotalSeconds < 3))
                         unit.Auras = auras;
                 }
             }
@@ -568,6 +575,23 @@ namespace WowPacketParser.Store
                 Storage.Emotes.Add(guid, emotesList);
             }
         }
+        public static readonly Dictionary<WowGuid, List<CreatureThreatUpdate>> CreatureThreatUpdates = new Dictionary<WowGuid, List<CreatureThreatUpdate>>();
+        public static void StoreCreatureThreatUpdate(WowGuid guid, CreatureThreatUpdate update)
+        {
+            if (!Settings.SqlTables.creature_threat_update)
+                return;
+
+            if (Storage.CreatureThreatUpdates.ContainsKey(guid))
+            {
+                Storage.CreatureThreatUpdates[guid].Add(update);
+            }
+            else
+            {
+                List<CreatureThreatUpdate> threatList = new List<CreatureThreatUpdate>();
+                threatList.Add(update);
+                Storage.CreatureThreatUpdates.Add(guid, threatList);
+            }
+        }
         public static readonly Dictionary<WowGuid, List<UnitMeleeAttackLog>> UnitAttackLogs = new Dictionary<WowGuid, List<UnitMeleeAttackLog>>();
         public static void StoreUnitAttackLog(UnitMeleeAttackLog attackData)
         {
@@ -658,7 +682,6 @@ namespace WowPacketParser.Store
         public static readonly DataBag<QuestVisualEffect> QuestVisualEffects = new DataBag<QuestVisualEffect>(Settings.SqlTables.quest_template);
         public static readonly DataBag<QuestRewardDisplaySpell> QuestRewardDisplaySpells = new DataBag<QuestRewardDisplaySpell>(Settings.SqlTables.quest_template);
         public static readonly DataBag<CreatureTemplate> CreatureTemplates = new DataBag<CreatureTemplate>(Settings.SqlTables.creature_template_wdb);
-        public static readonly DataBag<CreatureTemplateClassic> CreatureTemplatesClassic = new DataBag<CreatureTemplateClassic>(Settings.SqlTables.creature_template_wdb);
         public static readonly DataBag<CreatureTemplateNonWDB> CreatureTemplatesNonWDB = new DataBag<CreatureTemplateNonWDB>(Settings.SqlTables.creature_template);
         public static readonly DataBag<CreatureTemplateQuestItem> CreatureTemplateQuestItems = new DataBag<CreatureTemplateQuestItem>(Settings.SqlTables.creature_template_wdb);
         public static readonly DataBag<CreatureTemplateScaling> CreatureTemplateScalings = new DataBag<CreatureTemplateScaling>(Settings.SqlTables.creature_template_scaling);
@@ -836,6 +859,48 @@ namespace WowPacketParser.Store
         // Start info (Race, Class)
         public static readonly DataBag<PlayerCreateInfoAction> StartActions = new DataBag<PlayerCreateInfoAction>(Settings.SqlTables.playercreateinfo_action);
         public static readonly DataBag<PlayerCreateInfo> StartPositions = new DataBag<PlayerCreateInfo>(Settings.SqlTables.playercreateinfo);
+        public static readonly DataBag<PlayerClassLevelStats> PlayerClassLevelStats = new DataBag<PlayerClassLevelStats>(Settings.SqlTables.player_classlevelstats);
+        public static readonly DataBag<PlayerLevelStats> PlayerLevelStats = new DataBag<PlayerLevelStats>(Settings.SqlTables.player_levelstats);
+        public static readonly DataBag<PlayerLevelupInfo> PlayerLevelupInfos = new DataBag<PlayerLevelupInfo>(Settings.SqlTables.player_levelup_info);
+        public static void SavePlayerStats(WoWObject obj, bool useInitialData)
+        {
+            if (!Settings.SqlTables.player_levelstats && !Settings.SqlTables.player_classlevelstats)
+                return;
+
+            Player player = obj as Player;
+            if (player == null)
+                return;
+
+           var unitData = useInitialData ? player.UnitDataOriginal : player.UnitData;
+
+
+            PlayerClassLevelStats classLevelStats = new PlayerClassLevelStats();
+            classLevelStats.ClassId = unitData.ClassId;
+            classLevelStats.Level = unitData.Level;
+            classLevelStats.BaseHP = unitData.BaseHealth;
+            classLevelStats.BaseMana = unitData.BaseMana;
+            if (classLevelStats.BaseHP != 0)
+                Storage.PlayerClassLevelStats.Add(classLevelStats);
+
+            var stats = unitData.Stats;
+            var posstats = unitData.StatPosBuff;
+            var negstats = unitData.StatNegBuff;
+
+            PlayerLevelStats levelStats = new PlayerLevelStats();
+            levelStats.RaceId = unitData.RaceId;
+            levelStats.ClassId = unitData.ClassId;
+            levelStats.Level = unitData.Level;
+            levelStats.Strength = stats[(int)StatType.Strength] - posstats[(int)StatType.Strength] - negstats[(int)StatType.Strength];
+            levelStats.Agility = stats[(int)StatType.Agility] - posstats[(int)StatType.Agility] - negstats[(int)StatType.Agility];
+            levelStats.Stamina = stats[(int)StatType.Stamina] - posstats[(int)StatType.Stamina] - negstats[(int)StatType.Stamina];
+            levelStats.Intellect = stats[(int)StatType.Intellect] - posstats[(int)StatType.Intellect] - negstats[(int)StatType.Intellect];
+            if (ClientVersion.RemovedInVersion(ClientType.Legion) || ClientVersion.IsClassicClientVersionBuild(ClientVersion.Build))
+                levelStats.Spirit = stats[(int)StatType.Spirit] - posstats[(int)StatType.Spirit] - negstats[(int)StatType.Spirit];
+            if (levelStats.Strength != 0 || levelStats.Agility != 0 ||
+                levelStats.Stamina != 0 || levelStats.Intellect != 0 ||
+                levelStats.Spirit != 0)
+                Storage.PlayerLevelStats.Add(levelStats);
+        }
 
         // Gossips (MenuId, TextId)
         public static readonly Dictionary<uint, uint> CreatureDefaultGossips = new Dictionary<uint, uint>();
@@ -869,6 +934,13 @@ namespace WowPacketParser.Store
         // Weather updates
         public static readonly DataBag<WeatherUpdate> WeatherUpdates = new DataBag<WeatherUpdate>(Settings.SqlTables.weather_updates);
 
+        // XP updates
+        public static readonly DataBag<XpGainAborted> XpGainAborted = new DataBag<XpGainAborted>(Settings.SqlTables.xp_gain_aborted);
+        public static readonly DataBag<XpGainLog> XpGainLogs = new DataBag<XpGainLog>(Settings.SqlTables.xp_gain_log);
+
+        // Reputation updates
+        public static readonly DataBag<FactionStandingUpdate> FactionStandingUpdates = new DataBag<FactionStandingUpdate>(Settings.SqlTables.faction_standing_update);
+
         // Npc Spell Click
         public static readonly StoreBag<WowGuid> NpcSpellClicks = new StoreBag<WowGuid>(Settings.SqlTables.npc_spellclick_spells);
         public static readonly DataBag<NpcSpellClick> SpellClicks = new DataBag<NpcSpellClick>(Settings.SqlTables.npc_spellclick_spells);
@@ -889,8 +961,20 @@ namespace WowPacketParser.Store
         public static readonly DataBag<SpellCastFailed> SpellCastFailed = new DataBag<SpellCastFailed>(Settings.SqlTables.spell_cast_failed);
         public static readonly DataBag<SpellCastData> SpellCastStart = new DataBag<SpellCastData>(Settings.SqlTables.spell_cast_start);
         public static readonly DataBag<SpellCastData> SpellCastGo = new DataBag<SpellCastData>(Settings.SqlTables.spell_cast_go);
+        public static readonly DataBag<SpellUniqueCaster> SpellUniqueCasters = new DataBag<SpellUniqueCaster>(Settings.SqlTables.spell_unique_caster);
         public static void StoreSpellCastData(SpellCastData castData, DataBag<SpellCastData> storage, Packet packet)
         {
+            if (Settings.SqlTables.spell_unique_caster &&
+                (castData.CasterGuid.GetObjectType() == ObjectType.Unit ||
+                castData.CasterGuid.GetObjectType() == ObjectType.GameObject))
+            {
+                SpellUniqueCaster uniqueCast = new SpellUniqueCaster();
+                uniqueCast.SpellId = castData.SpellID;
+                uniqueCast.CasterId = castData.CasterGuid.GetEntry();
+                uniqueCast.CasterType = GetObjectTypeNameForDB(castData.CasterGuid);
+                SpellUniqueCasters.Add(uniqueCast);
+            }
+
             if (!Settings.SqlTables.spell_cast_start &&
                 !Settings.SqlTables.spell_cast_go)
                 return;
@@ -899,28 +983,10 @@ namespace WowPacketParser.Store
                 return;
 
             castData.Time = packet.Time;
-
-            /*
-            uncomment for unique casts only
-            foreach (var cast_pair in storage)
-            {
-                if (cast_pair.Item1.CasterID == castData.CasterID &&
-                    cast_pair.Item1.CasterType == castData.CasterType &&
-                    cast_pair.Item1.CastFlags == castData.CastFlags &&
-                    cast_pair.Item1.CastFlagsEx == castData.CastFlagsEx &&
-                    cast_pair.Item1.SpellID == castData.SpellID &&
-                    cast_pair.Item1.MainTargetID == castData.MainTargetID &&
-                    cast_pair.Item1.MainTargetType == castData.MainTargetType &&
-                    cast_pair.Item1.HitTargetID.SequenceEqual(castData.HitTargetID) &&
-                    cast_pair.Item1.HitTargetType.SequenceEqual(castData.HitTargetType))
-                    return;
-            }
-            */
-
             storage.Add(castData, packet.TimeSpan);
         }
-        public static readonly DataBag<SpellPetCooldown> SpellPetCooldown = new DataBag<SpellPetCooldown>(Settings.SqlTables.spell_pet_cooldown);
-        public static readonly DataBag<SpellPetActions> SpellPetActions = new DataBag<SpellPetActions>(Settings.SqlTables.spell_pet_action);
+        public static readonly DataBag<CreaturePetCooldown> CreaturePetCooldown = new DataBag<CreaturePetCooldown>(Settings.SqlTables.creature_pet_cooldown);
+        public static readonly DataBag<CreaturePetActions> CreaturePetActions = new DataBag<CreaturePetActions>(Settings.SqlTables.creature_pet_actions);
         public static readonly DataBag<SpellTargetPosition> SpellTargetPositions = new DataBag<SpellTargetPosition>(Settings.SqlTables.spell_target_position);
 
         // World state
@@ -1003,11 +1069,11 @@ namespace WowPacketParser.Store
             CreatureStats.Clear();
 
             CreatureTemplates.Clear();
-            CreatureTemplatesClassic.Clear();
             CreatureTemplatesNonWDB.Clear();
             CreatureTemplateQuestItems.Clear();
             CreatureTemplateScalings.Clear();
             CreatureTemplateModels.Clear();
+            CreatureThreatUpdates.Clear();
             UnitAurasUpdates.Clear();
             UnitEquipmentValuesUpdates.Clear();
             UnitGuidValuesUpdates.Clear();
@@ -1042,6 +1108,9 @@ namespace WowPacketParser.Store
 
             StartActions.Clear();
             StartPositions.Clear();
+            PlayerClassLevelStats.Clear();
+            PlayerLevelStats.Clear();
+            PlayerLevelupInfos.Clear();
 
             CreatureDefaultGossips.Clear();
             CreatureGossips.Clear();
@@ -1069,6 +1138,10 @@ namespace WowPacketParser.Store
 
             WeatherUpdates.Clear();
 
+            XpGainAborted.Clear();
+            XpGainLogs.Clear();
+            FactionStandingUpdates.Clear();
+
             NpcSpellClicks.Clear();
             SpellClicks.Clear();
 
@@ -1076,8 +1149,9 @@ namespace WowPacketParser.Store
             SpellCastFailed.Clear();
             SpellCastStart.Clear();
             SpellCastGo.Clear();
-            SpellPetActions.Clear();
-            SpellPetCooldown.Clear();
+            SpellUniqueCasters.Clear();
+            CreaturePetActions.Clear();
+            CreaturePetCooldown.Clear();
             SpellTargetPositions.Clear();
 
             LocalesCreatures.Clear();

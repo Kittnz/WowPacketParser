@@ -119,6 +119,9 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("player_flags")]
         public uint PlayerFlags;
 
+        [DBFieldName("pvp_rank")]
+        public uint PvPRank;
+
         [DBFieldName("scale")]
         public float? Scale;
 
@@ -161,14 +164,14 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("stand_state")]
         public uint? StandState;
 
-        [DBFieldName("pet_talent_points")]
-        public uint? PetTalentPoints;
+        //[DBFieldName("pet_talent_points")]
+        //public uint? PetTalentPoints;
 
         [DBFieldName("vis_flags")]
         public uint? VisFlags;
 
-        [DBFieldName("anim_tier")]
-        public uint? AnimTier;
+        //[DBFieldName("anim_tier")]
+        //public uint? AnimTier;
 
         [DBFieldName("sheath_state")]
         public uint? SheatheState;
@@ -176,17 +179,35 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("pvp_flags")]
         public uint? PvpFlags;
 
-        [DBFieldName("pet_flags")]
-        public uint? PetFlags;
+        //[DBFieldName("pet_flags")]
+        //public uint? PetFlags;
 
         [DBFieldName("shapeshift_form")]
         public uint? ShapeshiftForm;
+
+        [DBFieldName("move_flags")]
+        public uint? MovementFlags;
 
         [DBFieldName("speed_walk")]
         public float? SpeedWalk;
 
         [DBFieldName("speed_run")]
         public float? SpeedRun;
+
+        [DBFieldName("speed_run_back", DbType = (TargetedDbType.WPP))]
+        public float? SpeedRunBack;
+
+        [DBFieldName("speed_swim", DbType = (TargetedDbType.WPP))]
+        public float? SpeedSwim;
+
+        [DBFieldName("speed_swim_back", DbType = (TargetedDbType.WPP))]
+        public float? SpeedSwimBack;
+
+        [DBFieldName("speed_fly", DbType = (TargetedDbType.WPP))]
+        public float? SpeedFly;
+
+        [DBFieldName("speed_fly_back", DbType = (TargetedDbType.WPP))]
+        public float? SpeedFlyBack;
 
         [DBFieldName("bounding_radius")]
         public float? BoundingRadius;
@@ -197,14 +218,20 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("mod_melee_haste")]
         public float? ModMeleeHaste;
 
-        [DBFieldName("mod_ranged_haste")]
-        public float? ModRangedHaste;
+        [DBFieldName("main_hand_attack_time")]
+        public uint? MainHandAttackTime;
 
-        [DBFieldName("base_attack_time")]
-        public uint? BaseAttackTime;
+        [DBFieldName("off_hand_attack_time")]
+        public uint? OffHandAttackTime;
 
         [DBFieldName("ranged_attack_time")]
         public uint? RangedAttackTime;
+
+        [DBFieldName("channel_spell_id")]
+        public uint? ChannelSpellId;
+
+        [DBFieldName("channel_visual_id")]
+        public uint? ChannelVisualId;
 
         [DBFieldName("equipment_cache")]
         public string EquipmentCache = "";
@@ -221,6 +248,9 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("guid", true, true)]
         public string GUID;
+
+        [DBFieldName("map")]
+        public uint? Map;
 
         [DBFieldName("position_x")]
         public float? PositionX;
@@ -244,6 +274,9 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("guid", true, true)]
         public string GUID;
 
+        [DBFieldName("map")]
+        public uint? Map;
+
         [DBFieldName("position_x")]
         public float? PositionX;
 
@@ -265,6 +298,79 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("guid", true, true)]
         public string GUID;
+    }
+
+    [DBTableName("player_classlevelstats")]
+    public sealed class PlayerClassLevelStats : IDataModel
+    {
+        [DBFieldName("class", true)]
+        public uint ClassId;
+
+        [DBFieldName("level", true)]
+        public int Level;
+
+        [DBFieldName("basehp")]
+        public int BaseHP;
+
+        [DBFieldName("basemana")]
+        public int BaseMana;
+    }
+
+    [DBTableName("player_levelstats")]
+    public sealed class PlayerLevelStats : IDataModel
+    {
+        [DBFieldName("race", true)]
+        public uint RaceId;
+
+        [DBFieldName("class", true)]
+        public uint ClassId;
+
+        [DBFieldName("level", true)]
+        public int Level;
+
+        [DBFieldName("str")]
+        public int Strength;
+
+        [DBFieldName("agi")]
+        public int Agility;
+
+        [DBFieldName("sta")]
+        public int Stamina;
+
+        [DBFieldName("inte")]
+        public int Intellect;
+
+        [DBFieldName("spi")]
+        public int Spirit;
+    }
+
+    [DBTableName("player_levelup_info")]
+    public sealed class PlayerLevelupInfo : IDataModel
+    {
+        [DBFieldName("race", true)]
+        public uint RaceId;
+
+        [DBFieldName("class", true)]
+        public uint ClassId;
+
+        [DBFieldName("level", true)]
+        public int Level;
+
+        [DBFieldName("health")]
+        public int Health;
+
+        [DBFieldName("power", TargetedDbExpansion.Classic, TargetedDbExpansion.Zero, 6, true)]
+        [DBFieldName("power", TargetedDbExpansion.Zero, TargetedDbExpansion.WrathOfTheLichKing, 5, true)]
+        [DBFieldName("power", TargetedDbExpansion.WrathOfTheLichKing, TargetedDbExpansion.Cataclysm, 7, true)]
+        [DBFieldName("power", TargetedDbExpansion.Cataclysm, TargetedDbExpansion.WarlordsOfDraenor, 5, true)]
+        [DBFieldName("power", TargetedDbExpansion.WarlordsOfDraenor, 6, true)]
+        public int?[] Power;
+
+        [DBFieldName("stat", TargetedDbExpansion.Classic, TargetedDbExpansion.Legion, 5, true)]
+        [DBFieldName("stat", TargetedDbExpansion.Legion, 4, true)]
+        public int?[] Stat;
+
+        public WowGuid GUID;
     }
 
     [DBTableName("character_inventory")]
@@ -366,6 +472,25 @@ namespace WowPacketParser.Store.Objects
     {
         public WowGuid Guid;
         public DateTime Time;
+    }
+
+    [DBTableName("guild_member")]
+    public sealed class GuildMember : IDataModel
+    {
+        [DBFieldName("guildid")]
+        public ulong GuildGUID = 0;
+
+        [DBFieldName("guid", true, true)]
+        public string Guid;
+
+        [DBFieldName("rank")]
+        public uint GuildRank = 0;
+
+        [DBFieldName("pnote")]
+        public string pnote = "";
+
+        [DBFieldName("offnote")]
+        public string offnote = "";
     }
 
     [DBTableName("guild_member")]

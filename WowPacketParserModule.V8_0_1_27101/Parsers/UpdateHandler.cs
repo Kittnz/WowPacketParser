@@ -173,6 +173,11 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                         hasData = true;
                         creatureUpdate.Scale = unit.ObjectData.Scale;
                     }
+                    if (oldObjectData.DynamicFlags != unit.ObjectData.DynamicFlags)
+                    {
+                        hasData = true;
+                        creatureUpdate.DynamicFlags = unit.ObjectData.DynamicFlags;
+                    }
                 }
                 if (oldUnitData != null)
                 {
@@ -193,6 +198,9 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                     }
                     if (oldUnitData.Level != unit.UnitData.Level)
                     {
+                        if (guid.GetObjectType() == ObjectType.ActivePlayer)
+                            Storage.SavePlayerStats(obj, false);
+
                         hasData = true;
                         creatureUpdate.Level = (uint)unit.UnitData.Level;
                     }
@@ -211,11 +219,13 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                         hasData = true;
                         creatureUpdate.StandState = unit.UnitData.StandState;
                     }
+                    /*
                     if (oldUnitData.PetTalentPoints != unit.UnitData.PetTalentPoints)
                     {
                         hasData = true;
                         creatureUpdate.PetTalentPoints = unit.UnitData.PetTalentPoints;
                     }
+                    */
                     if (oldUnitData.VisFlags != unit.UnitData.VisFlags)
                     {
                         hasData = true;
@@ -236,11 +246,13 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                         hasData = true;
                         creatureUpdate.PvpFlags = unit.UnitData.PvpFlags;
                     }
+                    /*
                     if (oldUnitData.PetFlags != unit.UnitData.PetFlags)
                     {
                         hasData = true;
                         creatureUpdate.PetFlags = unit.UnitData.PetFlags;
                     }
+                    */
                     if (oldUnitData.ShapeshiftForm != unit.UnitData.ShapeshiftForm)
                     {
                         hasData = true;
@@ -296,20 +308,25 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                         hasData = true;
                         creatureUpdate.ModMeleeHaste = unit.UnitData.ModHaste;
                     }
-                    if (oldUnitData.ModRangedHaste != unit.UnitData.ModRangedHaste)
-                    {
-                        hasData = true;
-                        creatureUpdate.ModRangedHaste = unit.UnitData.ModRangedHaste;
-                    }
                     if (oldUnitData.AttackRoundBaseTime[0] != unit.UnitData.AttackRoundBaseTime[0])
                     {
                         hasData = true;
-                        creatureUpdate.BaseAttackTime = unit.UnitData.AttackRoundBaseTime[0];
+                        creatureUpdate.MainHandAttackTime = unit.UnitData.AttackRoundBaseTime[0];
                     }
-                    if (oldUnitData.RangedAttackRoundBaseTime != unit.UnitData.RangedAttackRoundBaseTime)
+                    if (oldUnitData.AttackRoundBaseTime[1] != unit.UnitData.AttackRoundBaseTime[1])
                     {
                         hasData = true;
-                        creatureUpdate.RangedAttackTime = unit.UnitData.RangedAttackRoundBaseTime;
+                        creatureUpdate.OffHandAttackTime = unit.UnitData.AttackRoundBaseTime[1];
+                    }
+                    if (oldUnitData.ChannelData.SpellID != unit.UnitData.ChannelData.SpellID)
+                    {
+                        hasData = true;
+                        creatureUpdate.ChannelSpellId = (uint)unit.UnitData.ChannelData.SpellID;
+                    }
+                    if (oldUnitData.ChannelData.SpellVisual.SpellXSpellVisualID != unit.UnitData.ChannelData.SpellVisual.SpellXSpellVisualID)
+                    {
+                        hasData = true;
+                        creatureUpdate.ChannelVisualId = (uint)unit.UnitData.ChannelData.SpellVisual.SpellXSpellVisualID;
                     }
                     uint slot = 0;
                     foreach (var item in unit.UnitData.VirtualItems)
@@ -364,6 +381,14 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                         guidUpdate.FieldName = "CreatedBy";
                         Storage.StoreUnitGuidValuesUpdate(guid, guidUpdate);
                     }
+                    if (oldUnitData.DemonCreator != unit.UnitData.DemonCreator)
+                    {
+                        CreatureGuidValuesUpdate guidUpdate = new CreatureGuidValuesUpdate();
+                        guidUpdate.guid = unit.UnitData.DemonCreator;
+                        guidUpdate.time = time;
+                        guidUpdate.FieldName = "DemonCreator";
+                        Storage.StoreUnitGuidValuesUpdate(guid, guidUpdate);
+                    }
                     if (oldUnitData.Target != unit.UnitData.Target)
                     {
                         CreatureGuidValuesUpdate guidUpdate = new CreatureGuidValuesUpdate();
@@ -401,20 +426,23 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                 GameObject go = obj as GameObject;
                 bool hasData = false;
                 GameObjectUpdate goUpdate = new GameObjectUpdate();
-                if (oldGameObjectData.DisplayID != go.GameObjectData.DisplayID)
+                if (oldObjectData != null)
                 {
-                    hasData = true;
-                    goUpdate.DisplayID = (uint)go.GameObjectData.DisplayID;
+                    if ((oldObjectData.DynamicFlags & 0x0000FFFF) != (go.ObjectData.DynamicFlags & 0x0000FFFF))
+                    {
+                        hasData = true;
+                        goUpdate.DynamicFlags = (go.ObjectData.DynamicFlags & 0x0000FFFF);
+                    }
+                    if (((oldObjectData.DynamicFlags & 0xFFFF0000) >> 16) != ((go.ObjectData.DynamicFlags & 0xFFFF0000) >> 16))
+                    {
+                        hasData = true;
+                        goUpdate.PathProgress = ((go.ObjectData.DynamicFlags & 0xFFFF0000) >> 16);
+                    }
                 }
-                if (oldGameObjectData.Level != go.GameObjectData.Level)
+                if (oldGameObjectData.CustomParam != go.GameObjectData.CustomParam)
                 {
                     hasData = true;
-                    goUpdate.Level = (uint)go.GameObjectData.Level;
-                }
-                if (oldGameObjectData.FactionTemplate != go.GameObjectData.FactionTemplate)
-                {
-                    hasData = true;
-                    goUpdate.Faction = (uint)go.GameObjectData.FactionTemplate;
+                    goUpdate.CustomParam = go.GameObjectData.CustomParam;
                 }
                 if (oldGameObjectData.Flags != go.GameObjectData.Flags)
                 {
@@ -430,6 +458,11 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                 {
                     hasData = true;
                     goUpdate.State = (uint)go.GameObjectData.State;
+                }
+                if (oldGameObjectData.ArtKit != go.GameObjectData.ArtKit)
+                {
+                    hasData = true;
+                    goUpdate.ArtKit = (uint)go.GameObjectData.ArtKit;
                 }
                 if (hasData)
                 {
@@ -476,7 +509,7 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
             }
 
             var moves = ReadMovementUpdateBlock(packet, guid, obj, index);
-            Storage.StoreObjectCreateTime(guid, moves, packet.Time, type);
+            Storage.StoreObjectCreateTime(guid, map, moves, packet.Time, type);
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V8_1_0_28724))
             {
                 var updatefieldSize = packet.ReadUInt32();
@@ -569,7 +602,7 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                 CoreParsers.UpdateHandler.ProcessExistingObject(ref existObj, guid, packet.Time, obj.UpdateFields, obj.DynamicUpdateFields, moves); // can't do "ref Storage.Objects[guid].Item1 directly
             }
             else
-                Storage.StoreNewObject(guid, obj, packet);
+                Storage.StoreNewObject(guid, obj, type, packet);
 
             if (guid.HasEntry() && (objType == ObjectType.Unit || objType == ObjectType.GameObject))
                 packet.AddSniffData(Utilities.ObjectTypeToStore(objType), (int)guid.GetEntry(), "SPAWN");
@@ -630,6 +663,7 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
             var isSelf = packet.ReadBit("ThisIsYou", index);
             if (isSelf)
             {
+                Storage.CurrentActivePlayer = guid;
                 ActivePlayerCreateTime activePlayer = new ActivePlayerCreateTime
                 {
                     Guid = guid,
@@ -727,9 +761,10 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                     {
                         packet.ResetBitReader();
 
-                        packet.ReadUInt32E<SplineFlag>("SplineFlags", index);
+                        ServerSideMovement movementData = new ServerSideMovement();
+                        movementData.SplineFlags = (uint)packet.ReadUInt32E<SplineFlag>("SplineFlags", index);
                         packet.ReadInt32("Elapsed", index);
-                        packet.ReadUInt32("Duration", index);
+                        movementData.MoveTime = packet.ReadUInt32("Duration", index);
                         packet.ReadSingle("DurationModifier", index);
                         packet.ReadSingle("NextDurationModifier", index);
 
@@ -737,6 +772,9 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                         var hasSpecialTime = packet.ReadBit("HasSpecialTime", index);
 
                         var pointsCount = packet.ReadBits("PointsCount", 16, index);
+                        movementData.SplineCount = pointsCount;
+                        if (pointsCount > 0)
+                            movementData.SplinePoints = new List<Vector3>();
 
                         if (ClientVersion.RemovedInVersion(ClientType.Shadowlands))
                             packet.ReadBitsE<SplineMode>("Mode", 2, index);
@@ -766,26 +804,32 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                             packet.ReadBits("FilterFlags", 2, index);
                         }
 
+                        float orientation = 100;
                         switch (face)
                         {
                             case 1:
-                                packet.ReadVector3("FaceSpot", index);
+                                var faceSpot = packet.ReadVector3("FaceSpot", index);
+                                orientation = Utilities.GetAngle(moveInfo.Position.X, moveInfo.Position.Y, faceSpot.X, faceSpot.Y);
                                 break;
                             case 2:
                                 packet.ReadPackedGuid128("FaceGUID", index);
                                 break;
                             case 3:
-                                packet.ReadSingle("FaceDirection", index);
+                                orientation = packet.ReadSingle("FaceDirection", index);
                                 break;
                             default:
                                 break;
                         }
+                        movementData.Orientation = orientation;
 
                         if (hasSpecialTime)
                             packet.ReadUInt32("SpecialTime", index);
 
                         for (var i = 0; i < pointsCount; ++i)
-                            packet.ReadVector3("Points", index, i);
+                        {
+                            var spot = packet.ReadVector3("Points", index, i);
+                            movementData.SplinePoints.Add(spot);
+                        }
 
                         if (hasSpellEffectExtraData)
                             MovementHandler.ReadMonsterSplineSpellEffectExtraData(packet, index);
@@ -810,6 +854,13 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                                 packet.ReadInt32("Unknown3", index, "Unknown901", i);
                                 packet.ReadInt32("Unknown4", index, "Unknown901", i);
                             }
+                        }
+
+                        if (pointsCount > 0)
+                        {
+                            Unit unit = obj as Unit;
+                            if (unit != null)
+                                unit.AddWaypoint(movementData, moveInfo.Position, packet.Time);
                         }
                     }
                 }

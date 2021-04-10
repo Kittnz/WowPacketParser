@@ -64,7 +64,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
         {
             ObjectType objType = ObjectTypeConverter.Convert(packet.ReadByteE<ObjectTypeLegacy>("Object Type", index));
             var moves = ReadMovementUpdateBlock(packet, guid, index);
-            Storage.StoreObjectCreateTime(guid, moves, packet.Time, type);
+            Storage.StoreObjectCreateTime(guid, map, moves, packet.Time, type);
             var updates = CoreParsers.UpdateHandler.ReadValuesUpdateBlockOnCreate(packet, objType, index);
             var dynamicUpdates = CoreParsers.UpdateHandler.ReadDynamicValuesUpdateBlockOnCreate(packet, objType, index);
 
@@ -107,7 +107,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
                 obj.PhaseMask = (uint)CoreParsers.MovementHandler.CurrentPhaseMask;
                 obj.Phases = new HashSet<ushort>(CoreParsers.MovementHandler.ActivePhases.Keys);
                 obj.DifficultyID = CoreParsers.MovementHandler.CurrentDifficultyID;
-                Storage.StoreNewObject(guid, obj, packet);
+                Storage.StoreNewObject(guid, obj, type, packet);
             }   
 
             if (guid.HasEntry() && (objType == ObjectType.Unit || objType == ObjectType.GameObject))
@@ -139,6 +139,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
             var isSelf = packet.ReadBit("ThisIsYou", index);
             if (isSelf)
             {
+                Storage.CurrentActivePlayer = guid;
                 ActivePlayerCreateTime activePlayer = new ActivePlayerCreateTime
                 {
                     Guid = guid,

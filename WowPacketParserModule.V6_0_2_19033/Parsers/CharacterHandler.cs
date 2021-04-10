@@ -348,24 +348,32 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
         [Parser(Opcode.SMSG_LOG_XP_GAIN)]
         public static void HandleLogXPGain(Packet packet)
         {
-            packet.ReadPackedGuid128("Victim");
-            packet.ReadInt32("Original");
+            XpGainLog log = new XpGainLog();
+            log.GUID = packet.ReadPackedGuid128("Victim");
+            log.OriginalAmount = (uint)packet.ReadInt32("Original");
 
-            packet.ReadByte("Reason");
-            packet.ReadInt32("Amount");
-            packet.ReadSingle("GroupBonus");
+            log.Reason = packet.ReadByte("Reason");
+            log.Amount = (uint)packet.ReadInt32("Amount");
+            log.GroupBonus = packet.ReadSingle("GroupBonus");
 
-            packet.ReadBit("ReferAFriend");
+            log.RAFBonus = packet.ReadBit("ReferAFriend");
+
+            log.Time = packet.Time;
+            Storage.XpGainLogs.Add(log);
         }
 
         [Parser(Opcode.SMSG_XP_GAIN_ABORTED)]
         public static void HandleXPGainAborted(Packet packet)
         {
-            packet.ReadPackedGuid128("Victim");
+            XpGainAborted log = new XpGainAborted();
+            log.GUID = packet.ReadPackedGuid128("Victim");
 
-            packet.ReadInt32("XpToAdd");
-            packet.ReadInt32("XpGainReason");
-            packet.ReadInt32("XpAbortReason");
+            log.Amount = (uint)packet.ReadInt32("XpToAdd");
+            log.GainReason = (uint)packet.ReadInt32("XpGainReason");
+            log.AbortReason = (uint)packet.ReadInt32("XpAbortReason");
+
+            log.Time = packet.Time;
+            Storage.XpGainAborted.Add(log);
         }
 
         [Parser(Opcode.CMSG_QUERY_PLAYER_NAME)]
@@ -440,16 +448,21 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
         [Parser(Opcode.SMSG_LEVEL_UP_INFO)]
         public static void HandleLevelUpInfo(Packet packet)
         {
-            packet.ReadInt32("Level");
-            packet.ReadInt32("HealthDelta");
+            PlayerLevelupInfo info = new PlayerLevelupInfo();
+            info.GUID = Storage.CurrentActivePlayer;
+            info.Level = packet.ReadInt32("Level");
+            info.Health = packet.ReadInt32("HealthDelta");
 
+            info.Power = new int?[6];
             for (var i = 0; i < 6; i++)
-                packet.ReadInt32("PowerDelta", (PowerType)i);
+                info.Power[i] = packet.ReadInt32("PowerDelta", (PowerType)i);
 
+            info.Stat = new int?[5];
             for (var i = 0; i < 5; i++)
-                packet.ReadInt32("StatDelta", (StatType)i);
+                info.Stat[i] = packet.ReadInt32("StatDelta", (StatType)i);
 
             packet.ReadInt32("Cp");
+            Storage.PlayerLevelupInfos.Add(info);
         }
 
         [Parser(Opcode.CMSG_SET_PLAYER_DECLINED_NAMES)]

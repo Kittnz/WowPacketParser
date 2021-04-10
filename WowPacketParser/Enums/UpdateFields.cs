@@ -134,10 +134,12 @@ namespace WowPacketParser.Enums
     public enum UnitField
     {
         UNIT_CHANNEL_SPELL,
+        UNIT_CHANNEL_SPELL_X_SPELL_VISUAL,
         UNIT_CREATED_BY_SPELL,
         UNIT_DYNAMIC_FLAGS,
         UNIT_END,
         UNIT_FIELD_ATTACK_POWER,
+        [UpdateField(UpdateFieldType.Short)]
         UNIT_FIELD_ATTACK_POWER_MODS,
         UNIT_FIELD_ATTACK_POWER_MOD_NEG,
         UNIT_FIELD_ATTACK_POWER_MOD_POS,
@@ -230,6 +232,7 @@ namespace WowPacketParser.Enums
         UNIT_FIELD_MOUNTDISPLAYID,
         UNIT_FIELD_NATIVEDISPLAYID,
         UNIT_FIELD_NATIVE_X_DISPLAY_SCALE,
+        [UpdateField(UpdateFieldType.Int)]
         UNIT_FIELD_NEGSTAT,
         UNIT_FIELD_NEGSTAT0,
         UNIT_FIELD_NEGSTAT1,
@@ -243,6 +246,7 @@ namespace WowPacketParser.Enums
         UNIT_FIELD_PETNEXTLEVELEXP,
         UNIT_FIELD_PETNUMBER,
         UNIT_FIELD_PET_NAME_TIMESTAMP,
+        [UpdateField(UpdateFieldType.Int)]
         UNIT_FIELD_POSSTAT,
         UNIT_FIELD_POSSTAT0,
         UNIT_FIELD_POSSTAT1,
@@ -274,6 +278,7 @@ namespace WowPacketParser.Enums
         UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER,
         UNIT_FIELD_RANGEDATTACKTIME,
         UNIT_FIELD_RANGED_ATTACK_POWER,
+        [UpdateField(UpdateFieldType.Short)]
         UNIT_FIELD_RANGED_ATTACK_POWER_MODS,
         UNIT_FIELD_RANGED_ATTACK_POWER_MOD_NEG,
         UNIT_FIELD_RANGED_ATTACK_POWER_MOD_POS,
@@ -320,6 +325,7 @@ namespace WowPacketParser.Enums
         UNIT_FIELD_SCALING_LEVEL_MAX,
         [UpdateField(UpdateFieldType.Int)]
         UNIT_FIELD_SCALING_LEVEL_DELTA,
+        [UpdateField(UpdateFieldType.Int)]
         UNIT_FIELD_STAT,
         UNIT_FIELD_STAT0,
         UNIT_FIELD_STAT1,
@@ -536,6 +542,7 @@ namespace WowPacketParser.Enums
         PLAYER_FIELD_YESTERDAY_CONTRIBUTION,
         PLAYER_FLAGS,
         PLAYER_FLAGS_EX,
+        PLAYER_PVP_RANK,
         PLAYER_GLYPHS_ENABLED,
         PLAYER_GUILDDELETE_DATE,
         PLAYER_GUILDID,
@@ -970,6 +977,7 @@ namespace WowPacketParser.Enums
         GAMEOBJECT_DISPLAYID,
         [UpdateField(UpdateFieldType.Short)]
         GAMEOBJECT_DYNAMIC,
+        GAMEOBJECT_DYN_FLAGS,
         GAMEOBJECT_END,
         [UpdateField(UpdateFieldType.Int)]
         GAMEOBJECT_FACTION,

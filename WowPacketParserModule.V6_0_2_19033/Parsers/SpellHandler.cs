@@ -53,7 +53,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
                 dbdata.DstPosition = ReadLocation(packet, "DstLocation");
 
             if (hasOrient)
-                packet.ReadSingle("Orientation", idx);
+                dbdata.Orientation = packet.ReadSingle("Orientation", idx);
 
             packet.ReadWoWString("Name", nameLength, idx);
         }
@@ -407,6 +407,8 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
 
             if (hasProjectileVisual)
                 ReadProjectileVisual(packet, idx, "ProjectileVisual");
+
+            packet.AddSniffData(StoreNameType.Spell, (int)dbdata.SpellID, "CAST");
         }
 
         [Parser(Opcode.SMSG_WEEKLY_SPELL_USAGE)]
@@ -841,7 +843,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
             var count = packet.ReadInt32("SpellCooldownsCount");
             for (int i = 0; i < count; i++)
             {
-                SpellPetCooldown petCooldown = new SpellPetCooldown();
+                CreaturePetCooldown petCooldown = new CreaturePetCooldown();
                 petCooldown.SpellID = (uint)packet.ReadInt32("SrecID", i);
                 petCooldown.Cooldown = (uint)packet.ReadInt32("ForcedCooldown", i);
                 if (casterGuid.GetObjectType() == ObjectType.Unit)
@@ -850,7 +852,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
                     petCooldown.Flags = flags;
                     petCooldown.Index = (byte)i;
                     petCooldown.ModRate = 1;
-                    Storage.SpellPetCooldown.Add(petCooldown);
+                    Storage.CreaturePetCooldown.Add(petCooldown);
                 }
             }
         }

@@ -105,6 +105,8 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
 
             for (var i = 0; i < targetPointsCount; ++i)
                 V6_0_2_19033.Parsers.SpellHandler.ReadLocation(packet, idx, "TargetPoints", i);
+
+            packet.AddSniffData(StoreNameType.Spell, (int)dbdata.SpellID, "CAST");
         }
 
         public static void ReadSpellTargetData(SpellCastData dbdata, Packet packet, uint spellID, params object[] idx)
@@ -127,8 +129,10 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
             if (hasDstLoc)
                 dbdata.DstPosition = V6_0_2_19033.Parsers.SpellHandler.ReadLocation(packet, "DstLocation");
 
+            float orientation = 0;
             if (hasOrient)
-                packet.ReadSingle("Orientation", idx);
+                orientation = packet.ReadSingle("Orientation", idx);
+            dbdata.Orientation = orientation;
 
             int mapID = -1;
             if (hasMapID)
@@ -153,6 +157,7 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
                                 PositionX = dbdata.DstPosition.X,
                                 PositionY = dbdata.DstPosition.Y,
                                 PositionZ = dbdata.DstPosition.Z,
+                                Orientation = orientation,
                                 MapID = (ushort)mapID,
                                 EffectHelper = effectHelper
                             };
@@ -474,7 +479,7 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
             var count = packet.ReadInt32("SpellCooldownsCount");
             for (int i = 0; i < count; i++)
             {
-                SpellPetCooldown petCooldown = new SpellPetCooldown();
+                CreaturePetCooldown petCooldown = new CreaturePetCooldown();
                 petCooldown.SpellID = (uint)packet.ReadInt32("SrecID", i);
                 petCooldown.Cooldown = (uint)packet.ReadInt32("ForcedCooldown", i);
                 petCooldown.ModRate = packet.ReadSingle("ModRate", i);
@@ -483,7 +488,7 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
                     petCooldown.CasterID = casterGuid.GetEntry();
                     petCooldown.Flags = flags;
                     petCooldown.Index = (byte)i;
-                    Storage.SpellPetCooldown.Add(petCooldown);
+                    Storage.CreaturePetCooldown.Add(petCooldown);
                 }
             }
         }

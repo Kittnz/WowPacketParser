@@ -18,25 +18,32 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("map", false, false, true)]
         public uint? Map;
 
-        [DBFieldName("zone_id")]
+        [DBFieldName("zone_id", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("zoneId", DbType = (TargetedDbType.TRINITY))]
         public uint? ZoneID;
 
-        [DBFieldName("area_id")]
+        [DBFieldName("area_id", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("areaId", DbType = (TargetedDbType.TRINITY))]
         public uint? AreaID;
 
-        [DBFieldName("spawn_mask", TargetedDatabase.WrathOfTheLichKing, TargetedDatabase.Legion)]
+        [DBFieldName("spawn_mask", TargetedDbExpansion.WrathOfTheLichKing, TargetedDbExpansion.Legion, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("spawnMask", TargetedDbExpansion.WrathOfTheLichKing, TargetedDbExpansion.Legion, DbType = (TargetedDbType.TRINITY | TargetedDbType.CMANGOS))]
         public uint? SpawnMask;
 
-        [DBFieldName("spawn_difficulties", TargetedDatabase.Legion)]
+        [DBFieldName("spawn_difficulties", TargetedDbExpansion.Legion, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("spawnDifficulties", TargetedDbExpansion.Legion, DbType = (TargetedDbType.TRINITY))]
         public string SpawnDifficulties;
 
-        [DBFieldName("phase_mask", TargetedDatabase.WrathOfTheLichKing, TargetedDatabase.Cataclysm)]
+        [DBFieldName("phase_mask", TargetedDbExpansion.WrathOfTheLichKing, TargetedDbExpansion.Cataclysm, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("phaseMask", TargetedDbExpansion.WrathOfTheLichKing, TargetedDbExpansion.Cataclysm, DbType = (TargetedDbType.TRINITY | TargetedDbType.CMANGOS))]
         public uint? PhaseMask;
 
-        [DBFieldName("phase_id", TargetedDatabase.Cataclysm)]
+        [DBFieldName("phase_id", TargetedDbExpansion.Cataclysm, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("PhaseId", TargetedDbExpansion.Cataclysm, DbType = (TargetedDbType.TRINITY))]
         public string PhaseID;
 
-        [DBFieldName("phase_group", TargetedDatabase.Cataclysm)]
+        [DBFieldName("phase_group", TargetedDbExpansion.Cataclysm, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("PhaseGroup", TargetedDbExpansion.Cataclysm, DbType = (TargetedDbType.TRINITY))]
         public int? PhaseGroup;
 
         [DBFieldName("position_x")]
@@ -51,133 +58,174 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("orientation")]
         public float? Orientation;
 
-        [DBFieldName("wander_distance")]
+        [DBFieldName("spawndist", DbType = (TargetedDbType.CMANGOS))]
+        [DBFieldName("wander_distance", DbType = (TargetedDbType.WPP | TargetedDbType.TRINITY | TargetedDbType.VMANGOS))]
         public float? WanderDistance;
 
-        [DBFieldName("movement_type")]
+        [DBFieldName("movement_type", DbType = (TargetedDbType.WPP | TargetedDbType.VMANGOS))]
+        [DBFieldName("MovementType", DbType = (TargetedDbType.TRINITY | TargetedDbType.CMANGOS))]
         public uint? MovementType;
 
-        [DBFieldName("hover")]
+        [DBFieldName("is_spawn", DbType = (TargetedDbType.WPP))]
+        public ObjectCreateType? IsSpawn;
+
+        [DBFieldName("is_hovering", DbType = (TargetedDbType.WPP))]
         public byte? Hover;
 
-        [DBFieldName("temp")]
+        [DBFieldName("is_temporary", DbType = (TargetedDbType.WPP))]
         public byte? TemporarySpawn;
 
-        [DBFieldName("pet")]
+        [DBFieldName("is_pet", DbType = (TargetedDbType.WPP))]
         public byte? IsPet;
 
-        [DBFieldName("summon_spell")]
+        [DBFieldName("summon_spell", DbType = (TargetedDbType.WPP))]
         public uint? SummonSpell;
 
-        [DBFieldName("scale")]
+        [DBFieldName("scale", DbType = (TargetedDbType.WPP))]
         public float? Scale;
 
-        [DBFieldName("display_id")]
+        [DBFieldName("display_id", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("modelid", DbType = (TargetedDbType.TRINITY | TargetedDbType.CMANGOS))]
         public uint? DisplayID;
 
-        [DBFieldName("native_display_id")]
+        [DBFieldName("native_display_id", DbType = (TargetedDbType.WPP))]
         public uint? NativeDisplayID;
 
-        [DBFieldName("mount_display_id")]
+        [DBFieldName("mount_display_id", DbType = (TargetedDbType.WPP))]
         public uint? MountDisplayID;
 
-        [DBFieldName("faction")]
+        [DBFieldName("class", DbType = (TargetedDbType.WPP))]
+        public uint? ClassId;
+
+        [DBFieldName("gender", DbType = (TargetedDbType.WPP))]
+        public uint? Gender;
+
+        [DBFieldName("faction", DbType = (TargetedDbType.WPP))]
         public uint? FactionTemplate;
 
-        [DBFieldName("level")]
+        [DBFieldName("level", DbType = (TargetedDbType.WPP))]
         public uint? Level;
 
-        [DBFieldName("npc_flags")]
+        [DBFieldName("npc_flags", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("npcflag", DbType = (TargetedDbType.TRINITY))]
         public uint? NpcFlag;
 
-        [DBFieldName("unit_flags")]
+        [DBFieldName("unit_flags", DbType = (TargetedDbType.WPP | TargetedDbType.TRINITY))]
         public uint? UnitFlag;
 
-        [DBFieldName("unit_flags2")]
+        [DBFieldName("unit_flags2", DbType = (TargetedDbType.WPP))]
         public uint? UnitFlag2;
 
-        [DBFieldName("current_health")]
+        [DBFieldName("dynamic_flags", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("dynamicflags", DbType = (TargetedDbType.TRINITY))]
+        public uint? DynamicFlags;
+
+        [DBFieldName("current_health", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("curhealth", DbType = (TargetedDbType.TRINITY | TargetedDbType.CMANGOS))]
         public uint? CurHealth;
 
-        [DBFieldName("max_health")]
+        [DBFieldName("max_health", DbType = (TargetedDbType.WPP))]
         public uint? MaxHealth;
 
-        [DBFieldName("current_mana")]
+        [DBFieldName("current_mana", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("curmana", DbType = (TargetedDbType.TRINITY | TargetedDbType.CMANGOS))]
         public uint? CurMana;
 
-        [DBFieldName("max_mana")]
+        [DBFieldName("max_mana", DbType = (TargetedDbType.WPP))]
         public uint? MaxMana;
 
-        [DBFieldName("aura_state")]
+        [DBFieldName("aura_state", DbType = (TargetedDbType.WPP))]
         public uint? AuraState;
 
-        [DBFieldName("emote_state")]
+        [DBFieldName("emote_state", DbType = (TargetedDbType.WPP))]
         public uint? EmoteState;
 
-        [DBFieldName("stand_state")]
+        [DBFieldName("stand_state", DbType = (TargetedDbType.WPP))]
         public uint? StandState;
 
-        [DBFieldName("pet_talent_points")]
-        public uint? PetTalentPoints;
+        //[DBFieldName("pet_talent_points", DbType = (TargetedDbType.WPP))]
+        //public uint? PetTalentPoints;
 
-        [DBFieldName("vis_flags")]
+        [DBFieldName("vis_flags", DbType = (TargetedDbType.WPP))]
         public uint? VisFlags;
 
-        [DBFieldName("anim_tier")]
+        [DBFieldName("anim_tier", TargetedDbExpansion.WrathOfTheLichKing, DbType = (TargetedDbType.WPP))]
         public uint? AnimTier;
 
-        [DBFieldName("sheath_state")]
+        [DBFieldName("sheath_state", DbType = (TargetedDbType.WPP))]
         public uint? SheatheState;
 
-        [DBFieldName("pvp_flags")]
+        [DBFieldName("pvp_flags", DbType = (TargetedDbType.WPP))]
         public uint? PvpFlags;
 
-        [DBFieldName("pet_flags")]
-        public uint? PetFlags;
+        //[DBFieldName("pet_flags", DbType = (TargetedDbType.WPP))]
+        //public uint? PetFlags;
 
-        [DBFieldName("shapeshift_form")]
+        [DBFieldName("shapeshift_form", DbType = (TargetedDbType.WPP))]
         public uint? ShapeshiftForm;
 
-        [DBFieldName("speed_walk")]
+        [DBFieldName("move_flags", DbType = (TargetedDbType.WPP))]
+        public uint? MovementFlags;
+
+        [DBFieldName("speed_walk", DbType = (TargetedDbType.WPP))]
         public float? SpeedWalk;
 
-        [DBFieldName("speed_run")]
+        [DBFieldName("speed_run", DbType = (TargetedDbType.WPP))]
         public float? SpeedRun;
 
-        [DBFieldName("bounding_radius")]
+        [DBFieldName("speed_run_back", DbType = (TargetedDbType.WPP))]
+        public float? SpeedRunBack;
+
+        [DBFieldName("speed_swim", DbType = (TargetedDbType.WPP))]
+        public float? SpeedSwim;
+
+        [DBFieldName("speed_swim_back", DbType = (TargetedDbType.WPP))]
+        public float? SpeedSwimBack;
+
+        [DBFieldName("speed_fly", DbType = (TargetedDbType.WPP))]
+        public float? SpeedFly;
+
+        [DBFieldName("speed_fly_back", DbType = (TargetedDbType.WPP))]
+        public float? SpeedFlyBack;
+
+        [DBFieldName("bounding_radius", DbType = (TargetedDbType.WPP))]
         public float? BoundingRadius;
 
-        [DBFieldName("combat_reach")]
+        [DBFieldName("combat_reach", DbType = (TargetedDbType.WPP))]
         public float? CombatReach;
 
-        [DBFieldName("mod_melee_haste")]
+        [DBFieldName("mod_melee_haste", DbType = (TargetedDbType.WPP))]
         public float? ModMeleeHaste;
 
-        [DBFieldName("mod_ranged_haste")]
-        public float? ModRangedHaste;
+        [DBFieldName("main_hand_attack_time", DbType = (TargetedDbType.WPP))]
+        public uint? MainHandAttackTime;
 
-        [DBFieldName("base_attack_time")]
-        public uint? BaseAttackTime;
+        [DBFieldName("off_hand_attack_time", DbType = (TargetedDbType.WPP))]
+        public uint? OffHandAttackTime;
 
-        [DBFieldName("ranged_attack_time")]
-        public uint? RangedAttackTime;
-
-        [DBFieldName("main_hand_slot_item")]
+        [DBFieldName("main_hand_slot_item", DbType = (TargetedDbType.WPP))]
         public uint? MainHandSlotItem;
 
-        [DBFieldName("off_hand_slot_item")]
+        [DBFieldName("off_hand_slot_item", DbType = (TargetedDbType.WPP))]
         public uint? OffHandSlotItem;
 
-        [DBFieldName("ranged_slot_item")]
+        [DBFieldName("ranged_slot_item", DbType = (TargetedDbType.WPP))]
         public uint? RangedSlotItem;
 
-        [DBFieldName("auras")]
+        [DBFieldName("channel_spell_id", DbType = (TargetedDbType.WPP))]
+        public uint? ChannelSpellId;
+
+        [DBFieldName("channel_visual_id", DbType = (TargetedDbType.WPP))]
+        public uint? ChannelVisualId;
+
+        [DBFieldName("auras", DbType = (TargetedDbType.WPP))]
         public string Auras;
 
-        [DBFieldName("sniff_id", false, false, false, true)]
-        public int? SniffId;
+        [DBFieldName("sniff_id", false, true, false, true, DbType = (TargetedDbType.WPP))]
+        public string SniffId;
 
-        [DBFieldName("sniff_build")]
+        [DBFieldName("sniff_build", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("VerifiedBuild", DbType = (TargetedDbType.TRINITY))]
         public int? SniffBuild = ClientVersion.BuildInt;
     }
 
@@ -214,6 +262,15 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("charmer_type")]
         public string CharmedByType;
 
+        [DBFieldName("summoner_guid", false, true)]
+        public string SummonedByGuid;
+
+        [DBFieldName("summoner_id")]
+        public uint SummonedById;
+
+        [DBFieldName("summoner_type")]
+        public string SummonedByType;
+
         [DBFieldName("creator_guid", false, true)]
         public string CreatedByGuid;
 
@@ -223,14 +280,14 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("creator_type")]
         public string CreatedByType;
 
-        [DBFieldName("summoner_guid", false, true)]
-        public string SummonedByGuid;
+        [DBFieldName("demon_creator_guid", false, true)]
+        public string DemonCreatorGuid;
 
-        [DBFieldName("summoner_id")]
-        public uint SummonedById;
+        [DBFieldName("demon_creator_id")]
+        public uint DemonCreatorId;
 
-        [DBFieldName("summoner_type")]
-        public string SummonedByType;
+        [DBFieldName("demon_creator_type")]
+        public string DemonCreatorType;
 
         [DBFieldName("target_guid", false, true)]
         public string TargetGuid;
@@ -264,43 +321,49 @@ namespace WowPacketParser.Store.Objects
         public float PositionZ;
     }
 
-    [DBTableName("creature_movement_server")]
+    [DBTableName("creature_movement_server", TargetedDbType.WPP)]
+    [DBTableName("waypoint_data", TargetedDbType.TRINITY)]
+    [DBTableName("creature_movement", (TargetedDbType.VMANGOS | TargetedDbType.CMANGOS))]
     public sealed class ServerSideMovement : IDataModel
     {
-        [DBFieldName("unixtimems")]
+        [DBFieldName("unixtimems", DbType = (TargetedDbType.WPP))]
         public ulong? UnixTimeMs;
 
-        [DBFieldName("guid", true, true)]
+        [DBFieldName("guid", true, true, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("id", true, true, DbType = (TargetedDbType.TRINITY | TargetedDbType.VMANGOS | TargetedDbType.CMANGOS))]
         public string GUID;
 
         [DBFieldName("point", true)]
         public uint Point;
 
-        [DBFieldName("move_time")]
+        [DBFieldName("move_time", DbType = (TargetedDbType.WPP))]
         public uint MoveTime;
 
-        [DBFieldName("spline_flags")]
+        [DBFieldName("spline_flags", DbType = (TargetedDbType.WPP))]
         public uint SplineFlags;
 
-        [DBFieldName("spline_count")]
+        [DBFieldName("spline_count", DbType = (TargetedDbType.WPP))]
         public uint SplineCount;
 
-        [DBFieldName("start_position_x")]
+        [DBFieldName("start_position_x", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("position_x", DbType = (TargetedDbType.TRINITY | TargetedDbType.VMANGOS | TargetedDbType.CMANGOS))]
         public float StartPositionX;
 
-        [DBFieldName("start_position_y")]
+        [DBFieldName("start_position_y", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("position_y", DbType = (TargetedDbType.TRINITY | TargetedDbType.VMANGOS | TargetedDbType.CMANGOS))]
         public float StartPositionY;
 
-        [DBFieldName("start_position_z")]
+        [DBFieldName("start_position_z", DbType = (TargetedDbType.WPP))]
+        [DBFieldName("position_z", DbType = (TargetedDbType.TRINITY | TargetedDbType.VMANGOS | TargetedDbType.CMANGOS))]
         public float StartPositionZ;  
 
-        [DBFieldName("end_position_x")]
+        [DBFieldName("end_position_x", DbType = (TargetedDbType.WPP))]
         public float EndPositionX;
 
-        [DBFieldName("end_position_y")]
+        [DBFieldName("end_position_y", DbType = (TargetedDbType.WPP))]
         public float EndPositionY;
 
-        [DBFieldName("end_position_z")]
+        [DBFieldName("end_position_z", DbType = (TargetedDbType.WPP))]
         public float EndPositionZ;
 
         [DBFieldName("orientation")]
@@ -317,6 +380,9 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("guid", true, true)]
         public string GUID;
+
+        [DBFieldName("map")]
+        public uint? Map;
 
         [DBFieldName("position_x")]
         public float? PositionX;
@@ -339,6 +405,9 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("guid", true, true)]
         public string GUID;
+
+        [DBFieldName("map")]
+        public uint? Map;
 
         [DBFieldName("position_x")]
         public float? PositionX;
@@ -396,7 +465,7 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("charges")]
         public uint Charges;
 
-        [DBFieldName("content_tuning_id", false, false, true)]
+        [DBFieldName("content_tuning_id", TargetedDbExpansion.BattleForAzeroth, false, false, true)]
         public int ContentTuningId;
 
         [DBFieldName("duration")]
@@ -467,6 +536,9 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("unit_flags2", true, false, true)]
         public uint? UnitFlag2;
 
+        [DBFieldName("dynamic_flags", true, false, true)]
+        public uint? DynamicFlags;
+
         [DBFieldName("current_health", true, false, true)]
         public uint? CurrentHealth;
 
@@ -488,13 +560,13 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("stand_state", true, false, true)]
         public uint? StandState;
 
-        [DBFieldName("pet_talent_points", true, false, true)]
-        public uint? PetTalentPoints;
+        //[DBFieldName("pet_talent_points", true, false, true)]
+        //public uint? PetTalentPoints;
 
         [DBFieldName("vis_flags", true, false, true)]
         public uint? VisFlags;
 
-        [DBFieldName("anim_tier", true, false, true)]
+        [DBFieldName("anim_tier", TargetedDbExpansion.WrathOfTheLichKing, true, false, true)]
         public uint? AnimTier;
 
         [DBFieldName("sheath_state", true, false, true)]
@@ -503,8 +575,8 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("pvp_flags", true, false, true)]
         public uint? PvpFlags;
 
-        [DBFieldName("pet_flags", true, false, true)]
-        public uint? PetFlags;
+        //[DBFieldName("pet_flags", true, false, true)]
+        //public uint? PetFlags;
 
         [DBFieldName("shapeshift_form", true, false, true)]
         public uint? ShapeshiftForm;
@@ -518,14 +590,17 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("mod_melee_haste", true, false, true)]
         public float? ModMeleeHaste;
 
-        [DBFieldName("mod_ranged_haste", true, false, true)]
-        public float? ModRangedHaste;
+        [DBFieldName("main_hand_attack_time", true, false, true)]
+        public uint? MainHandAttackTime;
 
-        [DBFieldName("base_attack_time", true, false, true)]
-        public uint? BaseAttackTime;
+        [DBFieldName("off_hand_attack_time", true, false, true)]
+        public uint? OffHandAttackTime;
 
-        [DBFieldName("ranged_attack_time", true, false, true)]
-        public uint? RangedAttackTime;
+        [DBFieldName("channel_spell_id", true, false, true)]
+        public uint? ChannelSpellId;
+
+        [DBFieldName("channel_visual_id", true, false, true)]
+        public uint? ChannelVisualId;
     }
 
     [DBTableName("creature_guid_values_update")]
@@ -599,10 +674,28 @@ namespace WowPacketParser.Store.Objects
         public float? RangedDmgMax;
 
         [DBFieldName("attack_power", false, false, true)]
-        public uint? AttackPower;
+        public int? AttackPower;
+
+        [DBFieldName("positive_attack_power", false, false, true)]
+        public int? PositiveAttackPower;
+
+        [DBFieldName("negative_attack_power", false, false, true)]
+        public int? NegativeAttackPower;
+
+        [DBFieldName("attack_power_multiplier", false, false, true)]
+        public float? AttackPowerMultiplier;
 
         [DBFieldName("ranged_attack_power", false, false, true)]
-        public uint? RangedAttackPower;
+        public int? RangedAttackPower;
+
+        [DBFieldName("positive_ranged_attack_power", false, false, true)]
+        public int? PositiveRangedAttackPower;
+
+        [DBFieldName("negative_ranged_attack_power", false, false, true)]
+        public int? NegativeRangedAttackPower;
+
+        [DBFieldName("ranged_attack_power_multiplier", false, false, true)]
+        public float? RangedAttackPowerMultiplier;
 
         [DBFieldName("base_health", false, false, true)]
         public uint? BaseHealth;
@@ -611,49 +704,49 @@ namespace WowPacketParser.Store.Objects
         public uint? BaseMana;
 
         [DBFieldName("strength", false, false, true)]
-        public uint? Strength;
+        public int? Strength;
 
         [DBFieldName("agility", false, false, true)]
-        public uint? Agility;
+        public int? Agility;
 
         [DBFieldName("stamina", false, false, true)]
-        public uint? Stamina;
+        public int? Stamina;
 
         [DBFieldName("intellect", false, false, true)]
-        public uint? Intellect;
+        public int? Intellect;
 
         [DBFieldName("spirit", false, false, true)]
-        public uint? Spirit;
+        public int? Spirit;
 
         [DBFieldName("positive_strength", false, false, true)]
-        public uint? PositiveStrength;
+        public int? PositiveStrength;
 
         [DBFieldName("positive_agility", false, false, true)]
-        public uint? PositiveAgility;
+        public int? PositiveAgility;
 
         [DBFieldName("positive_stamina", false, false, true)]
-        public uint? PositiveStamina;
+        public int? PositiveStamina;
 
         [DBFieldName("positive_intellect", false, false, true)]
-        public uint? PositiveIntellect;
+        public int? PositiveIntellect;
 
         [DBFieldName("positive_spirit", false, false, true)]
-        public uint? PositiveSpirit;
+        public int? PositiveSpirit;
 
         [DBFieldName("negative_strength", false, false, true)]
-        public uint? NegativeStrength;
+        public int? NegativeStrength;
 
         [DBFieldName("negative_agility", false, false, true)]
-        public uint? NegativeAgility;
+        public int? NegativeAgility;
 
         [DBFieldName("negative_stamina", false, false, true)]
-        public uint? NegativeStamina;
+        public int? NegativeStamina;
 
         [DBFieldName("negative_intellect", false, false, true)]
-        public uint? NegativeIntellect;
+        public int? NegativeIntellect;
 
         [DBFieldName("negative_spirit", false, false, true)]
-        public uint? NegativeSpirit;
+        public int? NegativeSpirit;
 
         [DBFieldName("armor", false, false, true)]
         public int? Armor;
@@ -749,6 +842,18 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("overkill_damage")]
         public int OverkillDamage;
 
+        [DBFieldName("sub_damage_count")]
+        public uint SubDamageCount;
+
+        [DBFieldName("total_school_mask")]
+        public uint TotalSchoolMask;
+
+        [DBFieldName("total_absorbed_damage")]
+        public uint TotalAbsorbedDamage;
+
+        [DBFieldName("total_resisted_damage")]
+        public uint TotalResistedDamage;
+
         [DBFieldName("blocked_damage")]
         public int BlockedDamage;
 
@@ -824,5 +929,43 @@ namespace WowPacketParser.Store.Objects
         }
         public WowGuid victim;
         public DateTime time;
+    }
+
+    [DBTableName("creature_threat_update")]
+    public sealed class CreatureThreatUpdate : IDataModel
+    {
+        [DBFieldName("unixtimems", true)]
+        public ulong UnixTimeMs;
+
+        [DBFieldName("guid", true, true)]
+        public string GUID;
+
+        [DBFieldName("target_count")]
+        public uint TargetsCount;
+
+        [DBFieldName("target_list_id", true)]
+        public uint TargetListId;
+
+        public DateTime Time;
+        public List<Tuple<WowGuid, long>> TargetsList;
+    }
+
+    [DBTableName("creature_threat_update_target")]
+    public sealed class CreatureThreatUpdateTarget : IDataModel
+    {
+        [DBFieldName("list_id", true)]
+        public uint TargetListId;
+
+        [DBFieldName("target_guid", true, true)]
+        public string TargetGuid;
+
+        [DBFieldName("target_id")]
+        public uint TargetId;
+
+        [DBFieldName("target_type", true)]
+        public string TargetType;
+
+        [DBFieldName("threat", true)]
+        public long Threat;
     }
 }

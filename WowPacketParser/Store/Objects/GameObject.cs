@@ -32,6 +32,38 @@ namespace WowPacketParser.Store.Objects
             return !GameObjectData.CreatedBy.IsEmpty();
         }
 
+        public uint GetDynamicFlags()
+        {
+            if (ClientVersion.AddedInVersion(ClientType.WarlordsOfDraenor))
+                return ObjectData.DynamicFlags & 0x0000FFFF;
+
+            return GameObjectData.DynamicFlags & 0x0000FFFF;
+        }
+
+        public uint GetDynamicFlagsOriginal()
+        {
+            if (ClientVersion.AddedInVersion(ClientType.WarlordsOfDraenor))
+                return ObjectDataOriginal.DynamicFlags & 0x0000FFFF;
+
+            return GameObjectDataOriginal.DynamicFlags & 0x0000FFFF;
+        }
+
+        public uint GetPathProgress()
+        {
+            if (ClientVersion.AddedInVersion(ClientType.WarlordsOfDraenor))
+                return (ObjectData.DynamicFlags & 0xFFFF0000) >> 16;
+
+            return (GameObjectData.DynamicFlags & 0xFFFF0000) >> 16;
+        }
+
+        public uint GetPathProgressOriginal()
+        {
+            if (ClientVersion.AddedInVersion(ClientType.WarlordsOfDraenor))
+                return (ObjectDataOriginal.DynamicFlags & 0xFFFF0000) >> 16;
+
+            return (GameObjectDataOriginal.DynamicFlags & 0xFFFF0000) >> 16;
+        }
+
         public Quaternion GetStaticRotation()
         {
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))

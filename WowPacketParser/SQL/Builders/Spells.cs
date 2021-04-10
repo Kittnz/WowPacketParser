@@ -22,6 +22,20 @@ namespace WowPacketParser.SQL.Builders
         }
 
         [BuilderMethod]
+        public static string SpellUniqueCasters()
+        {
+            if (Storage.SpellUniqueCasters.IsEmpty())
+                return string.Empty;
+
+            if (!Settings.SqlTables.spell_unique_caster)
+                return string.Empty;
+
+            var templatesDb = SQLDatabase.Get(Storage.SpellUniqueCasters);
+
+            return SQLUtil.Compare(Storage.SpellUniqueCasters, templatesDb, StoreNameType.None);
+        }
+
+        [BuilderMethod]
         public static string SpellCastStart()
         {
             if (Storage.SpellCastStart.IsEmpty())
@@ -82,6 +96,7 @@ namespace WowPacketParser.SQL.Builders
                 row.Data.AmmoInventoryType = cast_pair.Item1.AmmoInventoryType;
                 row.Data.HitTargetsCount = cast_pair.Item1.HitTargetsCount;
                 row.Data.MissTargetsCount = cast_pair.Item1.MissTargetsCount;
+                row.Data.Orientation = cast_pair.Item1.Orientation;
 
                 Storage.GetObjectDbGuidEntryType(cast_pair.Item1.CasterGuid, out row.Data.CasterGuid, out row.Data.CasterId, out row.Data.CasterType);
                 Storage.GetObjectDbGuidEntryType(cast_pair.Item1.CasterUnitGuid, out row.Data.CasterUnitGuid, out row.Data.CasterUnitId, out row.Data.CasterUnitType);
@@ -145,13 +160,24 @@ namespace WowPacketParser.SQL.Builders
 
                 spellRows.Add(row);
             }
-            var spellsSql = new SQLInsert<SpellCastGo>(spellRows, false);
-            result.Append(spellsSql.Build());
-            result.AppendLine();
-            var targetsSql = new SQLInsert<SpellCastGoTarget>(spellTargetRows, false);
-            result.Append(targetsSql.Build());
-            var positionSql = new SQLInsert<SpellCastGoPosition>(spellPositionRows, false);
-            result.Append(positionSql.Build());
+            if (spellRows.Count != 0)
+            {
+                var spellsSql = new SQLInsert<SpellCastGo>(spellRows, false);
+                result.Append(spellsSql.Build());
+                result.AppendLine();
+            }
+            if (spellTargetRows.Count != 0)
+            {
+                var targetsSql = new SQLInsert<SpellCastGoTarget>(spellTargetRows, false);
+                result.Append(targetsSql.Build());
+                result.AppendLine();
+            }
+            if (spellPositionRows.Count != 0)
+            {
+                var positionSql = new SQLInsert<SpellCastGoPosition>(spellPositionRows, false);
+                result.Append(positionSql.Build());
+            }
+            
             return result.ToString();
         }
 
@@ -206,31 +232,31 @@ namespace WowPacketParser.SQL.Builders
         }
 
         [BuilderMethod(false)]
-        public static string SpellPetCooldown()
+        public static string CreaturePetCooldown()
         {
-            if (!Settings.SqlTables.spell_pet_cooldown)
+            if (!Settings.SqlTables.creature_pet_cooldown)
                 return string.Empty;
 
-            if (Storage.SpellPetCooldown.IsEmpty())
+            if (Storage.CreaturePetCooldown.IsEmpty())
                 return string.Empty;
 
-            var templatesDb = SQLDatabase.Get(Storage.SpellPetCooldown);
+            var templatesDb = SQLDatabase.Get(Storage.CreaturePetCooldown);
 
-            return SQLUtil.Compare(Storage.SpellPetCooldown, templatesDb, StoreNameType.None);
+            return SQLUtil.Compare(Storage.CreaturePetCooldown, templatesDb, StoreNameType.None);
         }
 
         [BuilderMethod(false)]
-        public static string SpellPetActions()
+        public static string CreaturePetActions()
         {
-            if (!Settings.SqlTables.spell_pet_action)
+            if (!Settings.SqlTables.creature_pet_actions)
                 return string.Empty;
 
-            if (Storage.SpellPetActions.IsEmpty())
+            if (Storage.CreaturePetActions.IsEmpty())
                 return string.Empty;
 
-            var templatesDb = SQLDatabase.Get(Storage.SpellPetActions);
+            var templatesDb = SQLDatabase.Get(Storage.CreaturePetActions);
 
-            return SQLUtil.Compare(Storage.SpellPetActions, templatesDb, StoreNameType.None);
+            return SQLUtil.Compare(Storage.CreaturePetActions, templatesDb, StoreNameType.None);
         }
 
         [BuilderMethod]
