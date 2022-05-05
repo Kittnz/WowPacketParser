@@ -5,28 +5,28 @@ namespace WowPacketParser.Store.Objects
     [DBTableName("guild")]
     public sealed class GuildTemplate : IDataModel
     {
-        [DBFieldName("guildid", true, true)]
+        [DBFieldName("guild_id", true, true)]
         public string GuildGUID;
 
         [DBFieldName("name")]
         public string GuildName;
 
-        [DBFieldName("leaderguid")]
+        [DBFieldName("leader_guid")]
         public uint LeaderGUID = 0;
 
-        [DBFieldName("EmblemStyle")]
+        [DBFieldName("emblem_style")]
         public int EmblemStyle;
 
-        [DBFieldName("EmblemColor")]
+        [DBFieldName("emblem_color")]
         public int EmblemColor;
 
-        [DBFieldName("BorderStyle")]
+        [DBFieldName("border_style")]
         public int BorderStyle = 0;
 
-        [DBFieldName("BorderColor")]
+        [DBFieldName("border_color")]
         public int BorderColor = 0;
 
-        [DBFieldName("BackgroundColor")]
+        [DBFieldName("background_color")]
         public int BackgroundColor;
 
         [DBFieldName("info")]
@@ -39,13 +39,13 @@ namespace WowPacketParser.Store.Objects
     [DBTableName("guild_rank")]
     public sealed class GuildRankTemplate : IDataModel
     {
-        [DBFieldName("guildid", true, true)]
+        [DBFieldName("guild_id", true, true)]
         public string GuildGUID;
 
-        [DBFieldName("rid", true)]
+        [DBFieldName("id", true)]
         public int RankID;
 
-        [DBFieldName("rname")]
+        [DBFieldName("name")]
         public string RankName;
 
         [DBFieldName("rights")]

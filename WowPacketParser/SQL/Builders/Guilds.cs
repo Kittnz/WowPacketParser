@@ -56,14 +56,14 @@ namespace WowPacketParser.SQL.Builders
 
             if (Settings.SqlTables.guild)
             {
-                var guildSql = new SQLInsert<GuildTemplate>(guildRows, false);
+                var guildSql = new SQLInsert<GuildTemplate>(guildRows, false, true);
                 result.Append(guildSql.Build());
                 result.AppendLine();
             }
 
             if (Settings.SqlTables.guild_rank)
             {
-                var guildRankSql = new SQLInsert<GuildRankTemplate>(guildRankRows, false);
+                var guildRankSql = new SQLInsert<GuildRankTemplate>(guildRankRows, false, true);
                 result.Append(guildRankSql.Build());
                 result.AppendLine();
             }

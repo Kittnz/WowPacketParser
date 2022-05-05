@@ -685,10 +685,10 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("slot")]
         public uint Slot;
 
-        [DBFieldName("item", true, true)]
+        [DBFieldName("item_guid", true, true)]
         public string ItemGuid;
 
-        [DBFieldName("item_template")]
+        [DBFieldName("item_id")]
         public uint ItemTemplate;
     }
 
@@ -698,7 +698,7 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("guid", true, true)]
         public string Guid;
 
-        [DBFieldName("itemEntry")]
+        [DBFieldName("item_id")]
         public uint ItemEntry;
 
         [DBFieldName("owner_guid", false, true)]
@@ -886,7 +886,7 @@ namespace WowPacketParser.Store.Objects
     [DBTableName("guild_member")]
     public sealed class GuildMember : IDataModel
     {
-        [DBFieldName("guildid")]
+        [DBFieldName("guild_id")]
         public ulong GuildGUID = 0;
 
         [DBFieldName("guid", true, true)]
@@ -895,11 +895,30 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("rank")]
         public uint GuildRank = 0;
 
-        [DBFieldName("pnote")]
+        [DBFieldName("player_note")]
         public string pnote = "";
 
-        [DBFieldName("offnote")]
+        [DBFieldName("officer_note")]
         public string offnote = "";
+    }
+
+    [DBTableName("account")]
+    public sealed class AccountCreation : IDataModel
+    {
+        [DBFieldName("id", true, true)]
+        public string id;
+
+        [DBFieldName("username", true, false)]
+        public string username;
+
+        [DBFieldName("s", false, false)]
+        public string s;
+
+        [DBFieldName("v", false, false)]
+        public string v;
+
+        [DBFieldName("joindate", false, true)]
+        public string joindate;
     }
 
     [DBTableName("logout_time")]

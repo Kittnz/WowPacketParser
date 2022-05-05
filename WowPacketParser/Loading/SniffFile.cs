@@ -450,7 +450,7 @@ namespace WowPacketParser.Loading
                        "SET @ACCID = 0; " + Environment.NewLine +
                        "SET @CGUID = 0; " + Environment.NewLine +
                        "SET @DGUID = 0;" + Environment.NewLine +
-                       "SET @IGUID = 0; " + Environment.NewLine +
+                       "SET @IGUID = (SELECT MAX(guid) FROM item_instance) + 1;" + Environment.NewLine +
                        "SET @OGUID = 0; " + Environment.NewLine +
                        "SET @PGUID = 0; " + Environment.NewLine +
                        "SET @POIID = 0; " + Environment.NewLine +
