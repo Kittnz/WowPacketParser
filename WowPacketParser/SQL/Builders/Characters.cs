@@ -2589,6 +2589,10 @@ namespace WowPacketParser.SQL.Builders
                 if (!player.IsActivePlayer && Settings.SkipOtherPlayers)
                     continue;
 
+                uint VirtualPlayerRealm = player.PlayerData.VirtualPlayerRealm;
+                if (player.PlayerData.VirtualPlayerRealm != 721682444) // Morgraine
+                    continue;
+
                 Row<CharacterTemplate> row = new Row<CharacterTemplate>();
 
                 /*row.Data.Guid = "@PGUID+" + player.DbGuid;
@@ -2606,6 +2610,10 @@ namespace WowPacketParser.SQL.Builders
                 row.Data.Account = player.PlayerData.WowAccount.Low.ToString();
 
                 row.Data.Name = Settings.RandomizePlayerNames ? GetRandomString(8) : StoreGetters.GetName(objPair.Key);
+
+                if (row.Data.Name == null)
+                    row.Data.Name = player.PlayerData.WowAccount.Low.ToString();
+
                 row.Data.Race = player.UnitDataOriginal.RaceId;
                 row.Data.Class = player.UnitDataOriginal.ClassId;
                 row.Data.Gender = player.UnitDataOriginal.Sex;
@@ -2615,6 +2623,8 @@ namespace WowPacketParser.SQL.Builders
                 AssignPlayerAppearanceFields(player.PlayerDataOriginal, out row.Data.Skin, out row.Data.Face, out row.Data.HairStyle, out row.Data.HairColor, out row.Data.FacialHair);
                 row.Data.PlayerFlags = player.PlayerDataOriginal.PlayerFlags;
 
+                //playerData.PlayerBytes2 & 0xFF
+
                 MovementInfo moveData = player.OriginalMovement == null ? player.Movement : player.OriginalMovement;
                 if (moveData != null)
                 {
@@ -2623,6 +2633,11 @@ namespace WowPacketParser.SQL.Builders
                     row.Data.PositionZ = moveData.Position.Z;
                     row.Data.Orientation = moveData.Orientation;
                 }
+
+                row.Data.Zone = 0;
+                if (player.Zone != -1)
+                    row.Data.Zone = player.Zone;
+
                 row.Data.Map = player.Map;
                 row.Data.Health = (uint)player.UnitDataOriginal.MaxHealth;
                 row.Data.Power1 = (uint)player.UnitDataOriginal.MaxMana;
@@ -3159,7 +3174,6 @@ namespace WowPacketParser.SQL.Builders
                    }
                 }
 
-
                 if (Settings.SqlTables.character_spell)
                 {
                     if (Storage.CharacterSpells.ContainsKey(objPair.Key))
@@ -3176,6 +3190,23 @@ namespace WowPacketParser.SQL.Builders
                         }
                     }
                 }
+
+                /*if (Settings.SqlTables.character_actions)
+                {
+                    if (Storage.CharacterReputations.ContainsKey(objPair.Key))
+                    {
+                        foreach (var spellId in Storage.StartActions[objPair.Key])
+                        {
+                            var spellRow = new Row<CharacterSpell>();
+                            //spellRow.Data.Guid = "@PGUID+" + player.DbGuid;
+                            spellRow.Data.Guid = objPair.Key.Low.ToString();
+                            spellRow.Data.Spell = spellId;
+                            spellRow.Data.Active = 1;
+                            spellRow.Data.Disabled = 0;
+                            characterSpellRows.Add(spellRow);
+                        }
+                    }
+                }*/
 
                 if (Settings.SqlTables.guild)
                 {
@@ -3195,8 +3226,15 @@ namespace WowPacketParser.SQL.Builders
                     if (!accountIdDictionary.ContainsKey(player.PlayerData.WowAccount))
                     {
                         var accountCreationRow = new Row<AccountCreation>();
-                        string name = StoreGetters.GetName(objPair.Key).ToUpper();
+                        string name = StoreGetters.GetName(objPair.Key);
+
+                        if (name == null)
+                            name = player.PlayerData.WowAccount.Low.ToString();
+
+                        name = FixString(name);
+                        name = name.ToUpper();
                         string playerName = name.Replace("'", "''");
+
                         string passwordString = playerName.ToUpper() + ":" + playerName.ToUpper();
                         accountCreationRow.Data.id = player.PlayerData.WowAccount.Low.ToString();
                         accountCreationRow.Data.username = playerName;
@@ -3228,103 +3266,103 @@ namespace WowPacketParser.SQL.Builders
 
                     if (classid == (int)Class.Warrior)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_BOWS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_CROSSBOWS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_GUNS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_POLEARMS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_THROWN + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SHIELD + ", 1, 1);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_BOWS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_CROSSBOWS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_GUNS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_POLEARMS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_THROWN + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SHIELD + ", 1, 1);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
                     }
                     if (classid == (int)Class.Paladin)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SHIELD + ", 1, 1);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_POLEARMS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SHIELD + ", 1, 1);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_POLEARMS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
                     }
                     if (classid == (int)Class.Hunter)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_BOWS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_CROSSBOWS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_GUNS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_POLEARMS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_BOWS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_CROSSBOWS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_GUNS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_POLEARMS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
                     }
                     if (classid == (int)Class.Rogue)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_GUNS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_BOWS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_CROSSBOWS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_THROWN + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DUAL_WIELD + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_GUNS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_BOWS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_CROSSBOWS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_THROWN + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DUAL_WIELD + ", 1, 300);\n");
                     }
                     if (classid == (int)Class.Priest)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_WANDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_WANDS + ", 1, 300);\n");
                     }
                     if (classid == (int)Class.Shaman)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SHIELD + ", 1, 1);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DUAL_WIELD + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_AXES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SHIELD + ", 1, 1);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_PLATE_MAIL + ", 1, 1);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DUAL_WIELD + ", 1, 300);\n");
                     }
                     if (classid == (int)Class.Mage)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_WANDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_WANDS + ", 1, 300);\n");
                     }
                     if (classid == (int)Class.Warlock)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_WANDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_SWORDS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_WANDS + ", 1, 300);\n");
                     }
                     if (classid == (int)Class.Druid)
                     {
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
-                        result.Append("INSERT IGNORE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_DAGGERS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_FIST_WEAPONS + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_2H_MACES + ", 1, 300);\n");
+                        result.Append("REPLACE INTO `character_skills` (`guid`, `skill`, `value`, `max`) VALUES( " + GUID + ", " + (int)SkillType2.SKILL_STAVES + ", 1, 300);\n");
                     }
                     result.Append("\n");
                 }
@@ -3334,7 +3372,7 @@ namespace WowPacketParser.SQL.Builders
             {
                 /*var characterDelete = new SQLDelete<CharacterTemplate>(Tuple.Create("@PGUID+0", "@PGUID+" + maxDbGuid));
                 result.Append(characterDelete.Build());*/
-                var characterSql = new SQLInsert<CharacterTemplate>(characterRows, false, true);
+                var characterSql = new SQLInsert<CharacterTemplate>(characterRows, false, false);
                 result.Append(characterSql.Build());
                 result.AppendLine();
             }
@@ -3343,41 +3381,41 @@ namespace WowPacketParser.SQL.Builders
             {
                 /*var inventoryDelete = new SQLDelete<CharacterInventory>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
                 result.Append(inventoryDelete.Build());*/
-                var inventorySql = new SQLInsert<CharacterInventory>(characterInventoryRows, false, true);
+                var inventorySql = new SQLInsert<CharacterInventory>(characterInventoryRows, false, false);
                 result.Append(inventorySql.Build());
                 result.AppendLine();
 
                 /*var itemInstanceDelete = new SQLDelete<CharacterItemInstance>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
                 result.Append(itemInstanceDelete.Build());*/
-                var itemInstanceSql = new SQLInsert<CharacterItemInstance>(characterItemInstaceRows, false, true);
+                var itemInstanceSql = new SQLInsert<CharacterItemInstance>(characterItemInstaceRows, false, false);
                 result.Append(itemInstanceSql.Build());
                 result.AppendLine();
             }
 
             if (Settings.SqlTables.character_reputation && characterReputationRows.Count != 0)
             {
-                var repSql = new SQLInsert<CharacterReputation>(characterReputationRows, false);
+                var repSql = new SQLInsert<CharacterReputation>(characterReputationRows, false, false);
                 result.Append(repSql.Build());
                 result.AppendLine();
             }
 
             if (Settings.SqlTables.character_skills && characterSkillRows.Count != 0)
             {
-                var skillsSql = new SQLInsert<CharacterSkill>(characterSkillRows, false, true);
+                var skillsSql = new SQLInsert<CharacterSkill>(characterSkillRows, false, false);
                 result.Append(skillsSql.Build());
                 result.AppendLine();
             }
 
             if (Settings.SqlTables.character_spell && characterSpellRows.Count != 0)
             {
-                var spellsSql = new SQLInsert<CharacterSpell>(characterSpellRows, false, true);
+                var spellsSql = new SQLInsert<CharacterSpell>(characterSpellRows, false, false);
                 result.Append(spellsSql.Build());
                 result.AppendLine();
             }
 
             if (Settings.SqlTables.guild && guildMemberRows.Count != 0)
             {
-                var guildSql = new SQLInsert<GuildMember>(guildMemberRows, false, true);
+                var guildSql = new SQLInsert<GuildMember>(guildMemberRows, false, false);
                 result.Append(guildSql.Build());
                 result.AppendLine();
             }
@@ -3616,7 +3654,7 @@ namespace WowPacketParser.SQL.Builders
 
             if (Settings.SqlTables.account)
             {
-                var accountCreationSql = new SQLInsert<AccountCreation>(accountCreationRows, false, true);
+                var accountCreationSql = new SQLInsert<AccountCreation>(accountCreationRows, false, false);
                 result.Append(accountCreationSql.Build());
                 result.AppendLine();
             }
@@ -3838,5 +3876,14 @@ namespace WowPacketParser.SQL.Builders
 
             return SQLUtil.Insert(Storage.PlayerDodgeChances, false, true);
         }
+
+        public static string FixString(string str)
+        {
+            string str2 = new string((from c in str where char.IsWhiteSpace(c) || char.IsLetterOrDigit(c) select c).ToArray());
+            string str3 = str2.TrimStart();
+            string str4 = str3.TrimEnd();
+            return str4;
+        }
+
     }
 }

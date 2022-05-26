@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using WowPacketParser.Misc;
 using WowPacketParser.Store;
 using WowPacketParser.Store.Objects;
@@ -35,6 +36,9 @@ namespace WowPacketParser.SQL.Builders
                 guildRow.Data.BackgroundColor = guild.Item1.BackgroundColor;
                 guildRow.Data.info = guild.Item1.info;
                 guildRow.Data.motd = guild.Item1.motd;
+                /*DateTime foo = DateTime.Now;
+                long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();*/
+                guildRow.Data.CreateDate = DateTimeOffset.Now.ToUnixTimeSeconds();
                 guildRows.Add(guildRow);
             }
 
@@ -56,14 +60,14 @@ namespace WowPacketParser.SQL.Builders
 
             if (Settings.SqlTables.guild)
             {
-                var guildSql = new SQLInsert<GuildTemplate>(guildRows, false, true);
+                var guildSql = new SQLInsert<GuildTemplate>(guildRows, false, false);
                 result.Append(guildSql.Build());
                 result.AppendLine();
             }
 
             if (Settings.SqlTables.guild_rank)
             {
-                var guildRankSql = new SQLInsert<GuildRankTemplate>(guildRankRows, false, true);
+                var guildRankSql = new SQLInsert<GuildRankTemplate>(guildRankRows, false, false);
                 result.Append(guildRankSql.Build());
                 result.AppendLine();
             }

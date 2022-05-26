@@ -62,6 +62,9 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("position_z")]
         public float PositionZ;
 
+        [DBFieldName("zone")]
+        public int Zone;
+
         [DBFieldName("map")]
         public uint Map;
 
@@ -769,6 +772,22 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("disabled")]
         public uint Disabled = 0;
+    }
+
+    [DBTableName("character_actions")]
+    public sealed class CharacterActions : IDataModel
+    {
+        [DBFieldName("guid", true, true)]
+        public string Guid;
+
+        [DBFieldName("button", true)]
+        public uint Button;
+
+        [DBFieldName("action")]
+        public uint Action;
+
+        [DBFieldName("type")]
+        public ActionButtonType Type;
     }
 
     [DBTableName("player_movement_client")]

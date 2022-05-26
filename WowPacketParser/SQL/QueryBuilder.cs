@@ -448,7 +448,7 @@ namespace WowPacketParser.SQL
         {
             StringBuilder query = new StringBuilder();
 
-            query.Append("INSERT ");
+            query.Append("REPLACE ");
             query.Append(_ignore ? "IGNORE " : string.Empty);
             query.Append("INTO ");
             if (tableNameOverride != null)

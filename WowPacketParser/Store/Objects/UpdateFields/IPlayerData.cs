@@ -5,6 +5,7 @@ namespace WowPacketParser.Store.Objects.UpdateFields
     public interface IPlayerData
     {
         WowGuid WowAccount { get; }
+        uint VirtualPlayerRealm { get; }
         uint PlayerBytes1 { get; }
         uint PlayerBytes2 { get; }
         uint PlayerFlags { get; }

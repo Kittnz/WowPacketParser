@@ -34,6 +34,9 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("motd")]
         public string motd = "No message set";
+
+        [DBFieldName("create_date")]
+        public long CreateDate;
     }
 
     [DBTableName("guild_rank")]

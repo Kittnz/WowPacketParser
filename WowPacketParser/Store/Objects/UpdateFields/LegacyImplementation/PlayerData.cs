@@ -30,6 +30,7 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
         }
 
         public WowGuid WowAccount => GetGuidValue(PlayerField.PLAYER_WOW_ACCOUNT);
+        public uint VirtualPlayerRealm => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_FIELD_VIRTUAL_PLAYER_REALM);
 
         public uint GuildRankID => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_GUILDRANK);
 
@@ -158,11 +159,14 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
 
         public WowGuid WowAccount => GetGuidValue(PlayerField.PLAYER_WOW_ACCOUNT);
 
+        public uint VirtualPlayerRealm => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_FIELD_VIRTUAL_PLAYER_REALM);
+
         public uint GuildRankID => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_GUILDRANK);
 
         public uint PlayerBytes1 => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_BYTES);
         public uint PlayerBytes2 => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_BYTES_2);
         public uint PlayerFlags => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_FLAGS);
+        public byte PvpTitle => (byte)((UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_BYTES_3) >> 16) & 0xFF);
         public byte PvPRank
         {
             get
@@ -179,6 +183,10 @@ namespace WowPacketParser.Store.Objects.UpdateFields.LegacyImplementation
                 return 0;
             }
         }
+        public uint PlayerChosenTitle => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_CHOSEN_TITLE);
+        public uint PlayerKnownTitles => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_FIELD_KNOWN_TITLES);
+        public uint PlayerWatchedFaction => UpdateFields.GetValue<PlayerField, uint>(PlayerField.PLAYER_FIELD_WATCHED_FACTION_INDEX);
+
 
         public class VisibleItem : IVisibleItem
         {
