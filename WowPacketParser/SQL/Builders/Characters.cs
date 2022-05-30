@@ -2657,14 +2657,18 @@ namespace WowPacketParser.SQL.Builders
                     inventoryRow.Data.ItemGuid = "@IGUID+" + itemGuidCounter;
                     //inventoryRow.Data.ItemGuid = "SELECT MAX(`item_instance`.guid) + 1";
                     inventoryRow.Data.ItemTemplate = (uint)itemId;
-                    characterInventoryRows.Add(inventoryRow);
+
+                    if (itemId != 0)
+                        characterInventoryRows.Add(inventoryRow);
 
                     Row<CharacterItemInstance> itemInstanceRow = new Row<CharacterItemInstance>();
                     itemInstanceRow.Data.Guid = "@IGUID+" + itemGuidCounter;
                     //itemInstanceRow.Data.ItemGuid = "SELECT MAX(`item_instance`.guid) + 1";
                     itemInstanceRow.Data.ItemEntry = (uint)itemId;
                     itemInstanceRow.Data.OwnerGuid = row.Data.Guid;
-                    characterItemInstaceRows.Add(itemInstanceRow);
+
+                    if (itemId != 0)
+                        characterItemInstaceRows.Add(itemInstanceRow);
 
                     itemGuidCounter++;
 
@@ -3379,14 +3383,15 @@ namespace WowPacketParser.SQL.Builders
 
             if (Settings.SqlTables.character_inventory && characterInventoryRows.Count != 0)
             {
-                /*var inventoryDelete = new SQLDelete<CharacterInventory>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
-                result.Append(inventoryDelete.Build());*/
+                foreach (var characterItemInstace in characterItemInstaceRows)
+                {
+                    result.AppendLine("DELETE FROM `item_instance` WHERE `owner_guid`= " + characterItemInstace.Data.OwnerGuid + ";");
+                    result.AppendLine("DELETE FROM `character_inventory` WHERE `guid`= " + characterItemInstace.Data.OwnerGuid + ";");
+                }
+
                 var inventorySql = new SQLInsert<CharacterInventory>(characterInventoryRows, false, false);
                 result.Append(inventorySql.Build());
-                result.AppendLine();
 
-                /*var itemInstanceDelete = new SQLDelete<CharacterItemInstance>(Tuple.Create("@IGUID+0", "@IGUID+" + itemGuidCounter));
-                result.Append(itemInstanceDelete.Build());*/
                 var itemInstanceSql = new SQLInsert<CharacterItemInstance>(characterItemInstaceRows, false, false);
                 result.Append(itemInstanceSql.Build());
                 result.AppendLine();
@@ -3415,6 +3420,11 @@ namespace WowPacketParser.SQL.Builders
 
             if (Settings.SqlTables.guild && guildMemberRows.Count != 0)
             {
+                foreach (var guildMember in guildMemberRows)
+                {
+                    result.AppendLine("DELETE FROM `guild_member` WHERE `guid`= " + guildMember.Data.Guid + ";");
+                }
+
                 var guildSql = new SQLInsert<GuildMember>(guildMemberRows, false, false);
                 result.Append(guildSql.Build());
                 result.AppendLine();
