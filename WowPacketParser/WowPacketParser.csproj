@@ -637,6 +637,7 @@
     <Compile Include="SQL\Builders\Locales.cs" />
     <Compile Include="SQL\Builders\Miscellaneous.cs" />
     <Compile Include="SQL\Builders\QuestMisc.cs" />
+    <Compile Include="SQL\Builders\Realms.cs" />
     <Compile Include="SQL\Builders\Spawns.cs" />
     <Compile Include="SQL\Builders\Spells.cs" />
     <Compile Include="SQL\Builders\UnitMisc.cs" />
@@ -686,6 +687,7 @@
     <Compile Include="Store\Objects\MailTemplate.cs" />
     <Compile Include="Store\Objects\ObjectCreate.cs" />
     <Compile Include="Store\Objects\PlayerGuidLookupData.cs" />
+    <Compile Include="Store\Objects\RealmTemplate.cs" />
     <Compile Include="Store\Objects\SceneObject.cs" />
     <Compile Include="Store\Objects\Sounds.cs" />
     <Compile Include="Store\Objects\SpellCastData.cs" />

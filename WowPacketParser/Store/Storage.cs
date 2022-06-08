@@ -2887,6 +2887,9 @@ namespace WowPacketParser.Store
         public static readonly DataBag<GuildTemplate> Guild = new DataBag<GuildTemplate>(Settings.SqlTables.guild);
         public static readonly DataBag<GuildRankTemplate> GuildRank = new DataBag<GuildRankTemplate>(Settings.SqlTables.guild_rank);
 
+        // Realm
+        public static readonly DataBag<RealmTemplate> Realms = new DataBag<RealmTemplate>(Settings.SqlTables.realms);
+
         // Mail
         public static readonly DataBag<MailTemplate> MailTemplates = new DataBag<MailTemplate>(Settings.SqlTables.mail_template);
         public static readonly DataBag<MailTemplateItem> MailTemplateItems = new DataBag<MailTemplateItem>(Settings.SqlTables.mail_template);

@@ -11,23 +11,27 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
         [Parser(Opcode.SMSG_REALM_QUERY_RESPONSE)]
         public static void HandleRealmQueryResponse(Packet packet)
         {
-            packet.ReadUInt32("VirtualRealmAddress");
+            uint VirtualRealmAddress = packet.ReadUInt32("VirtualRealmAddress");
 
             var state = packet.ReadByte("LookupState");
-            if (state == 0)
-            {
+            //if (state == 0)
+            //{
                 packet.ResetBitReader();
 
-                packet.ReadBit("IsLocal");
-                packet.ReadBit("Unk bit");
+                uint IsLocal = packet.ReadBit("IsLocal");
+                uint Unkbit = packet.ReadBit("Unk bit");
 
                 var realmNameLen = packet.ReadBits(8);
                 var realmNameNormalizedLen = packet.ReadBits(8);
                 packet.ReadBit();
 
-                packet.ReadWoWString("RealmNameActual", realmNameLen);
-                packet.ReadWoWString("RealmNameNormalized", realmNameNormalizedLen);
-            }
+                string RealmNameActual = packet.ReadWoWString("RealmNameActual", realmNameLen);
+                string RealmNameNormalized = packet.ReadWoWString("RealmNameNormalized", realmNameNormalizedLen);
+
+            //}
+
+            RealmTemplate realm = new RealmTemplate { VirtualRealmAddress = VirtualRealmAddress, LookupState = state, IsLocal = IsLocal, Unkbit = Unkbit, RealmNameActual = RealmNameActual, RealmNameNormalized = RealmNameNormalized };
+            Storage.Realms.Add(realm);
         }
 
         [HasSniffData]

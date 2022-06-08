@@ -197,6 +197,7 @@ namespace WowPacketParser.Misc
             public static readonly bool guild = Conf.GetBoolean("guild", false);
             public static readonly bool guild_rank = Conf.GetBoolean("guild_rank", false);
             public static readonly bool account = Conf.GetBoolean("account", false);
+            public static readonly bool realms = Conf.GetBoolean("realms", false);
 
             public static readonly bool areatrigger_create_properties = Conf.GetBoolean("areatrigger_create_properties", false);
             public static readonly bool areatrigger_create_properties_orbit = Conf.GetBoolean("areatrigger_create_properties_orbit", false);
