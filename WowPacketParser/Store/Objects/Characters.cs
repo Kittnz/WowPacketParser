@@ -79,6 +79,9 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("equipment_cache")]
         public string EquipmentCache = "";
+
+        [DBFieldName("virtual_player_realm")]
+        public uint VirtualPlayerRealm = 0;
     }
     [DBTableName("player")]
     public sealed class PlayerTemplate : IDataModel

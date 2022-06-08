@@ -2590,8 +2590,8 @@ namespace WowPacketParser.SQL.Builders
                     continue;
 
                 uint VirtualPlayerRealm = player.PlayerData.VirtualPlayerRealm;
-                if (player.PlayerData.VirtualPlayerRealm != 721682444) // Morgraine
-                    continue;
+                /*if (player.PlayerData.VirtualPlayerRealm != 721682444) // Morgraine
+                    continue;*/
 
                 Row<CharacterTemplate> row = new Row<CharacterTemplate>();
 
@@ -2622,6 +2622,7 @@ namespace WowPacketParser.SQL.Builders
                 row.Data.Money = (uint)player.ActivePlayerData.Coinage;
                 AssignPlayerAppearanceFields(player.PlayerDataOriginal, out row.Data.Skin, out row.Data.Face, out row.Data.HairStyle, out row.Data.HairColor, out row.Data.FacialHair);
                 row.Data.PlayerFlags = player.PlayerDataOriginal.PlayerFlags;
+                row.Data.VirtualPlayerRealm = VirtualPlayerRealm;
 
                 //playerData.PlayerBytes2 & 0xFF
 
