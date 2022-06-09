@@ -14,8 +14,8 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("is_local")]
         public uint IsLocal = 0;
 
-        [DBFieldName("unk_bit")]
-        public uint Unkbit = 0;
+        [DBFieldName("is_internal_realm")]
+        public uint IsInternalRealm = 0;
 
         [DBFieldName("realm_name_actual")]
         public string RealmNameActual = "";

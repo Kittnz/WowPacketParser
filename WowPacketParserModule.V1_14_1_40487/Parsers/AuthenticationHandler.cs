@@ -1,6 +1,8 @@
 ﻿using WowPacketParser.Enums;
 using WowPacketParser.Misc;
 using WowPacketParser.Parsing;
+using WowPacketParser.Store;
+using WowPacketParser.Store.Objects;
 
 namespace WowPacketParserModule.V1_14_1_40487.Parsers
 {
@@ -65,17 +67,20 @@ namespace WowPacketParserModule.V1_14_1_40487.Parsers
 
                 for (var i = 0; i < realms; ++i)
                 {
-                    packet.ReadUInt32("RealmAddress", "VirtualRealms", i);
+                    uint VirtualRealmAddress = packet.ReadUInt32("RealmAddress", "VirtualRealms", i);
                     packet.ResetBitReader();
-                    packet.ReadBit("IsLocal", "VirtualRealms", i);
-                    packet.ReadBit("IsInternalRealm", "VirtualRealms", i);
+                    uint IsLocal = packet.ReadBit("IsLocal", "VirtualRealms", i);
+                    uint IsInternalRealm = packet.ReadBit("IsInternalRealm", "VirtualRealms", i);
 
                     var bitsCount = 8;
 
                     var nameLen1 = packet.ReadBits(bitsCount);
                     var nameLen2 = packet.ReadBits(bitsCount);
-                    packet.ReadWoWString("RealmNameActual", nameLen1, "VirtualRealms", i);
-                    packet.ReadWoWString("RealmNameNormalized", nameLen2, "VirtualRealms", i);
+                    string RealmNameActual = packet.ReadWoWString("RealmNameActual", nameLen1, "VirtualRealms", i);
+                    string RealmNameNormalized = packet.ReadWoWString("RealmNameNormalized", nameLen2, "VirtualRealms", i);
+
+                    RealmTemplate realm = new RealmTemplate { VirtualRealmAddress = VirtualRealmAddress, LookupState = 0, IsLocal = IsLocal, IsInternalRealm = IsInternalRealm, RealmNameActual = RealmNameActual, RealmNameNormalized = RealmNameNormalized };
+                    Storage.Realms.Add(realm);
                 }
 
                 for (var i = 0; i < templates; ++i)

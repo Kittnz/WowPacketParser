@@ -1,4 +1,5 @@
-﻿using WowPacketParser.Enums;
+﻿using System;
+using WowPacketParser.Enums;
 using WowPacketParser.Misc;
 using WowPacketParser.Parsing;
 using WowPacketParser.Store;
@@ -11,15 +12,16 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
         [Parser(Opcode.SMSG_REALM_QUERY_RESPONSE)]
         public static void HandleRealmQueryResponse(Packet packet)
         {
-            uint VirtualRealmAddress = packet.ReadUInt32("VirtualRealmAddress");
+            uint VirtualRealmAddress = packet.ReadUInt32("VirtualRealmAddress"); // the virtual address of this realm, constructed as RealmHandle::Region << 24 | RealmHandle::Battlegroup << 16 | RealmHandle::Index
 
             var state = packet.ReadByte("LookupState");
-            //if (state == 0)
-            //{
+
+            if (state == 0) // success
+            {
                 packet.ResetBitReader();
 
                 uint IsLocal = packet.ReadBit("IsLocal");
-                uint Unkbit = packet.ReadBit("Unk bit");
+                uint IsInternalRealm = packet.ReadBit("IsInternalRealm");
 
                 var realmNameLen = packet.ReadBits(8);
                 var realmNameNormalizedLen = packet.ReadBits(8);
@@ -28,10 +30,9 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                 string RealmNameActual = packet.ReadWoWString("RealmNameActual", realmNameLen);
                 string RealmNameNormalized = packet.ReadWoWString("RealmNameNormalized", realmNameNormalizedLen);
 
-            //}
-
-            RealmTemplate realm = new RealmTemplate { VirtualRealmAddress = VirtualRealmAddress, LookupState = state, IsLocal = IsLocal, Unkbit = Unkbit, RealmNameActual = RealmNameActual, RealmNameNormalized = RealmNameNormalized };
-            Storage.Realms.Add(realm);
+                RealmTemplate realm = new RealmTemplate { VirtualRealmAddress = VirtualRealmAddress, LookupState = state, IsLocal = IsLocal, IsInternalRealm = IsInternalRealm, RealmNameActual = RealmNameActual, RealmNameNormalized = RealmNameNormalized };
+                Storage.Realms.Add(realm);
+            }
         }
 
         [HasSniffData]

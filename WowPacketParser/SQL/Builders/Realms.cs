@@ -28,7 +28,7 @@ namespace WowPacketParser.SQL.Builders
                 realmRow.Data.VirtualRealmAddress = realm.Item1.VirtualRealmAddress;
                 realmRow.Data.LookupState = realm.Item1.LookupState;
                 realmRow.Data.IsLocal = realm.Item1.IsLocal;
-                realmRow.Data.Unkbit = realm.Item1.Unkbit;
+                realmRow.Data.IsInternalRealm = realm.Item1.IsInternalRealm;
                 realmRow.Data.RealmNameActual = realm.Item1.RealmNameActual;
                 realmRow.Data.RealmNameNormalized = realm.Item1.RealmNameNormalized;
                 realmRows.Add(realmRow);
