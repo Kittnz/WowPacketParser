@@ -778,19 +778,25 @@ namespace WowPacketParser.Store.Objects
     }
 
     [DBTableName("character_actions")]
-    public sealed class CharacterActions : IDataModel
+    public sealed class CharacterAction : IDataModel
     {
         [DBFieldName("guid", true, true)]
         public string Guid;
 
         [DBFieldName("button", true)]
-        public uint Button;
+        public int Button;
 
         [DBFieldName("action")]
-        public uint Action;
+        public int Action;
 
         [DBFieldName("type")]
-        public ActionButtonType Type;
+        public uint Type;
+    }
+    public class CharacterActionData
+    {
+        public int Button;
+        public int Action;
+        public uint? Type;
     }
 
     [DBTableName("player_movement_client")]

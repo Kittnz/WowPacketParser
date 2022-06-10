@@ -615,7 +615,18 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                 if (hasActionButtons)
                 {
                     for (int i = 0; i < 132; i++)
-                        packet.ReadInt32("Action", index, i);
+                    {
+                        int action = packet.ReadInt32("Action", index, i);
+
+                        CharacterActionData actionData = new CharacterActionData();
+                        actionData.Button = i;
+                        actionData.Action = action;
+                        actionData.Type = 0;
+
+                        // only woltk spells that go up to 80k and remove actions below 0
+                        if (action < 80000 && action > 0)
+                            Storage.StoreCharacterAction(actionData);
+                    }
                 }
             }
 

@@ -2555,6 +2555,7 @@ namespace WowPacketParser.SQL.Builders
             var characterReputationRows = new RowList<CharacterReputation>();
             var characterSkillRows = new RowList<CharacterSkill>();
             var characterSpellRows = new RowList<CharacterSpell>();
+            var characterActionRows = new RowList<CharacterAction>();
             var guildMemberRows = new RowList<GuildMember>();
             var accountCreationRows = new RowList<AccountCreation>();
             var playerRows = new RowList<PlayerTemplate>();
@@ -3196,22 +3197,25 @@ namespace WowPacketParser.SQL.Builders
                     }
                 }
 
-                /*if (Settings.SqlTables.character_actions)
+                if (Settings.SqlTables.character_actions)
                 {
-                    if (Storage.CharacterReputations.ContainsKey(objPair.Key))
+                    if (Storage.CharacterActions.ContainsKey(objPair.Key))
                     {
-                        foreach (var spellId in Storage.StartActions[objPair.Key])
+                        foreach (var actionData in Storage.CharacterActions[objPair.Key])
                         {
-                            var spellRow = new Row<CharacterSpell>();
-                            //spellRow.Data.Guid = "@PGUID+" + player.DbGuid;
-                            spellRow.Data.Guid = objPair.Key.Low.ToString();
-                            spellRow.Data.Spell = spellId;
-                            spellRow.Data.Active = 1;
-                            spellRow.Data.Disabled = 0;
-                            characterSpellRows.Add(spellRow);
+                            if (actionData.Value.Action != 0 || actionData.Value.Type != 0)
+                            {
+                                var actionRow = new Row<CharacterAction>();
+                                //actionRow.Data.Guid = "@PGUID+" + player.DbGuid;
+                                actionRow.Data.Guid = objPair.Key.Low.ToString();
+                                actionRow.Data.Button = actionData.Value.Button;
+                                actionRow.Data.Action = actionData.Value.Action;
+                                actionRow.Data.Type = actionData.Value.Type != null ? (uint)actionData.Value.Type : 0;
+                                characterActionRows.Add(actionRow);
+                            }
                         }
                     }
-                }*/
+                }
 
                 if (Settings.SqlTables.guild)
                 {
@@ -3460,6 +3464,13 @@ namespace WowPacketParser.SQL.Builders
             {
                 var spellsSql = new SQLInsert<CharacterSpell>(characterSpellRows, false, false);
                 result.Append(spellsSql.Build());
+                result.AppendLine();
+            }
+
+            if (Settings.SqlTables.character_actions && characterActionRows.Count != 0)
+            {
+                var actionSql = new SQLInsert<CharacterAction>(characterActionRows, false, false);
+                result.Append(actionSql.Build());
                 result.AppendLine();
             }
 

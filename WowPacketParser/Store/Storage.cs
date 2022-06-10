@@ -1085,6 +1085,7 @@ namespace WowPacketParser.Store
                 Storage.CharacterSpells.Add(guid, spellList);
             }
         }
+
         public static void ClearTemporarySpellList()
         {
             if (Storage.CharacterSpells.ContainsKey(WowGuid64.Empty))
@@ -1125,6 +1126,41 @@ namespace WowPacketParser.Store
                 Storage.CharacterReputations.Add(guid, repDict);
             }
         }
+
+        public static readonly Dictionary<WowGuid, Dictionary<int, CharacterActionData>> CharacterActions = new Dictionary<WowGuid, Dictionary<int, CharacterActionData>>();
+        public static void StoreCharacterAction(CharacterActionData actionData)
+        {
+            if (!Settings.SqlTables.character_actions)
+                return;
+
+            WowGuid guid = Storage.CurrentActivePlayer;
+
+            if (Storage.CharacterActions.ContainsKey(guid))
+            {
+                if (Storage.CharacterActions[guid].ContainsKey(actionData.Button))
+                {
+                    Storage.CharacterActions[guid][actionData.Button].Action = actionData.Action;
+                    if (actionData.Type != null)
+                        Storage.CharacterActions[guid][actionData.Button].Type = actionData.Type;
+                }
+                else
+                {
+                    if (actionData.Type == null)
+                        actionData.Type = 0;
+                    Storage.CharacterActions[guid].Add(actionData.Button, actionData);
+                }
+            }
+            else
+            {
+                if (actionData.Type == null)
+                    actionData.Type = 0;
+
+                Dictionary<int, CharacterActionData> actionDict = new Dictionary<int, CharacterActionData>();
+                actionDict.Add(actionData.Button, actionData);
+                Storage.CharacterActions.Add(guid, actionDict);
+            }
+        }
+
         public static readonly DataBag<CreatureKillReputation> CreatureKillReputations = new DataBag<CreatureKillReputation>(Settings.SqlTables.creature_kill_reputation);
         public static void StoreFactionStandingUpdate(FactionStandingUpdate update, Packet packet)
         {
