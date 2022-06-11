@@ -777,7 +777,7 @@ namespace WowPacketParser.Store.Objects
         public uint Disabled = 0;
     }
 
-    [DBTableName("character_actions")]
+    [DBTableName("character_action")]
     public sealed class CharacterAction : IDataModel
     {
         [DBFieldName("guid", true, true)]

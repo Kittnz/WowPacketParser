@@ -3197,7 +3197,7 @@ namespace WowPacketParser.SQL.Builders
                     }
                 }
 
-                if (Settings.SqlTables.character_actions)
+                if (Settings.SqlTables.character_action)
                 {
                     if (Storage.CharacterActions.ContainsKey(objPair.Key))
                     {
@@ -3432,10 +3432,15 @@ namespace WowPacketParser.SQL.Builders
 
             if (Settings.SqlTables.character_inventory && characterInventoryRows.Count != 0)
             {
+                string lastOwnerGuid = "";
                 foreach (var characterItemInstace in characterItemInstaceRows)
                 {
+                    if (characterItemInstace.Data.OwnerGuid == lastOwnerGuid)
+                        continue;
+
                     result.AppendLine("DELETE FROM `item_instance` WHERE `owner_guid`= " + characterItemInstace.Data.OwnerGuid + ";");
                     result.AppendLine("DELETE FROM `character_inventory` WHERE `guid`= " + characterItemInstace.Data.OwnerGuid + ";");
+                    lastOwnerGuid = characterItemInstace.Data.OwnerGuid;
                 }
 
                 var inventorySql = new SQLInsert<CharacterInventory>(characterInventoryRows, false, false);
@@ -3467,7 +3472,7 @@ namespace WowPacketParser.SQL.Builders
                 result.AppendLine();
             }
 
-            if (Settings.SqlTables.character_actions && characterActionRows.Count != 0)
+            if (Settings.SqlTables.character_action && characterActionRows.Count != 0)
             {
                 var actionSql = new SQLInsert<CharacterAction>(characterActionRows, false, false);
                 result.Append(actionSql.Build());

@@ -1130,7 +1130,7 @@ namespace WowPacketParser.Store
         public static readonly Dictionary<WowGuid, Dictionary<int, CharacterActionData>> CharacterActions = new Dictionary<WowGuid, Dictionary<int, CharacterActionData>>();
         public static void StoreCharacterAction(CharacterActionData actionData)
         {
-            if (!Settings.SqlTables.character_actions)
+            if (!Settings.SqlTables.character_action)
                 return;
 
             WowGuid guid = Storage.CurrentActivePlayer;
