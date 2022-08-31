@@ -969,6 +969,8 @@ namespace WowPacketParser.Misc
                 case ClientVersionBuild.V2_5_4_44833:
                     return ClientVersionBuild.V2_5_1_38707;
                 case ClientVersionBuild.V3_4_0_45166:
+                case ClientVersionBuild.V3_4_0_44930:
+                case ClientVersionBuild.V3_4_0_45043:
                 case ClientVersionBuild.V3_4_0_45189:
                 case ClientVersionBuild.V3_4_0_45264:
                 case ClientVersionBuild.V3_4_0_45327:
@@ -1361,6 +1363,8 @@ namespace WowPacketParser.Misc
             switch (build)
             {
                 case ClientVersionBuild.V3_4_0_45166:
+                case ClientVersionBuild.V3_4_0_44930:
+                case ClientVersionBuild.V3_4_0_45043:
                 case ClientVersionBuild.V3_4_0_45189:
                 case ClientVersionBuild.V3_4_0_45264:
                 case ClientVersionBuild.V3_4_0_45327:
