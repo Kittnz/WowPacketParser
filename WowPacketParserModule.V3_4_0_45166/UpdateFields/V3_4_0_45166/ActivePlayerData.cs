@@ -10,6 +10,7 @@ namespace WowPacketParserModule.V3_4_0_45166.UpdateFields.V3_4_0_45166
         public WowGuid[] InvSlots { get; } = new WowGuid[129];
         public WowGuid FarsightObject { get; set; }
         public WowGuid ComboTarget { get; set; }
+        public WowGuid SummonedBattlePetGUID { get; set; }
         public System.Nullable<ulong> Coinage { get; set; }
         public System.Nullable<int> XP { get; set; }
         public System.Nullable<int> NextLevelXP { get; set; }

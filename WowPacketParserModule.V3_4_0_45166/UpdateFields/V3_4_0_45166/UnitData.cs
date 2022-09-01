@@ -124,7 +124,6 @@ namespace WowPacketParserModule.V3_4_0_45166.UpdateFields.V3_4_0_45166
         public System.Nullable<int> LookAtControllerID { get; set; }
         public WowGuid GuildGUID { get; set; }
         public WowGuid SkinningOwnerGUID { get; set; }
-        public WowGuid Unk340_3 { get; set; }
         public DynamicUpdateField<IPassiveSpellHistory> PassiveSpells { get; } = new DynamicUpdateField<IPassiveSpellHistory>();
         public DynamicUpdateField<System.Nullable<int>> WorldEffects { get; } = new DynamicUpdateField<System.Nullable<int>>();
         public DynamicUpdateField<WowGuid> ChannelObjects { get; } = new DynamicUpdateField<WowGuid>();
