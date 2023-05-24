@@ -53,7 +53,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
             weatherUpdate.Grade = packet.ReadSingle("Intensity");
             weatherUpdate.Instant = packet.ReadBit("Abrupt"); // Type
 
-            weatherUpdate.UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(packet.Time);
+            weatherUpdate.UnixTimeMs = (ulong)packet.UnixTimeMs;
             Storage.WeatherUpdates.Add(weatherUpdate, packet.TimeSpan);
         }
 
@@ -485,7 +485,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
             PlayMusic musicEntry = new PlayMusic
             {
                 Music = sound,
-                UnixTimeMs = (ulong)Utilities.GetUnixTimeMsFromDateTime(packet.Time)
+                UnixTimeMs = (ulong)packet.UnixTimeMs
             };
             Storage.Music.Add(musicEntry, packet.TimeSpan);
         }
@@ -525,16 +525,22 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
             pageText.Text = packet.ReadWoWString("Text", textLen);
 
             packet.AddSniffData(StoreNameType.PageText, (int)entry, "QUERY_RESPONSE");
-            Storage.PageTexts.Add(pageText, packet.TimeSpan);
-
-            if (ClientLocale.PacketLocale != LocaleConstant.enUS && pageText.Text != string.Empty)
+            
+            if (ClientLocale.PacketLocale != LocaleConstant.enUS)
             {
-                PageTextLocale localesPageText = new PageTextLocale
+                if (!string.IsNullOrEmpty(pageText.Text))
                 {
-                    ID = pageText.ID,
-                    Text = pageText.Text
-                };
-                Storage.LocalesPageText.Add(localesPageText, packet.TimeSpan);
+                    PageTextLocale localesPageText = new PageTextLocale
+                    {
+                        ID = pageText.ID,
+                        Text = pageText.Text
+                    };
+                    Storage.LocalesPageText.Add(localesPageText, packet.TimeSpan);
+                }
+            }
+            else
+            {
+                Storage.PageTexts.Add(pageText, packet.TimeSpan);
             }
         }
 
