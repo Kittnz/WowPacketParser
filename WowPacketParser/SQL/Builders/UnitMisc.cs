@@ -1165,7 +1165,7 @@ namespace WowPacketParser.SQL.Builders
                     if (entry.Any())
                     {
                         var sub = entry.Select(creature => creature.Item1.SubName).First();
-                        if (sub.Length > 0)
+                        if (sub != null && sub.Length > 0)
                             template.NpcFlag |= ProcessNpcFlags(sub);
                         else // If the SubName doesn't exist or is cached, fall back to DB method
                             template.NpcFlag |= ProcessNpcFlags(subname);
@@ -1504,8 +1504,6 @@ namespace WowPacketParser.SQL.Builders
 
             foreach (var unit in units)
             {
-                var row = new Row<NpcSpellClick>();
-
                 var npc = unit.Value;
                 if (npc.UnitData.InteractSpellID == 0)
                     continue;
@@ -1518,6 +1516,7 @@ namespace WowPacketParser.SQL.Builders
                     if (!npc.Map.ToString(CultureInfo.InvariantCulture).MatchesFilters(Settings.MapFilters))
                         continue;
 
+                var row = new Row<NpcSpellClick>();
                 row.Data.Entry = unit.Key.GetEntry();
                 row.Data.SpellID = (uint)npc.UnitData.InteractSpellID;
 
@@ -1610,6 +1609,23 @@ namespace WowPacketParser.SQL.Builders
             return result;
         }
 
+        [BuilderMethod]
+        public static string CreatureUniqueSpellHits()
+        {
+            if (Storage.CreatureUniqueSpellHits.IsEmpty())
+                return string.Empty;
+
+            if (!Settings.SqlTables.creature_unique_spell_hit)
+                return string.Empty;
+
+            string result = SQLUtil.MakeInsertWithSniffIdList(Storage.CreatureUniqueSpellHits, false, true);
+
+            // not used anywhere else so empty to free up memory
+            Storage.CreatureUniqueSpellHits.Clear();
+
+            return result;
+        }
+        
         [BuilderMethod]
         public static string CreatureRespawnTime()
         {

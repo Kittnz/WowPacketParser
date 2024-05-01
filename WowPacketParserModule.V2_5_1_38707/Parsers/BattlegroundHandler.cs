@@ -11,9 +11,6 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
         {
             LfgHandler.ReadCliRideTicket(packet);
 
-            if (ClientVersion.AddedInClassicVersion(1, 14, 3, 2, 5, 4))
-                packet.ReadByte("Unk254");
-
             uint queueCount = packet.ReadUInt32("QueueCount");
             packet.ReadByte("RangeMin");
             packet.ReadByte("RangeMax");
@@ -25,6 +22,8 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
                 long battleFieldListId = queueId & ~0x1F10000000000000;
                 packet.WriteLine($"[{i}] BattlemasterListID: {battleFieldListId}");
             }
+
+            packet.ResetBitReader();
             packet.ReadBit("IsArena");
             packet.ReadBit("TournamentRules");
             packet.ResetBitReader();
@@ -62,7 +61,6 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
         public static void HandleBattlefieldStatus_Failed(Packet packet)
         {
             LfgHandler.ReadCliRideTicket(packet);
-            packet.ReadByte("Unk");
             packet.ReadInt64("QueueID");
             packet.ReadInt32("Reason");
             packet.ReadPackedGuid128("ClientID");

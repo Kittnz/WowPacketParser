@@ -22,7 +22,7 @@ namespace WowPacketParser.SQL.Builders
             if (!Storage.Objects.TryGetValue(@object.Movement.TransportGuid, out transport))
                 return false;
 
-            if (transport.Type == ObjectType.Player || transport.Type == ObjectType.ActivePlayer)
+            if (transport.Type != ObjectType.GameObject)
                 return false;
 
             if (SQLConnector.Enabled)
@@ -102,6 +102,8 @@ namespace WowPacketParser.SQL.Builders
                 row.Data.GUID = "@CGUID+" + creature.DbGuid;
                 row.Data.OriginalID = unit.Key.GetEntry();
                 row.Data.ID = entry;
+                row.Data.TotalObservationTime = creature.TotalObservedTime;
+                row.Data.LongestObservationTime = creature.LongestObservedTime;
 
                 bool badTransport = false;
                 if (!creature.WasOriginallyOnTransport() || Settings.SaveTransports)
@@ -1062,6 +1064,8 @@ namespace WowPacketParser.SQL.Builders
                 row.Data.GUID = "@OGUID+" + go.DbGuid;
                 row.Data.OriginalID = gameobject.Key.GetEntry();
                 row.Data.ID = entry;
+                row.Data.TotalObservationTime = go.TotalObservedTime;
+                row.Data.LongestObservationTime = go.LongestObservedTime;
 
                 if (!go.WasOriginallyOnTransport() || Settings.SaveTransports)
                     row.Data.Map = go.Map;

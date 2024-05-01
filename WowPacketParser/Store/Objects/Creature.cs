@@ -18,6 +18,12 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("id")]
         public uint? ID;
 
+        [DBFieldName("total_observation_time")]
+        public uint? TotalObservationTime;
+
+        [DBFieldName("longest_observation_time")]
+        public uint? LongestObservationTime;
+
         [DBFieldName("map", false, false, true)]
         public uint? Map;
 
@@ -1240,6 +1246,16 @@ namespace WowPacketParser.Store.Objects
         public uint SpellID;
     }
 
+    [DBTableName("creature_unique_spell_hit")]
+    public sealed class CreatureUniqueSpellHit : ITableWithSniffIdList
+    {
+        [DBFieldName("entry", true)]
+        public uint Entry;
+
+        [DBFieldName("spell_id", true)]
+        public uint SpellID;
+    }
+    
     [DBTableName("creature_respawn_time")]
     public sealed class CreatureRespawnTime : IDataModel
     {

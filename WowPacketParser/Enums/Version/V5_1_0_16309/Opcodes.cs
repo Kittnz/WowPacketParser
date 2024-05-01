@@ -763,7 +763,7 @@ namespace WowPacketParser.Enums.Version.V5_1_0_16309
             {Opcode.SMSG_NEUTRAL_PLAYER_FACTION_SELECT_RESULT, 0x08F5},
             {Opcode.SMSG_NEW_TAXI_PATH, 0x016C},
             {Opcode.SMSG_NEW_WORLD, 0x081D},
-            {Opcode.SMSG_NEW_WORLD_ABORT, 0x0295},
+            {Opcode.SMSG_ABORT_NEW_WORLD, 0x0295},
             {Opcode.SMSG_PRINT_NOTIFICATION, 0x0218},
             {Opcode.SMSG_NOTIFY_DANCE, 0x018D},
             {Opcode.SMSG_QUERY_NPC_TEXT_RESPONSE, 0x0544},

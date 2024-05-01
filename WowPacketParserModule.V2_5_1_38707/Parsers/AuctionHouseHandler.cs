@@ -127,7 +127,7 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
             packet.ResetBitReader();
 
             if (hasAddonInfo)
-                WowPacketParserModule.V9_0_1_36216.Parsers.AuctionHouseHandler.ReadAddonInfo(packet);
+                V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
 
             for (var i = 0; i < count; ++i)
             {
@@ -144,7 +144,7 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
             bool hasAddonInfo = packet.ReadBit("HasAddonInfo");
 
             if (hasAddonInfo)
-                WowPacketParserModule.V9_0_1_36216.Parsers.AuctionHouseHandler.ReadAddonInfo(packet);
+                V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
         }
 
         [Parser(Opcode.CMSG_AUCTION_PLACE_BID)]
@@ -156,7 +156,7 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
             bool hasAddonInfo = packet.ReadBit("HasAddonInfo");
 
             if (hasAddonInfo)
-                WowPacketParserModule.V9_0_1_36216.Parsers.AuctionHouseHandler.ReadAddonInfo(packet);
+                V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
         }
 
         [Parser(Opcode.SMSG_AUCTION_COMMAND_RESULT)]

@@ -118,7 +118,15 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
         {
             packet.ResetBitReader();
 
-            packet.ReadBitsE<TargetFlag>("Flags", ClientVersion.AddedInVersion(ClientVersionBuild.V8_1_5_29683) ? 26 : 25, idx);
+            if (ClientVersion.AddedInVersion(10, 0, 0, 1, 14, 4, 3, 4, 1))
+                packet.ReadBitsE<TargetFlag>("Flags", 28, idx);
+            else if (ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build))
+                packet.ReadBitsE<TargetFlag>("Flags", 27, idx);
+            else if (ClientVersion.AddedInVersion(ClientVersionBuild.V8_1_5_29683))
+                packet.ReadBitsE<TargetFlag>("Flags", 26, idx);
+            else
+                packet.ReadBitsE<TargetFlag>("Flags", 25, idx);
+
             var hasSrcLoc = packet.ReadBit("HasSrcLocation", idx);
             var hasDstLoc = packet.ReadBit("HasDstLocation", idx);
             var hasOrient = packet.ReadBit("HasOrientation", idx);

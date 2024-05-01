@@ -22,6 +22,12 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("CreatureDisplayInfoId", TargetedDbExpansion.Shadowlands)]
         public uint? CreatureDisplayInfoId;
 
+        [DBFieldName("NoActorObject", TargetedDbExpansion.Shadowlands)]
+        public bool? NoActorObject;
+
+        [DBFieldName("ActivePlayerObject", TargetedDbExpansion.Shadowlands)]
+        public bool? ActivePlayerObject;
+
         public WowGuid Guid;
 
         [DBFieldName("VerifiedBuild")]

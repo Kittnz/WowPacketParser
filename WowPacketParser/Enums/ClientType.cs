@@ -15,5 +15,6 @@ namespace WowPacketParser.Enums
         ClassicSoM         = 8,
         BurningCrusadeClassic = 8,
         WrathOfTheLichKingClassic = 8,
+        ClassicSoD = 8,
     }
 }

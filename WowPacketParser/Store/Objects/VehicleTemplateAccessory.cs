@@ -2,6 +2,7 @@
 
 namespace WowPacketParser.Store.Objects
 {
+    [DBTableName("vehicle_template_accessory")]
     public class VehicleTemplateAccessory : IDataModel
     {
         [DBFieldName("entry", true)]

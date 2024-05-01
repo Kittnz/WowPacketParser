@@ -43,7 +43,7 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
                 packet.ReadByte("Flags", i);
                 packet.ReadByte("RolesAssigned", i);
                 packet.ReadByteE<Class>("Class", i);
-                if (ClientVersion.AddedInVersion(9, 2, 7, 1, 14, 3, 2, 5, 4))
+                if (ClientVersion.AddedInVersion(9, 2, 5, 1, 14, 3, 2, 5, 4))
                     packet.ReadByte("FactionGroup", i);
 
                 packet.ReadWoWString("Name", playerNameLength, i);

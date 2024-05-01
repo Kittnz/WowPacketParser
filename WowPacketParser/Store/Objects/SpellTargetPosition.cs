@@ -4,6 +4,7 @@ using WowPacketParser.Enums;
 
 namespace WowPacketParser.Store.Objects
 {
+    [DBTableName("spell_target_position")]
     public sealed class SpellTargetPosition : IDataModel
     {
         [DBFieldName("spell_id", true, DbType = (TargetedDbType.WPP))]

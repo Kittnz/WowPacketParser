@@ -150,7 +150,7 @@ namespace WowPacketParser.Parsing.Parsers
             }
 
             var cooldownCount = packet.ReadUInt16("Cooldown Count");
-            for (var i = 0; i < cooldownCount; i++)
+            for (var i = 0; i < cooldownCount && packet.CanRead(); i++)
             {
                 if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
                     packet.ReadInt32<SpellId>("Cooldown Spell ID", i);
@@ -355,10 +355,20 @@ namespace WowPacketParser.Parsing.Parsers
 
             if (targetFlags.HasAnyFlag(TargetFlag.Unit | TargetFlag.CorpseEnemy | TargetFlag.GameObject |
                 TargetFlag.CorpseAlly | TargetFlag.UnitMinipet))
-                packet.ReadPackedGuid("Target GUID");
+            {
+                if (ClientVersion.AddedInVersion(1, 9, 0))
+                    packet.ReadPackedGuid("Target GUID");
+                else
+                    packet.ReadGuid("Target GUID");
+            }
 
             if (targetFlags.HasAnyFlag(TargetFlag.Item | TargetFlag.TradeItem))
-                packet.ReadPackedGuid("Item Target GUID");
+            {
+                if (ClientVersion.AddedInVersion(1, 9, 0))
+                    packet.ReadPackedGuid("Item Target GUID");
+                else
+                    packet.ReadGuid("Item Target GUID");
+            }
 
             if (targetFlags.HasAnyFlag(TargetFlag.SourceLocation))
             {
@@ -673,10 +683,10 @@ namespace WowPacketParser.Parsing.Parsers
             SpellCastData dbdata = new SpellCastData();
             bool isSpellGo = packet.Opcode == Opcodes.GetOpcode(Opcode.SMSG_SPELL_GO, Direction.ServerToClient);
 
-            var casterGUID = packet.ReadPackedGuid("Caster GUID");
+            var casterGUID = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("Caster GUID") : packet.ReadGuid("Caster GUID");
             dbdata.CasterGuid = casterGUID;
 
-            dbdata.CasterUnitGuid = packet.ReadPackedGuid("Caster Unit GUID");
+            dbdata.CasterUnitGuid = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("Caster Unit GUID") : packet.ReadGuid("Caster Unit GUID");
 
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
                 packet.ReadByte("Cast Count");
@@ -729,11 +739,16 @@ namespace WowPacketParser.Parsing.Parsers
             WowGuid targetGUID = WowGuid64.Empty;
             if (targetFlags.HasAnyFlag(TargetFlag.Unit | TargetFlag.CorpseEnemy | TargetFlag.GameObject |
                 TargetFlag.CorpseAlly | TargetFlag.UnitMinipet))
-                targetGUID = packet.ReadPackedGuid("Target GUID");
+                targetGUID = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("Target GUID") : packet.ReadGuid("Target GUID");
             dbdata.MainTargetGuid = targetGUID;
 
             if (targetFlags.HasAnyFlag(TargetFlag.Item | TargetFlag.TradeItem))
-                packet.ReadPackedGuid("Item Target GUID");
+            {
+                if (ClientVersion.AddedInVersion(1, 9, 0))
+                    packet.ReadPackedGuid("Item Target GUID");
+                else
+                    packet.ReadGuid("Item Target GUID");
+            } 
 
             if (targetFlags.HasAnyFlag(TargetFlag.SourceLocation))
             {

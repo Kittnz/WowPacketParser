@@ -17,6 +17,9 @@ namespace WowPacketParser.SQL.Builders
             if (!Settings.SqlTables.quest_template)
                 return string.Empty;
 
+            if (Settings.TargetedDbType == TargetedDbType.WPP)
+                return SQLUtil.Insert(Storage.QuestOfferRewards, false, true);
+
             var offerDb = SQLDatabase.Get(Storage.QuestOfferRewards);
 
             return SQLUtil.Compare(Storage.QuestOfferRewards, offerDb, StoreNameType.Quest);
@@ -79,6 +82,9 @@ namespace WowPacketParser.SQL.Builders
             if (Storage.QuestDetails.IsEmpty())
                 return string.Empty;
 
+            if (Settings.TargetedDbType == TargetedDbType.WPP)
+                return SQLUtil.Insert(Storage.QuestDetails, false, true);
+
             var templatesDb = SQLDatabase.Get(Storage.QuestDetails);
 
             return SQLUtil.Compare(Storage.QuestDetails, templatesDb, StoreNameType.Quest);
@@ -92,6 +98,9 @@ namespace WowPacketParser.SQL.Builders
 
             if (Storage.QuestRequestItems.IsEmpty())
                 return string.Empty;
+
+            if (Settings.TargetedDbType == TargetedDbType.WPP)
+                return SQLUtil.Insert(Storage.QuestRequestItems, false, true);
 
             var templatesDb = SQLDatabase.Get(Storage.QuestRequestItems);
 

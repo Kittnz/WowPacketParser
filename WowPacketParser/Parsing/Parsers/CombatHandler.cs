@@ -125,8 +125,8 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_ATTACK_STOP)]
         public static void HandleAttackStartStop(Packet packet)
         {
-            WowGuid attackerGuid = packet.ReadPackedGuid("AttackerGUID");
-            WowGuid victimGuid = packet.ReadPackedGuid("VictimGUID");
+            WowGuid attackerGuid = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("AttackerGUID") : packet.ReadGuid("AttackerGUID");
+            WowGuid victimGuid = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("VictimGUID") : packet.ReadGuid("VictimGUID");
             packet.ReadInt32("NowDead"); // Blocks clientside facing when set to 1
             Storage.StoreUnitAttackToggle(attackerGuid, victimGuid, packet.Time, false);
         }
@@ -206,8 +206,8 @@ namespace WowPacketParser.Parsing.Parsers
             UnitMeleeAttackLog attackData = new UnitMeleeAttackLog();
             var hitInfo = packet.ReadInt32E<SpellHitInfo>("HitInfo");
             attackData.HitInfo = (uint)hitInfo;
-            attackData.Attacker = packet.ReadPackedGuid("AttackerGUID");
-            attackData.Victim = packet.ReadPackedGuid("TargetGUID");
+            attackData.Attacker = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("AttackerGUID") : packet.ReadGuid("AttackerGUID");
+            attackData.Victim = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("TargetGUID") : packet.ReadGuid("TargetGUID");
             attackData.Damage = packet.ReadInt32("Damage");
 
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_3_9183))

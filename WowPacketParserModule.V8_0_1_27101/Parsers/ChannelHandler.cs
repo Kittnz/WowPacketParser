@@ -60,7 +60,10 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
         public static void HandleClientChatMessage(Packet packet)
         {
             packet.ReadInt32E<Language>("Language");
-            var len = packet.ReadBits(10);
+            var msgBitsLen = 10;
+            if (ClientVersion.AddedInVersion(10, 0, 2, 1, 15, 0, 3, 4, 1))
+                msgBitsLen = 11;
+            var len = packet.ReadBits("TextLength", msgBitsLen);
             packet.ReadWoWString("Text", len);
         }
 
@@ -69,7 +72,10 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
         {
             packet.ReadInt32E<Language>("Language");
             var recvName = packet.ReadBits(9);
-            var msgLen = packet.ReadBits(10);
+            var msgBitsLen = 10;
+            if (ClientVersion.AddedInVersion(10, 0, 2, 1, 15, 0, 3, 4, 1))
+                msgBitsLen = 11;
+            var msgLen = packet.ReadBits(msgBitsLen);
 
             packet.ReadWoWString("Target", recvName);
             packet.ReadWoWString("Text", msgLen);

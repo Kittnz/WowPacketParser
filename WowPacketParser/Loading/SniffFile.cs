@@ -152,6 +152,7 @@ namespace WowPacketParser.Loading
                     Store.Store.SQLEnabledFlags = Settings.SQLOutputFlag;
                     File.Delete(outFileName);
 
+                    DateTime lastPacketTime = new DateTime();
                     _stats.SetStartTime(DateTime.Now);
 
                     var threadCount = Settings.Threads;
@@ -193,6 +194,9 @@ namespace WowPacketParser.Loading
                                 BattlenetHandler.ParseBattlenet(packet);
                             else
                                 Handler.Parse(packet);
+
+                            if (packet.Time > lastPacketTime)
+                                lastPacketTime = packet.Time;
 
                             // Update statistics
                             _stats.AddByStatus(packet.Status);
@@ -271,7 +275,10 @@ namespace WowPacketParser.Loading
                     Trace.WriteLine($"{_logPrefix}: {_stats}");
 
                     if (Settings.SQLOutputFlag != 0 || HotfixSettings.Instance.ShouldLog())
+                    {
+                        Storage.AddObservationTimeBeforeCleanup(lastPacketTime);
                         WriteSQLs();
+                    }
 
                     Storage.ClearTemporaryData();
 

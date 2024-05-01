@@ -45,6 +45,16 @@ namespace WowPacketParser.Parsing.Parsers
         }
 
         [Parser(Opcode.SMSG_SPELL_FAILURE)]
+        public static void HandleSpellFailure(Packet packet)
+        {
+            SpellCastFailed failData = new SpellCastFailed();
+            failData.Guid = packet.ReadGuid("Guid");
+            failData.SpellId = packet.ReadUInt32<SpellId>("Spell ID");
+            failData.Reason = (uint)packet.ReadByteE<SpellCastFailureReason>("Reason");
+            failData.Time = packet.Time;
+            Storage.SpellCastFailed.Add(failData);
+        }
+
         [Parser(Opcode.SMSG_SPELL_FAILED_OTHER)]
         public static void HandleSpellFailedOther(Packet packet)
         {

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `broadcast_text` (
   `emote_delay3` int(11) NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `cinematic_begin` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `cinematic_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_TRIGGER_CINEMATIC';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_TRIGGER_CINEMATIC';
 
 -- Data exporting was unselected.
 
@@ -66,7 +66,7 @@ DROP TABLE IF EXISTS `cinematic_end`;
 CREATE TABLE IF NOT EXISTS `cinematic_end` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from CMSG_COMPLETE_CINEMATIC';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from CMSG_COMPLETE_CINEMATIC';
 
 -- Data exporting was unselected.
 
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `client_areatrigger_enter` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   `areatrigger_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`unixtimems`,`areatrigger_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the client notified the server it has entered an areatrigger''s confines\r\nfrom CMSG_AREA_TRIGGER';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the client notified the server it has entered an areatrigger''s confines\r\nfrom CMSG_AREA_TRIGGER';
 
 -- Data exporting was unselected.
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `client_areatrigger_leave` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   `areatrigger_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`unixtimems`,`areatrigger_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the client notified the server it has left an areatrigger''s confines\r\nfrom CMSG_AREA_TRIGGER';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the client notified the server it has left an areatrigger''s confines\r\nfrom CMSG_AREA_TRIGGER';
 
 -- Data exporting was unselected.
 
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `client_creature_interact` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   `guid` int(10) unsigned NOT NULL COMMENT 'creature spawn guid',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the client talked to a creature';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the client talked to a creature';
 
 -- Data exporting was unselected.
 
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `client_gameobject_use` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   `guid` int(10) unsigned NOT NULL COMMENT 'gameobject spawn guid',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when client used a gameobject\r\nfrom CMSG_GAME_OBJ_USE and CMSG_GAME_OBJ_REPORT_USE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when client used a gameobject\r\nfrom CMSG_GAME_OBJ_USE and CMSG_GAME_OBJ_REPORT_USE';
 
 -- Data exporting was unselected.
 
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `client_item_use` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   `entry` int(10) unsigned NOT NULL COMMENT 'item template entry',
   PRIMARY KEY (`entry`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when client used an item\r\nfrom CMSG_USE_ITEM';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when client used an item\r\nfrom CMSG_USE_ITEM';
 
 -- Data exporting was unselected.
 
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `client_quest_accept` (
   `object_type` varchar(16) COLLATE latin1_general_ci NOT NULL COMMENT 'type of the quest ender object',
   `quest_id` int(10) unsigned NOT NULL COMMENT 'references quest_template',
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when a quest was accepted by client';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when a quest was accepted by client';
 
 -- Data exporting was unselected.
 
@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS `client_quest_complete` (
   `object_type` varchar(16) COLLATE latin1_general_ci NOT NULL COMMENT 'type of the quest ender object',
   `quest_id` int(10) unsigned NOT NULL COMMENT 'references quest_template',
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when a quest was turned in by client';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when a quest was turned in by client';
 
 -- Data exporting was unselected.
 
@@ -159,7 +159,7 @@ DROP TABLE IF EXISTS `client_reclaim_corpse`;
 CREATE TABLE IF NOT EXISTS `client_reclaim_corpse` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from CMSG_RECLAIM_CORPSE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from CMSG_RECLAIM_CORPSE';
 
 -- Data exporting was unselected.
 
@@ -169,7 +169,7 @@ DROP TABLE IF EXISTS `client_release_spirit`;
 CREATE TABLE IF NOT EXISTS `client_release_spirit` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was sent',
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from CMSG_REPOP_REQUEST';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from CMSG_REPOP_REQUEST';
 
 -- Data exporting was unselected.
 
@@ -180,6 +180,8 @@ CREATE TABLE IF NOT EXISTS `creature` (
   `guid` bigint(20) unsigned NOT NULL DEFAULT '0',
   `original_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'entry from guid',
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'entry from update fields',
+  `total_observation_time` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'accumulated time in ms between create and destroy packets',
+  `longest_observation_time` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'longest uninterrupted period of time in ms the object was visible for',
   `map` smallint(5) unsigned DEFAULT '0' COMMENT 'Map Identifier',
   `zone_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Zone Identifier',
   `area_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Area Identifier',
@@ -258,7 +260,7 @@ CREATE TABLE IF NOT EXISTS `creature_armor` (
   `damage_reduction` float NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='estimated armor of creatures from damage taken';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='estimated armor of creatures from damage taken';
 
 -- Data exporting was unselected.
 
@@ -284,7 +286,7 @@ CREATE TABLE IF NOT EXISTS `creature_attack_log` (
   `attacker_state` int(10) NOT NULL DEFAULT '0',
   `spell_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACKER_STATE_UPDATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACKER_STATE_UPDATE';
 
 -- Data exporting was unselected.
 
@@ -298,7 +300,7 @@ CREATE TABLE IF NOT EXISTS `creature_attack_start` (
   `victim_id` int(10) unsigned NOT NULL DEFAULT '0',
   `victim_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_ATTACK_START';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_ATTACK_START';
 
 -- Data exporting was unselected.
 
@@ -312,7 +314,7 @@ CREATE TABLE IF NOT EXISTS `creature_attack_stop` (
   `victim_id` int(10) unsigned NOT NULL DEFAULT '0',
   `victim_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_ATTACK_STOP';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_ATTACK_STOP';
 
 -- Data exporting was unselected.
 
@@ -337,7 +339,7 @@ CREATE TABLE IF NOT EXISTS `creature_auras_update` (
   `caster_id` int(10) unsigned NOT NULL,
   `caster_type` varchar(16) COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`guid`,`update_id`,`slot`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='aura updates from SMSG_AURA_UPDATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='aura updates from SMSG_AURA_UPDATE';
 
 -- Data exporting was unselected.
 
@@ -374,7 +376,7 @@ CREATE TABLE IF NOT EXISTS `creature_create1_time` (
   `transport_time` int(10) unsigned NOT NULL DEFAULT '0',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
 
 -- Data exporting was unselected.
 
@@ -411,7 +413,7 @@ CREATE TABLE IF NOT EXISTS `creature_create2_time` (
   `transport_time` int(10) unsigned NOT NULL DEFAULT '0',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
 
 -- Data exporting was unselected.
 
@@ -422,7 +424,7 @@ CREATE TABLE IF NOT EXISTS `creature_destroy_time` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `guid` int(10) unsigned NOT NULL COMMENT 'creature spawn guid',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
 
 -- Data exporting was unselected.
 
@@ -451,7 +453,7 @@ CREATE TABLE IF NOT EXISTS `creature_emote` (
   `emote_id` int(10) unsigned NOT NULL COMMENT 'references Emotes.dbc',
   `emote_name` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`guid`,`unixtimems`,`emote_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_EMOTE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_EMOTE';
 
 -- Data exporting was unselected.
 
@@ -464,7 +466,7 @@ CREATE TABLE IF NOT EXISTS `creature_equipment_values_update` (
   `slot` tinyint(3) unsigned NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`guid`,`unixtimems`,`slot`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to visual item slots';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to visual item slots';
 
 -- Data exporting was unselected.
 
@@ -495,7 +497,7 @@ CREATE TABLE IF NOT EXISTS `creature_guid_values` (
   `target_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='initial value in guid type update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='initial value in guid type update fields';
 
 -- Data exporting was unselected.
 
@@ -510,7 +512,7 @@ CREATE TABLE IF NOT EXISTS `creature_guid_values_update` (
   `object_id` int(10) unsigned NOT NULL DEFAULT '0',
   `object_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`,`unixtimems`,`field_name`,`object_guid`,`object_id`,`object_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to guid type update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to guid type update fields';
 
 -- Data exporting was unselected.
 
@@ -527,7 +529,7 @@ CREATE TABLE IF NOT EXISTS `creature_kill_reputation` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='faction standing changes after a creature died\r\ncan be wrong if multiple creatures died at the same time';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='faction standing changes after a creature died\r\ncan be wrong if multiple creatures died at the same time';
 
 -- Data exporting was unselected.
 
@@ -542,7 +544,7 @@ CREATE TABLE IF NOT EXISTS `creature_loot` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`loot_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='each row represents a separate loot instance\r\nmight not contain all the items or gold that dropped if somebody else looted them first';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='each row represents a separate loot instance\r\nmight not contain all the items or gold that dropped if somebody else looted them first';
 
 -- Data exporting was unselected.
 
@@ -553,7 +555,7 @@ CREATE TABLE IF NOT EXISTS `creature_loot_item` (
   `loot_id` int(10) unsigned NOT NULL COMMENT 'references creature_loot',
   `item_id` int(10) unsigned NOT NULL COMMENT 'item template id',
   `count` int(10) unsigned NOT NULL DEFAULT '1' COMMENT 'stack size'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual item that is part of a loot instance';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual item that is part of a loot instance';
 
 -- Data exporting was unselected.
 
@@ -571,7 +573,7 @@ CREATE TABLE IF NOT EXISTS `creature_melee_damage` (
   `total_school_mask` int(10) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='statistics for melee damage per creature id';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='statistics for melee damage per creature id';
 
 -- Data exporting was unselected.
 
@@ -608,7 +610,7 @@ CREATE TABLE IF NOT EXISTS `creature_movement_client` (
   `transport_time` int(10) unsigned NOT NULL DEFAULT '0',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`packet_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='client side movement';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='client side movement';
 
 -- Data exporting was unselected.
 
@@ -634,7 +636,7 @@ CREATE TABLE IF NOT EXISTS `creature_movement_server` (
   `transport_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`point`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='out of combat movement points from SMSG_ON_MONSTER_MOVE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='out of combat movement points from SMSG_ON_MONSTER_MOVE';
 
 -- Data exporting was unselected.
 
@@ -660,7 +662,7 @@ CREATE TABLE IF NOT EXISTS `creature_movement_server_combat` (
   `transport_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`point`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='in combat movement points from SMSG_ON_MONSTER_MOVE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='in combat movement points from SMSG_ON_MONSTER_MOVE';
 
 -- Data exporting was unselected.
 
@@ -675,7 +677,7 @@ CREATE TABLE IF NOT EXISTS `creature_movement_server_combat_spline` (
   `position_y` float NOT NULL,
   `position_z` float NOT NULL,
   PRIMARY KEY (`guid`,`parent_point`,`spline_point`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual spline points for combat  movement';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual spline points for combat  movement';
 
 -- Data exporting was unselected.
 
@@ -690,7 +692,7 @@ CREATE TABLE IF NOT EXISTS `creature_movement_server_spline` (
   `position_y` float NOT NULL,
   `position_z` float NOT NULL,
   PRIMARY KEY (`guid`,`parent_point`,`spline_point`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual spline points for out of combat movement';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual spline points for out of combat movement';
 
 -- Data exporting was unselected.
 
@@ -712,7 +714,7 @@ CREATE TABLE IF NOT EXISTS `creature_pet_actions` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_PET_SPELLS_MESSAGE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_PET_SPELLS_MESSAGE';
 
 -- Data exporting was unselected.
 
@@ -729,7 +731,7 @@ CREATE TABLE IF NOT EXISTS `creature_pet_cooldown` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_SPELL_COOLDOWN';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_SPELL_COOLDOWN';
 
 -- Data exporting was unselected.
 
@@ -740,7 +742,7 @@ CREATE TABLE IF NOT EXISTS `creature_pet_name` (
   `guid` int(10) unsigned NOT NULL,
   `name` varchar(16) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='from SMSG_QUERY_PET_NAME_RESPONSE';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='from SMSG_QUERY_PET_NAME_RESPONSE';
 
 -- Data exporting was unselected.
 
@@ -758,7 +760,7 @@ CREATE TABLE IF NOT EXISTS `creature_pet_remaining_cooldown` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='cooldowns that were already present when the creature became charmed\r\nfrom SMSG_PET_SPELLS_MESSAGE.';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='cooldowns that were already present when the creature became charmed\r\nfrom SMSG_PET_SPELLS_MESSAGE.';
 
 -- Data exporting was unselected.
 
@@ -771,7 +773,7 @@ CREATE TABLE IF NOT EXISTS `creature_power_values` (
   `current_power` int(10) unsigned NOT NULL DEFAULT '0',
   `max_power` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`power_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='initial value of power update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='initial value of power update fields';
 
 -- Data exporting was unselected.
 
@@ -784,7 +786,7 @@ CREATE TABLE IF NOT EXISTS `creature_power_values_update` (
   `power_type` tinyint(3) unsigned NOT NULL,
   `current_power` int(10) unsigned DEFAULT NULL,
   `max_power` int(10) unsigned DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='changes to power update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='changes to power update fields';
 
 -- Data exporting was unselected.
 
@@ -797,7 +799,7 @@ CREATE TABLE IF NOT EXISTS `creature_quest_item` (
   `item_id` int(10) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`idx`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='quest items that drop from a given creature id\r\nfrom SMSG_QUERY_CREATURE_RESPONSE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='quest items that drop from a given creature id\r\nfrom SMSG_QUERY_CREATURE_RESPONSE';
 
 -- Data exporting was unselected.
 
@@ -809,7 +811,7 @@ CREATE TABLE IF NOT EXISTS `creature_respawn_time` (
   `new_guid` int(10) unsigned NOT NULL,
   `respawn_time` int(10) unsigned NOT NULL COMMENT 'time in seconds',
   PRIMARY KEY (`old_guid`,`new_guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='stores the time in seconds between the death of one creature, and the spawn of another on the same position\r\nrespawn time is reduced dynamically if there are too many players in the same area, so beware of abnormally low values';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='stores the time in seconds between the death of one creature, and the spawn of another on the same position\r\nrespawn time is reduced dynamically if there are too many players in the same area, so beware of abnormally low values';
 
 -- Data exporting was unselected.
 
@@ -821,7 +823,7 @@ CREATE TABLE IF NOT EXISTS `creature_speed_update` (
   `guid` int(10) unsigned NOT NULL,
   `speed_type` tinyint(3) unsigned NOT NULL,
   `speed_rate` float unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to movement speed';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to movement speed';
 
 -- Data exporting was unselected.
 
@@ -833,7 +835,7 @@ CREATE TABLE IF NOT EXISTS `creature_spell_immunity` (
   `spell_id` int(10) unsigned NOT NULL,
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`entry`,`spell_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='spells that creatures were immune to\r\nfrom SMSG_SPELL_GO';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='spells that creatures were immune to\r\nfrom SMSG_SPELL_GO';
 
 -- Data exporting was unselected.
 
@@ -853,7 +855,7 @@ CREATE TABLE IF NOT EXISTS `creature_spell_timers` (
   `repeat_delay_max` int(10) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='calculated time between casts for creatures';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='calculated time between casts for creatures';
 
 -- Data exporting was unselected.
 
@@ -920,7 +922,7 @@ CREATE TABLE IF NOT EXISTS `creature_stats` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   KEY `entry` (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='stats data from SMSG_UPDATE_OBJECT\r\nserver only sends it to the creature''s charmer, or player who casts beast lore on it';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='stats data from SMSG_UPDATE_OBJECT\r\nserver only sends it to the creature''s charmer, or player who casts beast lore on it';
 
 -- Data exporting was unselected.
 
@@ -1008,7 +1010,7 @@ CREATE TABLE IF NOT EXISTS `creature_template_wdb` (
   `racial_leader` int(11) NOT NULL DEFAULT '0',
   `movement_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`sniff_build`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='static creature data from SMSG_QUERY_CREATURE_RESPONSE which gets saved to wdb cache';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='static creature data from SMSG_QUERY_CREATURE_RESPONSE which gets saved to wdb cache';
 
 -- Data exporting was unselected.
 
@@ -1025,7 +1027,7 @@ CREATE TABLE IF NOT EXISTS `creature_text` (
   `target_guid` int(10) unsigned NOT NULL DEFAULT '0',
   `target_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_type` varchar(16) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='individual instances of creatures sending a text message';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='individual instances of creatures sending a text message';
 
 -- Data exporting was unselected.
 
@@ -1036,7 +1038,7 @@ CREATE TABLE IF NOT EXISTS `creature_threat_clear` (
   `unixtimems` bigint(20) unsigned NOT NULL DEFAULT '0',
   `guid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`unixtimems`,`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='from SMSG_THREAT_CLEAR';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='from SMSG_THREAT_CLEAR';
 
 -- Data exporting was unselected.
 
@@ -1050,7 +1052,7 @@ CREATE TABLE IF NOT EXISTS `creature_threat_remove` (
   `target_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`unixtimems`,`guid`,`target_guid`,`target_id`,`target_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_THREAT_REMOVE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_THREAT_REMOVE';
 
 -- Data exporting was unselected.
 
@@ -1063,7 +1065,7 @@ CREATE TABLE IF NOT EXISTS `creature_threat_update` (
   `target_count` int(10) unsigned NOT NULL DEFAULT '0',
   `target_list_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`,`target_list_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_THREAT_UPDATE and SMSG_HIGHEST_THREAT_UPDATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_THREAT_UPDATE and SMSG_HIGHEST_THREAT_UPDATE';
 
 -- Data exporting was unselected.
 
@@ -1076,7 +1078,7 @@ CREATE TABLE IF NOT EXISTS `creature_threat_update_target` (
   `target_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   `threat` bigint(20) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='individual targets and their threat from SMSG_THREAT_UPDATE and SMSG_HIGHEST_THREAT_UPDATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='individual targets and their threat from SMSG_THREAT_UPDATE and SMSG_HIGHEST_THREAT_UPDATE';
 
 -- Data exporting was unselected.
 
@@ -1103,7 +1105,7 @@ CREATE TABLE IF NOT EXISTS `creature_unique_emote` (
   `emote_name` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`entry`,`emote_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='all unique emote ids played by a given creature id\r\nfrom SMSG_EMOTE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='all unique emote ids played by a given creature id\r\nfrom SMSG_EMOTE';
 
 -- Data exporting was unselected.
 
@@ -1131,7 +1133,7 @@ CREATE TABLE IF NOT EXISTS `creature_unique_faction` (
   `faction` int(10) unsigned NOT NULL,
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`entry`,`faction`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='all unique faction template ids used by a given creature id';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='all unique faction template ids used by a given creature id';
 
 -- Data exporting was unselected.
 
@@ -1144,7 +1146,19 @@ CREATE TABLE IF NOT EXISTS `creature_unique_gossip` (
   `is_default` tinyint(3) unsigned NOT NULL,
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`entry`,`gossip_menu_id`,`is_default`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='all unique gossip menu ids used for given creature id';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='all unique gossip menu ids used for given creature id';
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table sniffs_new_test.creature_unique_spell_hit
+DROP TABLE IF EXISTS `creature_unique_spell_hit`;
+CREATE TABLE IF NOT EXISTS `creature_unique_spell_hit` (
+  `entry` int(10) unsigned NOT NULL,
+  `spell_id` int(10) unsigned NOT NULL,
+  `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
+  PRIMARY KEY (`entry`,`spell_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=DYNAMIC COMMENT='spells that creatures were hit by';
 
 -- Data exporting was unselected.
 
@@ -1203,7 +1217,7 @@ CREATE TABLE IF NOT EXISTS `creature_values_update` (
   `off_hand_attack_time` int(10) unsigned DEFAULT NULL,
   `channel_spell_id` int(10) unsigned DEFAULT NULL,
   `channel_visual_id` int(10) unsigned DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='values updates from SMSG_UPDATE_OBJECT';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='values updates from SMSG_UPDATE_OBJECT';
 
 -- Data exporting was unselected.
 
@@ -1216,7 +1230,7 @@ CREATE TABLE IF NOT EXISTS `creature_visibility_distance` (
   `distance` int(10) unsigned NOT NULL COMMENT 'distance from player at time of create object',
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`entry`,`distance`,`map`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='max visibility distances';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='max visibility distances';
 
 -- Data exporting was unselected.
 
@@ -1262,7 +1276,7 @@ CREATE TABLE IF NOT EXISTS `dynamicobject_create1_time` (
   `transport_z` float NOT NULL DEFAULT '0',
   `transport_o` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
 
 -- Data exporting was unselected.
 
@@ -1285,7 +1299,7 @@ CREATE TABLE IF NOT EXISTS `dynamicobject_create2_time` (
   `transport_z` float NOT NULL DEFAULT '0',
   `transport_o` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
 
 -- Data exporting was unselected.
 
@@ -1296,7 +1310,7 @@ CREATE TABLE IF NOT EXISTS `dynamicobject_destroy_time` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `guid` int(10) unsigned NOT NULL COMMENT 'dynamicobject spawn guid',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
 
 -- Data exporting was unselected.
 
@@ -1311,7 +1325,7 @@ CREATE TABLE IF NOT EXISTS `faction_standing_update` (
   `achievement_bonus` float NOT NULL DEFAULT '0',
   `show_visual` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`reputation_list_id`,`standing`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SET_FACTION_STANDING';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SET_FACTION_STANDING';
 
 -- Data exporting was unselected.
 
@@ -1322,6 +1336,8 @@ CREATE TABLE IF NOT EXISTS `gameobject` (
   `guid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Global Unique Identifier',
   `original_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'entry from guid',
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'entry from update fields',
+  `total_observation_time` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'accumulated time in ms between create and destroy packets',
+  `longest_observation_time` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'longest uninterrupted period of time in ms the object was visible for',
   `map` smallint(5) unsigned DEFAULT '0' COMMENT 'Map Identifier',
   `zone_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Zone Identifier',
   `area_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Area Identifier',
@@ -1394,7 +1410,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_create1_time` (
   `transport_o` float NOT NULL DEFAULT '0',
   `transport_path_timer` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
 
 -- Data exporting was unselected.
 
@@ -1418,7 +1434,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_create2_time` (
   `transport_o` float NOT NULL DEFAULT '0',
   `transport_path_timer` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
 
 -- Data exporting was unselected.
 
@@ -1431,7 +1447,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_custom_anim` (
   `anim_id` int(10) unsigned NOT NULL DEFAULT '0',
   `as_despawn` tinyint(3) unsigned DEFAULT NULL,
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_GAME_OBJECT_CUSTOM_ANIM';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_GAME_OBJECT_CUSTOM_ANIM';
 
 -- Data exporting was unselected.
 
@@ -1442,7 +1458,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_despawn_anim` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `guid` int(10) unsigned NOT NULL COMMENT 'gameobject spawn guid',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_GAME_OBJECT_DESPAWN';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_GAME_OBJECT_DESPAWN';
 
 -- Data exporting was unselected.
 
@@ -1453,7 +1469,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_destroy_time` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `guid` int(10) unsigned NOT NULL COMMENT 'gameobject spawn guid',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
 
 -- Data exporting was unselected.
 
@@ -1468,7 +1484,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_loot` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`loot_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='each row represents a separate loot instance\r\nmight not contain all the items or gold that dropped if somebody else looted them first';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='each row represents a separate loot instance\r\nmight not contain all the items or gold that dropped if somebody else looted them first';
 
 -- Data exporting was unselected.
 
@@ -1479,7 +1495,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_loot_item` (
   `loot_id` int(10) unsigned NOT NULL COMMENT 'references gameobject_loot',
   `item_id` int(10) unsigned NOT NULL COMMENT 'item template id',
   `count` int(10) unsigned NOT NULL DEFAULT '1' COMMENT 'stack size'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual item that is part of a loot instance';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='individual item that is part of a loot instance';
 
 -- Data exporting was unselected.
 
@@ -1504,7 +1520,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_respawn_time` (
   `new_guid` int(10) unsigned NOT NULL,
   `respawn_time` int(10) unsigned NOT NULL COMMENT 'time in seconds',
   PRIMARY KEY (`old_guid`,`new_guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='stores the time in seconds between the despawn of a gameobject, and the spawn of another on the same position\r\nrespawn time is reduced dynamically if there are too many players in the same area, so beware of abnormally low values';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='stores the time in seconds between the despawn of a gameobject, and the spawn of another on the same position\r\nrespawn time is reduced dynamically if there are too many players in the same area, so beware of abnormally low values';
 
 -- Data exporting was unselected.
 
@@ -1571,7 +1587,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_template_addon` (
   `faction` int(10) unsigned NOT NULL DEFAULT '0',
   `flags` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -1584,7 +1600,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_unique_anim` (
   `as_despawn` tinyint(3) unsigned DEFAULT NULL,
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`entry`,`anim_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='all unique custom anim ids used by a given gameobject id\r\nfrom SMSG_GAME_OBJECT_CUSTOM_ANIM';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='all unique custom anim ids used by a given gameobject id\r\nfrom SMSG_GAME_OBJECT_CUSTOM_ANIM';
 
 -- Data exporting was unselected.
 
@@ -1601,7 +1617,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_values_update` (
   `art_kit` int(10) unsigned DEFAULT NULL,
   `anim_progress` int(10) unsigned DEFAULT NULL,
   `custom_param` int(10) unsigned DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='values updates from SMSG_UPDATE_OBJECT';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='values updates from SMSG_UPDATE_OBJECT';
 
 -- Data exporting was unselected.
 
@@ -1614,7 +1630,7 @@ CREATE TABLE IF NOT EXISTS `gameobject_visibility_distance` (
   `distance` int(10) unsigned NOT NULL COMMENT 'distance from player at time of create object',
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`entry`,`distance`,`map`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='max visibility distances';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='max visibility distances';
 
 -- Data exporting was unselected.
 
@@ -1691,7 +1707,7 @@ CREATE TABLE IF NOT EXISTS `hotfix_blob` (
   `Blob` blob,
   `VerifiedBuild` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`TableHash`,`RecordId`,`locale`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -1706,7 +1722,7 @@ CREATE TABLE IF NOT EXISTS `hotfix_data` (
   `Status` int(10) unsigned NOT NULL DEFAULT '0',
   `VerifiedBuild` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`,`TableHash`,`RecordId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -1721,7 +1737,7 @@ CREATE TABLE IF NOT EXISTS `item_loot` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'points to sniff_file table',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`loot_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='each row represents a separate loot instance';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='each row represents a separate loot instance';
 
 -- Data exporting was unselected.
 
@@ -1732,7 +1748,7 @@ CREATE TABLE IF NOT EXISTS `item_loot_item` (
   `loot_id` int(10) unsigned NOT NULL COMMENT 'references item_loot',
   `item_id` int(10) unsigned NOT NULL COMMENT 'item template id',
   `count` int(10) unsigned NOT NULL DEFAULT '1' COMMENT 'stack size'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='individual item that is part of a loot instance';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='individual item that is part of a loot instance';
 
 -- Data exporting was unselected.
 
@@ -1891,7 +1907,7 @@ DROP TABLE IF EXISTS `logout_time`;
 CREATE TABLE IF NOT EXISTS `logout_time` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_LOGOUT_COMPLETE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_LOGOUT_COMPLETE';
 
 -- Data exporting was unselected.
 
@@ -1909,7 +1925,7 @@ CREATE TABLE IF NOT EXISTS `mail_template` (
   `subject` text COLLATE utf8_unicode_ci NOT NULL,
   `body` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`entry`,`sniff_build`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='data for mail sent by creatures\r\nfrom SMSG_MAIL_LIST_RESULT';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='data for mail sent by creatures\r\nfrom SMSG_MAIL_LIST_RESULT';
 
 -- Data exporting was unselected.
 
@@ -1923,7 +1939,7 @@ CREATE TABLE IF NOT EXISTS `mail_template_item` (
   `count` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`,`slot`,`item_id`,`count`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='items attached to mail templates\r\nfrom SMSG_MAIL_LIST_RESULT';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='items attached to mail templates\r\nfrom SMSG_MAIL_LIST_RESULT';
 
 -- Data exporting was unselected.
 
@@ -1996,7 +2012,7 @@ CREATE TABLE IF NOT EXISTS `object_names` (
   `id` int(10) NOT NULL,
   `name` text NOT NULL,
   PRIMARY KEY (`object_type`,`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='WPP''s ObjectTypes Names DataBase';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='WPP''s ObjectTypes Names DataBase';
 
 -- Data exporting was unselected.
 
@@ -2133,7 +2149,7 @@ CREATE TABLE IF NOT EXISTS `player_active_player` (
   `unixtime` int(10) unsigned NOT NULL,
   `guid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`guid`,`unixtime`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='shows which character was controlled by the client at a given time';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='shows which character was controlled by the client at a given time';
 
 -- Data exporting was unselected.
 
@@ -2159,7 +2175,7 @@ CREATE TABLE IF NOT EXISTS `player_attack_log` (
   `attacker_state` int(10) NOT NULL DEFAULT '0',
   `spell_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACKER_STATE_UPDATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACKER_STATE_UPDATE';
 
 -- Data exporting was unselected.
 
@@ -2173,7 +2189,7 @@ CREATE TABLE IF NOT EXISTS `player_attack_start` (
   `victim_id` int(10) unsigned NOT NULL DEFAULT '0',
   `victim_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACK_START';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACK_START';
 
 -- Data exporting was unselected.
 
@@ -2187,7 +2203,7 @@ CREATE TABLE IF NOT EXISTS `player_attack_stop` (
   `victim_id` int(10) unsigned NOT NULL DEFAULT '0',
   `victim_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACK_STOP';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_ATTACK_STOP';
 
 -- Data exporting was unselected.
 
@@ -2212,7 +2228,7 @@ CREATE TABLE IF NOT EXISTS `player_auras_update` (
   `caster_id` int(10) unsigned NOT NULL,
   `caster_type` varchar(16) COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`guid`,`update_id`,`slot`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='aura updates from SMSG_AURA_UPDATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='aura updates from SMSG_AURA_UPDATE';
 
 -- Data exporting was unselected.
 
@@ -2278,7 +2294,7 @@ CREATE TABLE IF NOT EXISTS `player_create1_time` (
   `transport_time` int(10) unsigned NOT NULL DEFAULT '0',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object became visible to the client';
 
 -- Data exporting was unselected.
 
@@ -2315,7 +2331,7 @@ CREATE TABLE IF NOT EXISTS `player_create2_time` (
   `transport_time` int(10) unsigned NOT NULL DEFAULT '0',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='the time at which the object spawned';
 
 -- Data exporting was unselected.
 
@@ -2326,7 +2342,7 @@ CREATE TABLE IF NOT EXISTS `player_destroy_time` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `guid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='times when the object was destroyed from the client''s prespective due to despawning, becoming invisible, or going out of range';
 
 -- Data exporting was unselected.
 
@@ -2344,7 +2360,7 @@ CREATE TABLE IF NOT EXISTS `player_dodge_chance` (
   `relevant_auras` varchar(128) COLLATE latin1_general_ci NOT NULL DEFAULT '' COMMENT 'auras of type 49',
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='data about player dodge chance, so that we can calculate the correct bonus to dodge chance per agility in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the agility stat';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='data about player dodge chance, so that we can calculate the correct bonus to dodge chance per agility in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the agility stat';
 
 -- Data exporting was unselected.
 
@@ -2357,7 +2373,7 @@ CREATE TABLE IF NOT EXISTS `player_emote` (
   `emote_id` int(10) unsigned NOT NULL COMMENT 'references Emotes.dbc',
   `emote_name` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`guid`,`unixtimems`,`emote_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_EMOTE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_EMOTE';
 
 -- Data exporting was unselected.
 
@@ -2370,7 +2386,7 @@ CREATE TABLE IF NOT EXISTS `player_equipment_values_update` (
   `slot` tinyint(3) unsigned NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`guid`,`unixtimems`,`slot`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to visual item slots';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to visual item slots';
 
 -- Data exporting was unselected.
 
@@ -2401,7 +2417,7 @@ CREATE TABLE IF NOT EXISTS `player_guid_values` (
   `target_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='initial value in guid type update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='initial value in guid type update fields';
 
 -- Data exporting was unselected.
 
@@ -2416,7 +2432,7 @@ CREATE TABLE IF NOT EXISTS `player_guid_values_update` (
   `object_id` int(10) unsigned NOT NULL DEFAULT '0',
   `object_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`guid`,`unixtimems`,`field_name`,`object_guid`,`object_id`,`object_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to guid type update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to guid type update fields';
 
 -- Data exporting was unselected.
 
@@ -2460,7 +2476,7 @@ CREATE TABLE IF NOT EXISTS `player_levelup_info` (
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`race`,`class`,`level`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -2480,7 +2496,7 @@ CREATE TABLE IF NOT EXISTS `player_melee_crit_chance` (
   `relevant_auras` varchar(128) COLLATE latin1_general_ci NOT NULL DEFAULT '' COMMENT 'auras of type 52',
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='data about player melee crit chance, so that we can calculate the correct bonus to crit chance per agility in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the agility stat';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='data about player melee crit chance, so that we can calculate the correct bonus to crit chance per agility in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the agility stat';
 
 -- Data exporting was unselected.
 
@@ -2493,7 +2509,7 @@ CREATE TABLE IF NOT EXISTS `player_minimap_ping` (
   `position_x` float NOT NULL DEFAULT '0',
   `position_y` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_MINIMAP_PING';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_MINIMAP_PING';
 
 -- Data exporting was unselected.
 
@@ -2530,7 +2546,7 @@ CREATE TABLE IF NOT EXISTS `player_movement_client` (
   `transport_time` int(10) unsigned NOT NULL DEFAULT '0',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`packet_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='client side movement';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='client side movement';
 
 -- Data exporting was unselected.
 
@@ -2556,7 +2572,7 @@ CREATE TABLE IF NOT EXISTS `player_movement_server` (
   `transport_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   `transport_seat` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`point`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='movement points from SMSG_ON_MONSTER_MOVE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='movement points from SMSG_ON_MONSTER_MOVE';
 
 -- Data exporting was unselected.
 
@@ -2571,7 +2587,7 @@ CREATE TABLE IF NOT EXISTS `player_movement_server_spline` (
   `position_y` float NOT NULL,
   `position_z` float NOT NULL,
   PRIMARY KEY (`guid`,`parent_point`,`spline_point`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='individual spline points for combat  movement';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='individual spline points for combat  movement';
 
 -- Data exporting was unselected.
 
@@ -2584,7 +2600,7 @@ CREATE TABLE IF NOT EXISTS `player_power_values` (
   `current_power` int(10) unsigned NOT NULL DEFAULT '0',
   `max_power` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`power_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='initial value of power update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='initial value of power update fields';
 
 -- Data exporting was unselected.
 
@@ -2597,7 +2613,7 @@ CREATE TABLE IF NOT EXISTS `player_power_values_update` (
   `power_type` tinyint(3) unsigned NOT NULL,
   `current_power` int(10) unsigned DEFAULT NULL,
   `max_power` int(10) unsigned DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='changes to power update fields';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='changes to power update fields';
 
 -- Data exporting was unselected.
 
@@ -2617,7 +2633,7 @@ CREATE TABLE IF NOT EXISTS `player_ranged_crit_chance` (
   `relevant_auras` varchar(128) COLLATE latin1_general_ci NOT NULL DEFAULT '' COMMENT 'auras of type 52',
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='data about player ranged crit chance, so that we can calculate the correct bonus to crit chance per agility in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the agility stat';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='data about player ranged crit chance, so that we can calculate the correct bonus to crit chance per agility in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the agility stat';
 
 -- Data exporting was unselected.
 
@@ -2629,7 +2645,7 @@ CREATE TABLE IF NOT EXISTS `player_speed_update` (
   `guid` int(10) unsigned NOT NULL,
   `speed_type` tinyint(3) unsigned NOT NULL,
   `speed_rate` float unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to movement speed';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='changes to movement speed';
 
 -- Data exporting was unselected.
 
@@ -2645,7 +2661,7 @@ CREATE TABLE IF NOT EXISTS `player_spell_crit_chance` (
   `relevant_auras` varchar(128) COLLATE latin1_general_ci NOT NULL DEFAULT '' COMMENT 'auras of type 57 and 71',
   `sniff_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='data about player spell crit chance, so that we can calculate the correct bonus to crit chance per intellect in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the intellect stat';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='data about player spell crit chance, so that we can calculate the correct bonus to crit chance per intellect in vanilla\r\nother expansions have this data in a dbc, because its shown on the user interface when you mouse over the intellect stat';
 
 -- Data exporting was unselected.
 
@@ -2683,7 +2699,7 @@ CREATE TABLE IF NOT EXISTS `player_values_update` (
   `off_hand_attack_time` int(10) unsigned DEFAULT NULL,
   `channel_spell_id` int(10) unsigned DEFAULT NULL,
   `channel_visual_id` int(10) unsigned DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='values updates from SMSG_UPDATE_OBJECT';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='values updates from SMSG_UPDATE_OBJECT';
 
 -- Data exporting was unselected.
 
@@ -2694,7 +2710,7 @@ CREATE TABLE IF NOT EXISTS `play_music` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `music` int(10) unsigned NOT NULL COMMENT 'references SoundEntries.dbc',
   PRIMARY KEY (`music`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_PLAY_MUSIC';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_PLAY_MUSIC';
 
 -- Data exporting was unselected.
 
@@ -2708,7 +2724,7 @@ CREATE TABLE IF NOT EXISTS `play_sound` (
   `source_type` varchar(16) COLLATE latin1_general_ci NOT NULL COMMENT 'type of the object which was the source of the sound',
   `sound` int(10) unsigned NOT NULL COMMENT 'references SoundEntries.dbc',
   PRIMARY KEY (`unixtimems`,`source_guid`,`sound`,`source_id`,`source_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_PLAY_SOUND';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_PLAY_SOUND';
 
 -- Data exporting was unselected.
 
@@ -2724,7 +2740,7 @@ CREATE TABLE IF NOT EXISTS `play_spell_visual_kit` (
   `kit_type` int(10) unsigned DEFAULT NULL,
   `duration` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`caster_id`,`caster_type`,`kit_id`,`unixtimems`,`caster_guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_PLAY_SPELL_VISUAL_KIT';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_PLAY_SPELL_VISUAL_KIT';
 
 -- Data exporting was unselected.
 
@@ -2749,17 +2765,17 @@ CREATE TABLE IF NOT EXISTS `points_of_interest` (
 -- Dumping structure for table sniffs_new_test.quest_details
 DROP TABLE IF EXISTS `quest_details`;
 CREATE TABLE IF NOT EXISTS `quest_details` (
-  `ID` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `Emote1` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Emote2` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Emote3` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Emote4` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay1` int(10) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay2` int(10) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay3` int(10) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay4` int(10) unsigned NOT NULL DEFAULT '0',
-  `VerifiedBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
+  `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `emote_id1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_id2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_id3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_id4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_delay1` int(10) unsigned NOT NULL DEFAULT '0',
+  `emote_delay2` int(10) unsigned NOT NULL DEFAULT '0',
+  `emote_delay3` int(10) unsigned NOT NULL DEFAULT '0',
+  `emote_delay4` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`entry`,`sniff_build`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
@@ -2773,7 +2789,7 @@ CREATE TABLE IF NOT EXISTS `quest_ender` (
   `quest_id` int(10) unsigned NOT NULL COMMENT 'references quest_template',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`object_id`,`object_type`,`quest_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='list of quests that can be turned in to a given creature or gameobject';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='list of quests that can be turned in to a given creature or gameobject';
 
 -- Data exporting was unselected.
 
@@ -2811,6 +2827,7 @@ CREATE TABLE IF NOT EXISTS `quest_greeting_locale` (
 DROP TABLE IF EXISTS `quest_objectives`;
 CREATE TABLE IF NOT EXISTS `quest_objectives` (
   `ID` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `SniffBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `QuestID` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `StorageIndex` tinyint(3) NOT NULL DEFAULT '0',
@@ -2821,8 +2838,7 @@ CREATE TABLE IF NOT EXISTS `quest_objectives` (
   `Flags2` int(10) unsigned NOT NULL DEFAULT '0',
   `ProgressBarWeight` float NOT NULL DEFAULT '0',
   `Description` text COLLATE latin1_general_ci,
-  `VerifiedBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`ID`,`SniffBuild`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
@@ -2846,18 +2862,18 @@ CREATE TABLE IF NOT EXISTS `quest_objectives_locale` (
 -- Dumping structure for table sniffs_new_test.quest_offer_reward
 DROP TABLE IF EXISTS `quest_offer_reward`;
 CREATE TABLE IF NOT EXISTS `quest_offer_reward` (
-  `ID` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `Emote1` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Emote2` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Emote3` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `Emote4` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay1` int(10) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay2` int(10) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay3` int(10) unsigned NOT NULL DEFAULT '0',
-  `EmoteDelay4` int(10) unsigned NOT NULL DEFAULT '0',
-  `RewardText` text COLLATE latin1_general_ci,
-  `VerifiedBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
+  `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `emote_id1` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_id2` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_id3` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_id4` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `emote_delay1` int(10) unsigned NOT NULL DEFAULT '0',
+  `emote_delay2` int(10) unsigned NOT NULL DEFAULT '0',
+  `emote_delay3` int(10) unsigned NOT NULL DEFAULT '0',
+  `emote_delay4` int(10) unsigned NOT NULL DEFAULT '0',
+  `reward_text` text COLLATE latin1_general_ci,
+  PRIMARY KEY (`entry`,`sniff_build`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
@@ -2871,7 +2887,7 @@ CREATE TABLE IF NOT EXISTS `quest_offer_reward_locale` (
   `RewardText` text,
   `VerifiedBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -2879,11 +2895,11 @@ CREATE TABLE IF NOT EXISTS `quest_offer_reward_locale` (
 -- Dumping structure for table sniffs_new_test.quest_request_items
 DROP TABLE IF EXISTS `quest_request_items`;
 CREATE TABLE IF NOT EXISTS `quest_request_items` (
-  `ID` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `Emote` smallint(5) unsigned DEFAULT NULL,
-  `CompletionText` text COLLATE latin1_general_ci,
-  `VerifiedBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
+  `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `emote_id` smallint(5) unsigned DEFAULT NULL,
+  `completion_text` text COLLATE latin1_general_ci,
+  PRIMARY KEY (`entry`,`sniff_build`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
@@ -2897,7 +2913,7 @@ CREATE TABLE IF NOT EXISTS `quest_request_items_locale` (
   `CompletionText` text,
   `VerifiedBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`,`locale`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -2910,7 +2926,7 @@ CREATE TABLE IF NOT EXISTS `quest_starter` (
   `quest_id` int(10) unsigned NOT NULL COMMENT 'references quest_template',
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`object_id`,`object_type`,`quest_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='list of quests that can be picked up from a given creature or gameobject';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='list of quests that can be picked up from a given creature or gameobject';
 
 -- Data exporting was unselected.
 
@@ -2919,6 +2935,7 @@ CREATE TABLE IF NOT EXISTS `quest_starter` (
 DROP TABLE IF EXISTS `quest_template`;
 CREATE TABLE IF NOT EXISTS `quest_template` (
   `ID` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `SniffBuild` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `QuestType` tinyint(3) unsigned NOT NULL DEFAULT '2',
   `QuestLevel` smallint(3) NOT NULL DEFAULT '1',
   `ScalingFactionGroup` int(11) NOT NULL DEFAULT '1',
@@ -3069,8 +3086,7 @@ CREATE TABLE IF NOT EXISTS `quest_template` (
   `PortraitTurnInName` text COLLATE latin1_general_ci,
   `AcceptedSoundKitID` int(10) unsigned DEFAULT NULL,
   `CompleteSoundKitID` int(10) unsigned DEFAULT NULL,
-  `VerifiedBuild` mediumint(8) unsigned DEFAULT '0',
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`ID`,`SniffBuild`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Quest System';
 
 -- Data exporting was unselected.
@@ -3103,7 +3119,7 @@ CREATE TABLE IF NOT EXISTS `quest_update_complete` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `quest_id` int(10) unsigned NOT NULL COMMENT 'quest template entry',
   PRIMARY KEY (`quest_id`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_QUEST_UPDATE_COMPLETE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_QUEST_UPDATE_COMPLETE';
 
 -- Data exporting was unselected.
 
@@ -3114,7 +3130,7 @@ CREATE TABLE IF NOT EXISTS `quest_update_failed` (
   `unixtimems` bigint(20) unsigned NOT NULL COMMENT 'when the packet was received',
   `quest_id` int(10) unsigned NOT NULL COMMENT 'quest template entry',
   PRIMARY KEY (`quest_id`,`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_QUEST_UPDATE_FAILED and SMSG_QUEST_UPDATE_FAILED_TIMER';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_QUEST_UPDATE_FAILED and SMSG_QUEST_UPDATE_FAILED_TIMER';
 
 -- Data exporting was unselected.
 
@@ -3129,7 +3145,7 @@ CREATE TABLE IF NOT EXISTS `raid_target_icon_update` (
   `target_id` int(10) unsigned NOT NULL,
   `target_type` varchar(16) COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`unixtimems`,`icon`,`target_guid`,`target_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -3140,7 +3156,7 @@ CREATE TABLE IF NOT EXISTS `replay_marked_creature` (
   `guid` int(10) unsigned NOT NULL,
   `marker` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='creatures that have been manually marked from replay core';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='creatures that have been manually marked from replay core';
 
 -- Data exporting was unselected.
 
@@ -3151,7 +3167,7 @@ CREATE TABLE IF NOT EXISTS `replay_marked_gameobject` (
   `guid` int(10) unsigned NOT NULL,
   `marker` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='gameobjects that have been manually marked from replay core';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='gameobjects that have been manually marked from replay core';
 
 -- Data exporting was unselected.
 
@@ -3165,7 +3181,7 @@ CREATE TABLE IF NOT EXISTS `sniff_data` (
   `id` int(10) NOT NULL DEFAULT '0',
   `data` text COLLATE latin1_general_ci NOT NULL,
   UNIQUE KEY `SniffName` (`object_type`,`id`,`data`(255),`sniff_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='information about the contents of each sniff included in the database\r\ncan be used to figure out where specific data can be found';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='information about the contents of each sniff included in the database\r\ncan be used to figure out where specific data can be found';
 
 -- Data exporting was unselected.
 
@@ -3179,7 +3195,7 @@ CREATE TABLE IF NOT EXISTS `sniff_file` (
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='the names of all sniffs included in the database';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='the names of all sniffs included in the database';
 
 -- Data exporting was unselected.
 
@@ -3192,7 +3208,7 @@ CREATE TABLE IF NOT EXISTS `sound_unique_source` (
   `sound` int(10) unsigned NOT NULL DEFAULT '0',
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`source_id`,`source_type`,`sound`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='unique source object and sound id combinations';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='unique source object and sound id combinations';
 
 -- Data exporting was unselected.
 
@@ -3204,7 +3220,7 @@ CREATE TABLE IF NOT EXISTS `spell_aura_flags` (
   `flags` int(10) unsigned NOT NULL,
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`spell_id`,`flags`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='all aura flags seen for a given spell id';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='all aura flags seen for a given spell id';
 
 -- Data exporting was unselected.
 
@@ -3220,7 +3236,7 @@ CREATE TABLE IF NOT EXISTS `spell_cast_failed` (
   `visual_id` int(10) unsigned NOT NULL DEFAULT '0',
   `reason` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`caster_id`,`caster_type`,`spell_id`,`unixtimems`,`caster_guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SPELL_FAILURE and SMSG_SPELL_FAILED_OTHER';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SPELL_FAILURE and SMSG_SPELL_FAILED_OTHER';
 
 -- Data exporting was unselected.
 
@@ -3252,7 +3268,7 @@ CREATE TABLE IF NOT EXISTS `spell_cast_go` (
   `dst_position_id` int(10) unsigned NOT NULL DEFAULT '0',
   `orientation` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`caster_guid`,`caster_id`,`caster_type`,`spell_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_SPELL_GO\r\nsent when a spell is successfully casted';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_SPELL_GO\r\nsent when a spell is successfully casted';
 
 -- Data exporting was unselected.
 
@@ -3265,7 +3281,7 @@ CREATE TABLE IF NOT EXISTS `spell_cast_go_position` (
   `position_y` float NOT NULL DEFAULT '0',
   `position_z` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='source and destination locations from SMSG_SPELL_GO';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='source and destination locations from SMSG_SPELL_GO';
 
 -- Data exporting was unselected.
 
@@ -3278,7 +3294,7 @@ CREATE TABLE IF NOT EXISTS `spell_cast_go_target` (
   `target_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   `miss_reason` tinyint(3) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='hit and miss targets from SMSG_SPELL_GO';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='hit and miss targets from SMSG_SPELL_GO';
 
 -- Data exporting was unselected.
 
@@ -3304,7 +3320,7 @@ CREATE TABLE IF NOT EXISTS `spell_cast_start` (
   `target_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_type` varchar(50) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`unixtimems`,`caster_guid`,`caster_id`,`caster_type`,`spell_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_SPELL_START\r\nsent when somebody starts casting a spell';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_SPELL_START\r\nsent when somebody starts casting a spell';
 
 -- Data exporting was unselected.
 
@@ -3320,7 +3336,7 @@ CREATE TABLE IF NOT EXISTS `spell_channel_start` (
   `visual_id` int(10) unsigned NOT NULL DEFAULT '0',
   `duration` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`caster_guid`,`caster_id`,`caster_type`,`spell_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SPELL_CHANNEL_START\r\nsent when somebody starts channeling a spell';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SPELL_CHANNEL_START\r\nsent when somebody starts channeling a spell';
 
 -- Data exporting was unselected.
 
@@ -3334,7 +3350,7 @@ CREATE TABLE IF NOT EXISTS `spell_channel_update` (
   `caster_type` varchar(16) COLLATE latin1_general_ci NOT NULL DEFAULT '',
   `duration` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`caster_guid`,`caster_id`,`caster_type`,`duration`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SPELL_CHANNEL_UPDATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_SPELL_CHANNEL_UPDATE';
 
 -- Data exporting was unselected.
 
@@ -3347,7 +3363,7 @@ CREATE TABLE IF NOT EXISTS `spell_script_target` (
   `target_id` int(10) unsigned NOT NULL,
   `sniff_build` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`spell_id`,`target_type`,`target_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -3376,7 +3392,7 @@ CREATE TABLE IF NOT EXISTS `spell_unique_caster` (
   `spell_id` int(10) unsigned NOT NULL DEFAULT '0',
   `sniff_id_list` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`caster_id`,`caster_type`,`spell_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='unique caster and spell combinations';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='unique caster and spell combinations';
 
 -- Data exporting was unselected.
 
@@ -3424,7 +3440,7 @@ CREATE TABLE IF NOT EXISTS `weather_update` (
   `sound` int(11) NOT NULL DEFAULT '0',
   `instant` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_WEATHER';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_WEATHER';
 
 -- Data exporting was unselected.
 
@@ -3439,7 +3455,7 @@ CREATE TABLE IF NOT EXISTS `world_state_init` (
   `variable` int(11) NOT NULL DEFAULT '0',
   `value` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`variable`,`value`,`area_id`,`zone_id`,`map`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_INIT_WORLD_STATES';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='from SMSG_INIT_WORLD_STATES';
 
 -- Data exporting was unselected.
 
@@ -3451,7 +3467,7 @@ CREATE TABLE IF NOT EXISTS `world_state_update` (
   `variable` int(11) NOT NULL DEFAULT '0',
   `value` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`variable`,`value`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_UPDATE_WORLD_STATE';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_UPDATE_WORLD_STATE';
 
 -- Data exporting was unselected.
 
@@ -3480,7 +3496,7 @@ CREATE TABLE IF NOT EXISTS `xp_gain_aborted` (
   `gain_reason` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `abort_reason` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`victim_guid`,`victim_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_XP_GAIN_ABORTED';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_XP_GAIN_ABORTED';
 
 -- Data exporting was unselected.
 
@@ -3498,7 +3514,7 @@ CREATE TABLE IF NOT EXISTS `xp_gain_log` (
   `group_bonus` float unsigned NOT NULL DEFAULT '0',
   `raf_bonus` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`unixtimems`,`victim_guid`,`victim_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_LOG_XP_GAIN';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci ROW_FORMAT=COMPACT COMMENT='from SMSG_LOG_XP_GAIN';
 
 -- Data exporting was unselected.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

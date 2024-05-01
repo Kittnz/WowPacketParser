@@ -39,8 +39,9 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("Name", DbType = (TargetedDbType.TRINITY))]
         public string Name;
 
-        [DBFieldName("Unknown905", TargetedDbExpansion.Shadowlands, DbType = (TargetedDbType.WPP))]
-        public int? Unknown905;
+        [DBFieldName("wmo_group_id", TargetedDbExpansion.Shadowlands, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("WMOGroupID", TargetedDbExpansion.Shadowlands, DbType = (TargetedDbType.TRINITY))]
+        public int? WMOGroupID;
 
         [DBFieldName("sniff_build", DbType = (TargetedDbType.WPP))]
         [DBFieldName("VerifiedBuild", DbType = (TargetedDbType.TRINITY))]

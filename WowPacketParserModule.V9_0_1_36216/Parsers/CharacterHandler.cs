@@ -133,6 +133,8 @@ namespace WowPacketParserModule.V9_0_1_36216.Parsers
         public static void ReadPVPBracketData(Packet packet, params object[] idx)
         {
             packet.ReadByte("Bracket", idx);
+            if (ClientVersion.AddedInVersion(10, 0, 2, 1, 15, 0, 3, 4, 1))
+                packet.ReadInt32("Unused3", idx);
             packet.ReadInt32("Rating", idx);
             packet.ReadInt32("Rank", idx);
             packet.ReadInt32("WeeklyPlayed", idx);
@@ -144,11 +146,17 @@ namespace WowPacketParserModule.V9_0_1_36216.Parsers
             packet.ReadInt32("PvpTierID", idx);
             if (ClientVersion.AddedInVersion(9, 1, 0, 1, 14, 0, 2, 5, 2))
                 packet.ReadInt32("WeeklyBestWinPvpTierID", idx);
-
             if (ClientVersion.AddedInVersion(9, 1, 5, 1, 14, 1, 2, 5, 3))
             {
                 packet.ReadInt32("Unused1", idx);
                 packet.ReadInt32("Unused2", idx);
+            }
+            if (ClientVersion.AddedInVersion(10, 0, 2, 1, 15, 0, 3, 4, 1))
+            {
+                packet.ReadInt32("RoundsSeasonPlayed", idx);
+                packet.ReadInt32("RoundsSeasonWon", idx);
+                packet.ReadInt32("RoundsWeeklyPlayed", idx);
+                packet.ReadInt32("RoundsWeeklyWon", idx);
             }
             packet.ResetBitReader();
             packet.ReadBit("Disqualified", idx);

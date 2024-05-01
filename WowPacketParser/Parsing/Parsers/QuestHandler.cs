@@ -1313,12 +1313,12 @@ namespace WowPacketParser.Parsing.Parsers
                 packet.ReadUInt32("Suggested Players");
 
             uint count1 = packet.ReadUInt32("Emote Count");
-            uint?[] emoteIDs = {0, 0, 0, 0};
+            int?[] emoteIDs = {0, 0, 0, 0};
             uint?[] emoteDelays = {0, 0, 0, 0};
             for (int i = 0; i < count1; i++)
             {
                 emoteDelays[i] = packet.ReadUInt32("Emote Delay", i);
-                emoteIDs[i] = (uint)packet.ReadUInt32E<EmoteType>("Emote Id", i);
+                emoteIDs[i] = (int)packet.ReadInt32E<EmoteType>("Emote Id", i);
             }
             offerReward.Emote = emoteIDs;
             offerReward.EmoteDelay = emoteDelays;
@@ -1486,9 +1486,15 @@ namespace WowPacketParser.Parsing.Parsers
             packet.ReadByte("Slot");
         }
 
-        [Parser(Opcode.SMSG_QUEST_UPDATE_ADD_KILL)]
         [Parser(Opcode.SMSG_QUEST_UPDATE_ADD_ITEM)]
-        public static void HandleQuestUpdateAdd(Packet packet)
+        public static void HandleQuestUpdateAddItem(Packet packet)
+        {
+            packet.ReadInt32<QuestId>("Quest ID");
+            packet.ReadInt32("Count");
+        }
+
+        [Parser(Opcode.SMSG_QUEST_UPDATE_ADD_KILL)]
+        public static void HandleQuestUpdateAddKill(Packet packet)
         {
             packet.ReadInt32<QuestId>("Quest ID");
             var entry = packet.ReadEntry();

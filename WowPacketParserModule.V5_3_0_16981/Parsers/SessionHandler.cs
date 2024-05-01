@@ -156,7 +156,8 @@ namespace WowPacketParserModule.V5_3_0_16981.Parsers
         [Parser(Opcode.SMSG_LOGOUT_COMPLETE)]
         public static void HandleLogoutComplete(Packet packet)
         {
-            Storage.CurrentActivePlayer = WowGuid64.Empty;
+            Storage.AddObservationTimeBeforeCleanup(packet.Time);
+            Storage.ClearTemporaryData();
             LogoutTime logoutTime = new LogoutTime()
             {
                 UnixTimeMs = (ulong)packet.UnixTimeMs

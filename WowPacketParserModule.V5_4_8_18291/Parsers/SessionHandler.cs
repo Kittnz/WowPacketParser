@@ -58,7 +58,8 @@ namespace WowPacketParserModule.V5_4_8_18291.Parsers
 
             packet.WriteGuid("Guid", guid);
 
-            Storage.CurrentActivePlayer = WowGuid64.Empty;
+            Storage.AddObservationTimeBeforeCleanup(packet.Time);
+            Storage.ClearTemporaryData();
             LogoutTime logoutTime = new LogoutTime()
             {
                 UnixTimeMs = (ulong)packet.UnixTimeMs

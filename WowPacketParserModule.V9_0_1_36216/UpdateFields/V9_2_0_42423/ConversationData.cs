@@ -7,7 +7,7 @@ namespace WowPacketParserModule.V9_0_1_36216.UpdateFields.V9_2_0_42423
 {
     public class ConversationData : IConversationData
     {
-        public int LastLineEndTime { get; set; }
+        public int? LastLineEndTime { get; set; }
         public uint Progress { get; set; }
         public IConversationLine[] Lines { get; set; }
         public uint Flags { get; set; }

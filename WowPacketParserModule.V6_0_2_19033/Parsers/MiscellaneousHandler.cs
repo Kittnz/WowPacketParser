@@ -833,6 +833,13 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
             packet.ReadBit("ConfirmSummon_NC");
         }
 
+        [Parser(Opcode.CMSG_SUMMON_RESPONSE)]
+        public static void HandleSummonResponse(Packet packet)
+        {
+            packet.ReadPackedGuid128("SummonerGUID");
+            packet.ReadBit("Accept");
+        }
+
         // new opcode on 6.x, related to combat log and mostly used in garrisons
         [Parser(Opcode.SMSG_DISPLAY_WORLD_TEXT)]
         public static void HandleDisplayWorldText(Packet packet)

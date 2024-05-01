@@ -17,5 +17,21 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
             packet.ReadInt32("UnkInt6");
             packet.ReadByte("UnkByte7");
         }
+
+        [Parser(Opcode.CMSG_LATENCY_REPORT)]
+        [Parser(Opcode.SMSG_LATENCY_REPORT_PING)]
+        public static void HandleLatencyReportPing(Packet packet)
+        {
+            packet.ReadInt32("Unk1");
+            uint count = packet.ReadUInt32("Count");
+            for (uint i = 0; i < count; ++i)
+            {
+                packet.ReadUInt32("Unk2", i);
+                packet.ReadUInt16("Unk3", i);
+                packet.ReadByte("Unk4", i);
+                packet.ReadUInt64("UnixTime", i);
+                packet.ReadUInt32("Unk6", i);
+            }
+        }
     }
 }

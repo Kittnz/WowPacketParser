@@ -10,6 +10,10 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("ID", true)]
         public uint? ID;
 
+        [DBFieldName("SniffBuild", true, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("VerifiedBuild", DbType = (TargetedDbType.TRINITY))]
+        public int? VerifiedBuild = ClientVersion.BuildInt;
+
         [DBFieldName("QuestID")]
         public uint? QuestID;
 
@@ -41,8 +45,5 @@ namespace WowPacketParser.Store.Objects
 
         [DBFieldName("Description", LocaleConstant.enUS)]
         public string Description;
-
-        [DBFieldName("VerifiedBuild")]
-        public int? VerifiedBuild = ClientVersion.BuildInt;
     }
 }

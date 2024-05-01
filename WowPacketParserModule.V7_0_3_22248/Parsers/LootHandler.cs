@@ -72,7 +72,20 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
             packet.ReadInt32<MapId>("MapID");
             packet.ReadUInt32("RollTime");
             packet.ReadByte("ValidRolls");
+            if (ClientVersion.AddedInVersion(10, 0, 2, 1, 15, 0, 3, 4, 1))
+            {
+                var lootRollIneligibilityReasonNum = 3;
+                if (ClientVersion.AddedInVersion(10, 0, 2, 1, 15, 1, 3, 4, 2))
+                    lootRollIneligibilityReasonNum = 4;
+                if (ClientVersion.AddedInVersion(10, 2, 5, 1, 15, 1, 3, 4 ,3))
+                    lootRollIneligibilityReasonNum = 5;
+
+                for (var i = 0; i < lootRollIneligibilityReasonNum; i++)
+                    packet.ReadUInt32("LootRollIneligibleReason");
+            }
             packet.ReadByteE<LootMethod>("Method");
+            if (ClientVersion.AddedInVersion(10, 1, 0, 1, 15, 1, 3, 4, 2))
+                packet.ReadInt32("DungeonEncounterID");
             ReadLootItem(null, packet, "LootItem");
         }
 

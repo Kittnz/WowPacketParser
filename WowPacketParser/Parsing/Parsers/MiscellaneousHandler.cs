@@ -366,7 +366,9 @@ namespace WowPacketParser.Parsing.Parsers
         public static void HandleClientPing(Packet packet)
         {
             packet.ReadInt32("Ping");
-            packet.ReadInt32("Ping Count");
+
+            if (ClientVersion.AddedInVersion(1, 9, 0))
+                packet.ReadInt32("Ping Count");
         }
 
         [Parser(Opcode.SMSG_PONG)]
@@ -1197,7 +1199,7 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_WEEKLY_RESET_CURRENCY)]
         [Parser(Opcode.CMSG_USED_FOLLOW)]
         [Parser(Opcode.SMSG_CLEAR_BOSS_EMOTES)]
-        [Parser(Opcode.SMSG_NEW_WORLD_ABORT)]
+        [Parser(Opcode.SMSG_ABORT_NEW_WORLD)]
         [Parser(Opcode.CMSG_ROLE_POLL_BEGIN)]
         [Parser(Opcode.CMSG_UPDATE_VAS_PURCHASE_STATES)]
         public static void HandleZeroLengthPackets(Packet packet)

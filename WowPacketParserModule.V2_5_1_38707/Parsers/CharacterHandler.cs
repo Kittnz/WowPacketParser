@@ -78,7 +78,7 @@ namespace WowPacketParserModule.V2_5_1_38835.Parsers
             packet.ReadByte("Index", idx);
 
             var azeritePowerCount = packet.ReadUInt32("AzeritePowersCount", idx);
-            var azeriteEssenceCount = packet.ReadUInt32();
+            var azeriteEssenceCount = packet.ReadUInt32("AzeriteEssenceCount", idx);
 
             for (int i = 0; i < azeritePowerCount; i++)
                 packet.ReadInt32("AzeritePowerId", idx, i);

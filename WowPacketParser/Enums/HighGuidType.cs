@@ -231,6 +231,7 @@ namespace WowPacketParser.Enums
         DynObject     = 0xF00, // Corpses
         GameObject    = 0xF01,
         Transport     = 0xF02,
+        Transport2    = 0x600, // seen in a vanilla sniff, go type 11
         Unit          = 0xF03,
         Pet           = 0xF04,
         Vehicle       = 0xF05

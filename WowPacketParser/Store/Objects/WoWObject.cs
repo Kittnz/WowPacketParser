@@ -14,6 +14,8 @@ namespace WowPacketParser.Store.Objects
         public ObjectCreateType FirstCreateType;
         public DateTime LastCreateTime;
         public ObjectCreateType LastCreateType;
+        public uint TotalObservedTime;
+        public uint LongestObservedTime;
 
         public MovementInfo Movement;
         public MovementInfo OriginalMovement;
@@ -58,7 +60,7 @@ namespace WowPacketParser.Store.Objects
 
         public bool WasOriginallyOnTransport()
         {
-            return OriginalMovement.TransportGuid != null && OriginalMovement.TransportGuid != WowGuid64.Empty;
+            return OriginalMovement.TransportGuid != null && !OriginalMovement.TransportGuid.IsEmpty();
         }
 
         public int GetDefaultSpawnTime(uint difficultyID)

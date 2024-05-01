@@ -25,7 +25,7 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
             var azeritePowerCount = packet.ReadUInt32("AzeritePowersCount", idx);
             uint azeriteEssenceCount = 0;
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V8_2_0_30898))
-                azeriteEssenceCount = packet.ReadUInt32();
+                azeriteEssenceCount = packet.ReadUInt32("AzeriteEssenceCount", idx);
 
             for (int j = 0; j < azeritePowerCount; j++)
                 packet.ReadInt32("AzeritePowerId", idx, j);

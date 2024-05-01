@@ -13,8 +13,8 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_INIT_WORLD_STATES)]
         public static void HandleInitWorldStates(Packet packet)
         {
-            uint map = packet.ReadUInt32<MapId>("Map ID");
-            int zoneId = CurrentZoneId = packet.ReadInt32<ZoneId>("Zone Id");
+            uint map = MovementHandler.CurrentMapId = packet.ReadUInt32<MapId>("Map ID");
+            int zoneId = ClientVersion.AddedInVersion(1, 12, 0) ? CurrentZoneId = packet.ReadInt32<ZoneId>("Zone Id") : 0;
             int areaId = ClientVersion.AddedInVersion(ClientVersionBuild.V2_1_0_6692) ? CurrentAreaId = packet.ReadInt32<AreaId>("Area Id") : 0;
 
             var numFields = packet.ReadInt16("Field Count");
@@ -24,17 +24,40 @@ namespace WowPacketParser.Parsing.Parsers
                 wsData.Map = map;
                 wsData.ZoneId = zoneId;
                 wsData.AreaId = areaId;
-                ReadWorldStateBlock(out wsData.Variable, out wsData.Value, packet, i);
+                ReadInitialWorldStateBlock(out wsData.Variable, out wsData.Value, packet, i);
                 wsData.UnixTimeMs = (ulong)packet.UnixTimeMs;
                 Storage.WorldStateInits.Add(wsData);
                 packet.AddSniffData(StoreNameType.WorldState, wsData.Variable, wsData.Value.ToString());
             }
         }
 
-        public static void ReadWorldStateBlock(out int variable, out int value, Packet packet, params object[] indexes)
+        public static void ReadInitialWorldStateBlock(out int variable, out int value, Packet packet, params object[] indexes)
         {
-            variable = packet.ReadInt32();
-            value = packet.ReadInt32();
+            if (ClientVersion.AddedInVersion(1, 11, 0))
+            {
+                variable = packet.ReadInt32();
+                value = packet.ReadInt32();
+            }
+            else
+            {
+                variable = packet.ReadInt16();
+                value = packet.ReadInt16();
+            }
+            packet.AddValue("Field", variable + " - Value: " + value, indexes);
+        }
+
+        public static void ReadUpdateWorldStateBlock(out int variable, out int value, Packet packet, params object[] indexes)
+        {
+            if (ClientVersion.AddedInVersion(1, 9, 0))
+            {
+                variable = packet.ReadInt32();
+                value = packet.ReadInt32();
+            }
+            else
+            {
+                variable = packet.ReadInt16();
+                value = packet.ReadInt16();
+            }
             packet.AddValue("Field", variable + " - Value: " + value, indexes);
         }
 
@@ -42,7 +65,7 @@ namespace WowPacketParser.Parsing.Parsers
         public static void HandleUpdateWorldState(Packet packet)
         {
             WorldStateUpdate wsData = new WorldStateUpdate();
-            ReadWorldStateBlock(out wsData.Variable, out wsData.Value, packet);
+            ReadUpdateWorldStateBlock(out wsData.Variable, out wsData.Value, packet);
             wsData.UnixTimeMs = (ulong)packet.UnixTimeMs;
             Storage.WorldStateUpdates.Add(wsData);
             packet.AddSniffData(StoreNameType.WorldState, wsData.Variable, wsData.Value.ToString());

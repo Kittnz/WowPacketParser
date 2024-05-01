@@ -257,7 +257,7 @@ namespace WowPacketParser.Enums.Version.V5_3_0_16981
             {Opcode.SMSG_QUERY_PLAYER_NAME_RESPONSE, 0x0BD0},
             {Opcode.SMSG_NEUTRAL_PLAYER_FACTION_SELECT_RESULT, 0x0480},
             {Opcode.SMSG_NEW_WORLD, 0x04D9},
-            {Opcode.SMSG_NEW_WORLD_ABORT, 0x0399},
+            {Opcode.SMSG_ABORT_NEW_WORLD, 0x0399},
             {Opcode.SMSG_QUERY_NPC_TEXT_RESPONSE, 0x02CC},
             {Opcode.SMSG_ON_MONSTER_MOVE, 0x114C},
             {Opcode.SMSG_QUERY_PAGE_TEXT_RESPONSE, 0x0384},

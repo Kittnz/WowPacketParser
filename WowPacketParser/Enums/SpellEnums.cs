@@ -1016,7 +1016,7 @@ namespace WowPacketParser.Enums
         SPELL_ATTR2_IS_ARCANE_CONCENTRATION          = 0x00800000, // 23 Only mage Arcane Concentration have this flag
         SPELL_ATTR2_UNK24                            = 0x01000000, // 24
         SPELL_ATTR2_UNK25                            = 0x02000000, // 25
-        SPELL_ATTR2_UNK26                            = 0x04000000, // 26 unaffected by school immunity
+        SPELL_ATTR2_NO_SCHOOL_IMMUNITIES             = 0x04000000, // 26 unaffected by school immunity
         SPELL_ATTR2_UNK27                            = 0x08000000, // 27
         SPELL_ATTR2_UNK28                            = 0x10000000, // 28
         SPELL_ATTR2_CANT_CRIT                        = 0x20000000, // 29 Spell can't crit
@@ -1055,7 +1055,7 @@ namespace WowPacketParser.Enums
         SPELL_ATTR3_UNK25                            = 0x02000000, // 25 no cause spell pushback ?
         SPELL_ATTR3_CAN_PROC_WITH_TRIGGERED          = 0x04000000, // 26 auras with this attribute can proc from triggered spell casts with SPELL_ATTR3_TRIGGERED_CAN_TRIGGER_PROC_2 (67736 + 52999)
         SPELL_ATTR3_DRAIN_SOUL                       = 0x08000000, // 27 only drain soul has this flag
-        SPELL_ATTR3_UNK28                            = 0x10000000, // 28
+        SPELL_ATTR3_IGNORE_CASTER_AND_TARGET_RESTRICTIONS = 0x10000000,   // 28 Skips all cast checks, moved from AttributesEx after 1.10 (100% correlation)
         SPELL_ATTR3_NO_DONE_BONUS                    = 0x20000000, // 29 Ignore caster spellpower and done damage mods?  client doesn't apply spellmods for those spells
         SPELL_ATTR3_DONT_DISPLAY_RANGE               = 0x40000000, // 30 client doesn't display range in tooltip for those spells
         SPELL_ATTR3_UNK31                            = 0x80000000  // 31

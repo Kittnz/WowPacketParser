@@ -360,7 +360,9 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_BATTLEFIELD_STATUS, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
         public static void HandleBattlefieldStatusServerVanilla(Packet packet)
         {
-            packet.ReadUInt32("Queue Slot");
+            if (ClientVersion.AddedInVersion(1, 9, 0))
+                packet.ReadUInt32("Queue Slot");
+
             var mapId = packet.ReadUInt32("Map Id");
             if (mapId == 0)
                 return;

@@ -19,6 +19,9 @@ namespace WowPacketParser.SQL.Builders
             if (Storage.QuestTemplates.IsEmpty())
                 return string.Empty;
 
+            if (Settings.TargetedDbType == TargetedDbType.WPP)
+                return SQLUtil.Insert(Storage.QuestTemplates, false, true);
+
             var templatesDb = SQLDatabase.Get(Storage.QuestTemplates);
 
             return SQLUtil.Compare(Storage.QuestTemplates, templatesDb, StoreNameType.Quest);
@@ -36,6 +39,9 @@ namespace WowPacketParser.SQL.Builders
 
             if (Storage.QuestObjectives.IsEmpty())
                 return string.Empty;
+
+            if (Settings.TargetedDbType == TargetedDbType.WPP)
+                return SQLUtil.Insert(Storage.QuestObjectives, false, true);
 
             var templatesDb = SQLDatabase.Get(Storage.QuestObjectives);
 

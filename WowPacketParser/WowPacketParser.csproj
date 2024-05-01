@@ -97,6 +97,7 @@
     <Reference Include="DotNetZip, Version=1.12.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.12.0\lib\net20\DotNetZip.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
@@ -211,6 +212,7 @@
     <Compile Include="Enums\ChatRestrictionType.cs" />
     <Compile Include="Enums\ChatTag.cs" />
     <Compile Include="Enums\Class.cs" />
+    <Compile Include="Enums\CliComplaintType.cs" />
     <Compile Include="Enums\CollectionType.cs" />
     <Compile Include="Enums\FileCompression.cs" />
     <Compile Include="Enums\ClassMask.cs" />
@@ -233,6 +235,7 @@
     <Compile Include="Enums\GarrisonResult.cs" />
     <Compile Include="Enums\GarrisonSite.cs" />
     <Compile Include="Enums\GarrisonSiteLevel.cs" />
+    <Compile Include="Enums\GarrisonTalentFlag.cs" />
     <Compile Include="Enums\GarrisonType.cs" />
     <Compile Include="Enums\GossipOptionType.cs" />
     <Compile Include="Enums\ItemFieldFlags.cs" />
@@ -292,6 +295,7 @@
     <Compile Include="Enums\InhabitType.cs" />
     <Compile Include="Enums\LocaleConstant.cs" />
     <Compile Include="Enums\MountResult.cs" />
+    <Compile Include="Enums\QuestStatusFlags.cs" />
     <Compile Include="Enums\RaidSummonFail.cs" />
     <Compile Include="Enums\ReportPvPAFKResult.cs" />
     <Compile Include="Enums\SceneType.cs" />
@@ -420,7 +424,10 @@
     <Compile Include="Enums\UpdateFlag.cs" />
     <Compile Include="Enums\UpdateType.cs" />
     <Compile Include="Enums\VehicleFlags.cs" />
+    <Compile Include="Enums\Version\V1_8_4_4878\Opcodes.cs" />
+    <Compile Include="Enums\Version\V1_8_4_4878\UpdateFields.cs" />
     <Compile Include="Enums\Version\V1_9_4_5086\UpdateFields.cs" />
+    <Compile Include="Enums\Version\V1_10_2_5302\UpdateFields.cs" />
     <Compile Include="Enums\Version\V1_12_1_5875\Opcodes.cs" />
     <Compile Include="Enums\Version\V1_12_1_5875\UpdateFields.cs" />
     <Compile Include="Enums\Version\V1_13_2_31446\Opcodes.cs" />
@@ -433,6 +440,7 @@
     <Compile Include="Enums\Version\V1_14_0_40237\UpdateFields.cs" />
     <Compile Include="Enums\Version\V1_14_1_40688\Opcodes.cs" />
     <Compile Include="Enums\Version\V1_14_1_40688\UpdateFields.cs" />
+    <Compile Include="Enums\Version\V1_15_1_53181\Opcodes.cs" />
     <Compile Include="Enums\Version\V2_4_3_8606\Opcodes.cs" />
     <Compile Include="Enums\Version\V2_4_3_8606\UpdateFields.cs" />
     <Compile Include="Enums\Version\V2_5_1_38835\UpdateFields.cs" />
@@ -443,7 +451,9 @@
     <Compile Include="Enums\Version\V2_5_3_41750\Opcodes.cs" />
     <Compile Include="Enums\Version\V2_5_4_42581\Opcodes.cs" />
     <Compile Include="Enums\Version\V3_4_0_43659\Opcodes.cs" />
+    <Compile Include="Enums\Version\V3_4_0_45166\Opcodes.cs" />
     <Compile Include="Enums\Version\V3_4_1_47014\Opcodes.cs" />
+    <Compile Include="Enums\Version\V3_4_3_51666\Opcodes.cs" />
     <Compile Include="Enums\Version\V3_0_9_9551\UpdateFields.cs" />
     <Compile Include="Enums\Version\V4_1_0_13914\UpdateFields.cs" />
     <Compile Include="Enums\Version\V5_0_5_16048\Opcodes.cs" />
@@ -521,6 +531,7 @@
     <Compile Include="Enums\Version\V9_1_0_39185\Opcodes.cs" />
     <Compile Include="Enums\Version\V9_1_5_40772\Opcodes.cs" />
     <Compile Include="Enums\Version\V9_2_0_42423\Opcodes.cs" />
+    <Compile Include="Enums\Version\V9_2_5_43903\Opcodes.cs" />
     <Compile Include="Enums\VictimStates.cs" />
     <Compile Include="Enums\VoidTransferError.cs" />
     <Compile Include="Enums\WardenCheckType.cs" />
@@ -697,6 +708,7 @@
     <Compile Include="Store\Objects\SceneObject.cs" />
     <Compile Include="Store\Objects\Sounds.cs" />
     <Compile Include="Store\Objects\SpellCastData.cs" />
+    <Compile Include="Store\Objects\UpdateFields\IGlyphInfo.cs" />
     <Compile Include="Store\Objects\UpdateFields\IVisualAnim.cs" />
     <Compile Include="Store\Objects\UpdateFields\IQuestSession.cs" />
     <Compile Include="Store\Objects\UpdateFields\IReplayedQuest.cs" />

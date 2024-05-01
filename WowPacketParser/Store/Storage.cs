@@ -64,6 +64,8 @@ namespace WowPacketParser.Store
 
         // Units, GameObjects, Players, Items
         public static readonly StoreDictionary<WowGuid, WoWObject> Objects = new StoreDictionary<WowGuid, WoWObject>(new List<SQLOutput>());
+        public static readonly List<WowGuid> CurrentlyVisibleObjects = new List<WowGuid>();
+
         public static void StoreNewObject(WowGuid guid, WoWObject obj, ObjectCreateType type, Packet packet)
         {
             obj.OriginalMovement = obj.Movement != null ? obj.Movement.CopyFromMe() : null;
@@ -289,6 +291,9 @@ namespace WowPacketParser.Store
                 guid.GetObjectType() != ObjectType.ActivePlayer)
                 return;
 
+            UpdateObjectObservationTime(guid, time);
+            CurrentlyVisibleObjects.Remove(guid);
+
             if (guid.GetObjectType() == ObjectType.Unit && !Settings.SqlTables.creature_destroy_time)
                 return;
 
@@ -353,6 +358,8 @@ namespace WowPacketParser.Store
                 guid.GetObjectType() != ObjectType.Player &&
                 guid.GetObjectType() != ObjectType.ActivePlayer)
                 return;
+
+            CurrentlyVisibleObjects.Add(guid);
 
             if (((guid.GetHighType() == HighGuidType.Creature && Settings.SqlTables.creature_visibility_distance) ||
                 (guid.GetHighType() == HighGuidType.GameObject && Settings.SqlTables.gameobject_visibility_distance)) &&
@@ -428,6 +435,8 @@ namespace WowPacketParser.Store
                 guid.GetObjectType() != ObjectType.Player &&
                 guid.GetObjectType() != ObjectType.ActivePlayer)
                 return;
+
+            CurrentlyVisibleObjects.Add(guid);
 
             if (guid.GetObjectType() == ObjectType.Unit && !Settings.SqlTables.creature_create2_time)
                 return;
@@ -2663,6 +2672,7 @@ namespace WowPacketParser.Store
         public static readonly DataBag<SpellCastData> SpellCastGo = new DataBag<SpellCastData>(Settings.SqlTables.spell_cast_go);
         public static readonly DataBag<SpellUniqueCaster> SpellUniqueCasters = new DataBag<SpellUniqueCaster>(Settings.SqlTables.spell_unique_caster);
         public static readonly DataBag<CreatureSpellImmunity> CreatureSpellImmunity = new DataBag<CreatureSpellImmunity>(Settings.SqlTables.creature_spell_immunity);
+        public static readonly DataBag<CreatureUniqueSpellHit> CreatureUniqueSpellHits = new DataBag<CreatureUniqueSpellHit>(Settings.SqlTables.creature_unique_spell_hit);
 
         public static readonly Dictionary<uint /*creature*/, Dictionary<uint /*spell*/, List<double /*delay*/>>> CreatureInitialSpellTimers = new Dictionary<uint, Dictionary<uint, List<double>>>();
         private static void StoreCreatureInitialSpellTimer(uint creatureId, uint spellId, uint delay)
@@ -2781,14 +2791,40 @@ namespace WowPacketParser.Store
                     if (guid.GetHighType() == HighGuidType.Creature &&
                         reason == (uint)SpellMissType.Immune1)
                     {
-                        CreatureSpellImmunity immunity = new CreatureSpellImmunity
+                        WoWObject obj;
+                        if (Storage.Objects.TryGetValue(guid, out obj) &&
+                           !((Unit)obj).UnitData.Flags.HasAnyFlag(UnitFlags.Immune))
                         {
-                            Entry = Storage.GetCurrentObjectEntry(guid),
-                            SpellID = castData.SpellID,
-                            SniffId = packet.SniffId,
-                        };
-                        Storage.CreatureSpellImmunity.Add(immunity);
+                            CreatureSpellImmunity immunity = new CreatureSpellImmunity
+                            {
+                                Entry = (uint)obj.ObjectData.EntryID,
+                                SpellID = castData.SpellID,
+                                SniffId = packet.SniffId,
+                            };
+                            Storage.CreatureSpellImmunity.Add(immunity);
+                        }
                     }
+                }
+            }
+
+            if (Settings.SqlTables.creature_unique_spell_hit && castData.HitTargetsList != null)
+            {
+                foreach (var target in castData.HitTargetsList)
+                {
+                    if (target == castData.CasterGuid)
+                        continue;
+                    if (target == castData.CasterUnitGuid)
+                        continue;
+                    if (target.GetHighType() != HighGuidType.Creature)
+                        continue;
+
+                    CreatureUniqueSpellHit hit = new CreatureUniqueSpellHit
+                    {
+                        Entry = Storage.GetCurrentObjectEntry(target),
+                        SpellID = castData.SpellID,
+                        SniffId = packet.SniffId,
+                    };
+                    Storage.CreatureUniqueSpellHits.Add(hit);
                 }
             }
             
@@ -2990,6 +3026,34 @@ namespace WowPacketParser.Store
             MailTemplates.Add(mailTemplate);
         }
 
+        private static void UpdateObjectObservationTime(WowGuid guid, DateTime endTime)
+        {
+            WoWObject obj;
+            if (Objects.TryGetValue(guid, out obj))
+            {
+                if (obj.LastCreateTime != null)
+                {
+                    if (obj.LastCreateTime < endTime)
+                    {
+                        uint observationTime = (uint)(endTime - obj.LastCreateTime).TotalMilliseconds;
+                        obj.TotalObservedTime += observationTime;
+                        if (obj.LongestObservedTime < observationTime)
+                            obj.LongestObservedTime = observationTime;
+                    }
+                    else
+                        Console.WriteLine($"Error: End of observation time is before the previous create time for {guid.ToString()}.");
+                }
+                else
+                    Console.WriteLine($"Error: Object no longer visible but create time is not set for {guid.ToString()}.");
+            }
+        }
+
+        public static void AddObservationTimeBeforeCleanup(DateTime lastPacketTime)
+        {
+            foreach (var guid in CurrentlyVisibleObjects)
+                UpdateObjectObservationTime(guid, lastPacketTime);
+        }
+
         // Called every time processing a sniff file finishes,
         // and a new one is about to be loaded and parsed.
         public static void ClearTemporaryData()
@@ -3003,6 +3067,7 @@ namespace WowPacketParser.Store
         // Called from SMSG_NEW_WORLD
         public static void ClearDataOnMapChange()
         {
+            CurrentlyVisibleObjects.Clear();
             HasCurrentPlayerMovedSinceEnterWorld = false;
             CurrentTaxiNode = 0;
             LastCreatureCastGo.Clear();

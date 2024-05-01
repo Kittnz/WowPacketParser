@@ -554,6 +554,7 @@ namespace WowPacketParserModule.V5_4_8_18291.Parsers
                 player.Movement.Orientation = pos.O;
             }
 
+            Storage.AddObservationTimeBeforeCleanup(packet.Time);
             Storage.ClearDataOnMapChange();
             packet.AddValue("Position", pos);
         }

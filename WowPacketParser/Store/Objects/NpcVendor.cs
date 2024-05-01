@@ -4,6 +4,7 @@ using WowPacketParser.Enums;
 
 namespace WowPacketParser.Store.Objects
 {
+    [DBTableName("npc_vendor")]
     public sealed class NpcVendor : ITableWithSniffIdList
     {
         [DBFieldName("entry", true)]

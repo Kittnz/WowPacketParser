@@ -15,6 +15,12 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
                 packet.ReadTime64("Time", idx);
             else
                 packet.ReadTime("Time", idx);
+
+            if (ClientVersion.AddedInVersion(9, 2, 5, 1, 14, 3, 2, 5, 4))
+            {
+                packet.ResetBitReader();
+                packet.ReadBit("Unknown925", idx);
+            }
         }
 
         public static void ReadLFGBlackList(Packet packet, params object[] idx)

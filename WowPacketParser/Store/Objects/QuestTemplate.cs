@@ -10,6 +10,10 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("ID", true)]
         public uint? ID;
 
+        [DBFieldName("SniffBuild", true, DbType = (TargetedDbType.WPP))]
+        [DBFieldName("VerifiedBuild", DbType = (TargetedDbType.TRINITY))]
+        public int? VerifiedBuild = ClientVersion.BuildInt;
+
         [DBFieldName("QuestType")]
         public QuestType? QuestType;
 
@@ -379,9 +383,6 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("SoundTurnIn", TargetedDbExpansion.Cataclysm, TargetedDbExpansion.WarlordsOfDraenor)]
         [DBFieldName("CompleteSoundKitID", TargetedDbExpansion.WarlordsOfDraenor)]
         public uint? SoundTurnIn;
-
-        [DBFieldName("VerifiedBuild")]
-        public int? VerifiedBuild = ClientVersion.BuildInt;
     }
 
     [DBTableName("quest_starter")]

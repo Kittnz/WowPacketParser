@@ -215,11 +215,13 @@ namespace WowPacketParser.Parsing.Parsers
             packet.ReadUInt32("Created");
             packet.ReadUInt32("Show in chat");
             packet.ReadByte("Slot");
-            packet.ReadInt32("Item Slot");
+            if (ClientVersion.AddedInVersion(1, 11, 0))
+                packet.ReadInt32("Item Slot");
             packet.ReadUInt32<ItemId>("Entry");
             packet.ReadInt32("Suffix Factor");
             packet.ReadInt32("Random Property ID");
-            packet.ReadUInt32("Count");
+            if (ClientVersion.AddedInVersion(1, 11, 0))
+                packet.ReadUInt32("Count");
 
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
                 packet.ReadUInt32("Count of Items in inventory");
@@ -231,7 +233,9 @@ namespace WowPacketParser.Parsing.Parsers
             packet.ReadGuid("Item GUID");
             packet.ReadUInt32("Slot");
             packet.ReadUInt32("Duration");
-            packet.ReadGuid("Player GUID");
+
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V1_11_0_5344))
+                packet.ReadGuid("Player GUID");
         }
 
         [Parser(Opcode.CMSG_BUY_BACK_ITEM)]
@@ -476,8 +480,18 @@ namespace WowPacketParser.Parsing.Parsers
                 packet.ReadByte("Count");
         }
 
-        [Parser(Opcode.SMSG_ENCHANTMENT_LOG)]
+        [Parser(Opcode.SMSG_ENCHANTMENT_LOG, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
         public static void HandleEnchantmentLog(Packet packet)
+        {
+            packet.ReadGuid("Target");
+            packet.ReadGuid("Caster");
+            packet.ReadInt32<ItemId>("Item Entry");
+            packet.ReadUInt32("Enchantment ID");
+            packet.ReadByte("ShowAffiliation");
+        }
+
+        [Parser(Opcode.SMSG_ENCHANTMENT_LOG, ClientVersionBuild.V2_0_1_6180)]
+        public static void HandleEnchantmentLogTbc(Packet packet)
         {
             packet.ReadPackedGuid("Target");
             packet.ReadPackedGuid("Caster");
@@ -606,7 +620,8 @@ namespace WowPacketParser.Parsing.Parsers
 
             item.AmmoType = packet.ReadInt32E<AmmoType>("Ammo Type");
 
-            item.RangedMod = packet.ReadSingle("Ranged Mod");
+            if (ClientVersion.AddedInVersion(1, 10, 0))
+                item.RangedMod = packet.ReadSingle("Ranged Mod");
 
             item.TriggeredSpellIds = new int?[5];
             item.TriggeredSpellTypes = new ItemSpellTriggerType?[5];
@@ -656,7 +671,8 @@ namespace WowPacketParser.Parsing.Parsers
             item.AreaID = packet.ReadUInt32<AreaId>("Area");
 
             // In this single (?) case, map 0 means no map
-            item.MapID = packet.ReadInt32<MapId>("Map");
+            if (ClientVersion.AddedInVersion(1, 12, 0))
+                item.MapID = packet.ReadInt32<MapId>("Map");
 
             item.BagFamily = packet.ReadInt32E<BagFamilyMask>("Bag Family");
 
@@ -1220,7 +1236,7 @@ namespace WowPacketParser.Parsing.Parsers
                     Storage.ObjectNames.Add(new ObjectName { ObjectType = StoreNameType.Item, ID = (int)itemId, Name = item.Name }, packet.TimeSpan);
                     break;
                 }
-                case DB2Hash.KeyChain:
+                case DB2Hash.Keychain:
                 {
                     packet.ReadUInt32("Key Chain Id");
                     packet.ReadBytes("Key", 32);

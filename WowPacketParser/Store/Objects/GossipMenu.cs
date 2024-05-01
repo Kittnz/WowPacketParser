@@ -15,6 +15,10 @@ namespace WowPacketParser.Store.Objects
         [DBFieldName("text_id", true, DbType = (TargetedDbType.WPP | TargetedDbType.VMANGOS | TargetedDbType.CMANGOS))]
         public uint? TextID;
 
+        [DBFieldName("BroadcastTextID", TargetedDbExpansion.Shadowlands, true, DbType = (TargetedDbType.TRINITY))]
+        [DBFieldName("broadcast_text_id", TargetedDbExpansion.Shadowlands, true, DbType = (TargetedDbType.WPP))]
+        public uint? BroadcastTextID;
+
         [DBFieldName("VerifiedBuild", DbType = (TargetedDbType.TRINITY))]
         [DBFieldName("sniff_build", DbType = (TargetedDbType.WPP))]
         public int SniffBuild = ClientVersion.BuildInt;

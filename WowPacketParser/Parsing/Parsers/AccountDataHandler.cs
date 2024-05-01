@@ -8,8 +8,14 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_ACCOUNT_DATA_TIMES, ClientVersionBuild.Zero, ClientVersionBuild.V3_0_2_9056)]
         public static void HandleAccountDataTimes(Packet packet)
         {
-            for (var i = 0; i < 32; i++)
-                packet.ReadInt32("Unk Int32", i);
+            int count;
+            if (ClientVersion.AddedInVersion(1, 9, 0))
+                count = 8;
+            else
+                count = 5;
+
+            for (var i = 0; i < count; i++)
+                packet.ReadBytes("MD5 Hash", 16, i);
         }
 
         [Parser(Opcode.SMSG_ACCOUNT_DATA_TIMES, ClientVersionBuild.V3_0_2_9056)]

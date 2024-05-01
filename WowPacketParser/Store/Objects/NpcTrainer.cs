@@ -4,6 +4,7 @@ using WowPacketParser.Misc;
 
 namespace WowPacketParser.Store.Objects
 {
+    [DBTableName("npc_trainer")]
     public sealed class NpcTrainer : IDataModel
     {
         [DBFieldName("entry", true, DbType = (TargetedDbType.WPP | TargetedDbType.VMANGOS | TargetedDbType.CMANGOS))]

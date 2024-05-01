@@ -10,6 +10,15 @@ namespace WowPacketParser.Enums
         NearObjects   = 5
     }
 
+    public enum UpdateTypeEarlyVanilla
+    {
+        Values = 0,
+        Movement = 1,
+        CreateObject1 = 2,
+        FarObjects = 3,
+        NearObjects = 4
+    }
+
     public enum UpdateTypeCataclysm
     {
         Values         = 0,

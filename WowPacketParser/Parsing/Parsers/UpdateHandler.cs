@@ -28,14 +28,20 @@ namespace WowPacketParser.Parsing.Parsers
             for (var i = 0; i < count; i++)
             {
                 var type = packet.ReadByte();
-                var typeString = ClientVersion.AddedInVersion(ClientType.Cataclysm) ? ((UpdateTypeCataclysm)type).ToString() : ((UpdateType)type).ToString();
+                string typeString;
+                if (ClientVersion.AddedInVersion(ClientType.Cataclysm))
+                    typeString = ((UpdateTypeCataclysm)type).ToString();
+                else if (ClientVersion.AddedInVersion(1, 9, 0))
+                    typeString = ((UpdateType)type).ToString();
+                else
+                    typeString = ((UpdateTypeEarlyVanilla)type).ToString();
 
                 packet.AddValue("UpdateType", typeString, i);
                 switch (typeString)
                 {
                     case "Values":
                     {
-                        var guid = packet.ReadPackedGuid("GUID", i);
+                        var guid = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("GUID", i) : packet.ReadGuid("GUID", i);
                         ReadValuesUpdateBlock(packet, guid, i);
                         break;
                     }
@@ -52,13 +58,13 @@ namespace WowPacketParser.Parsing.Parsers
                     }
                     case "CreateObject1":
                     {
-                        var guid = packet.ReadPackedGuid("GUID", i);
+                        var guid = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("GUID", i) : packet.ReadGuid("GUID", i);
                         ReadCreateObjectBlock(packet, guid, map, i, ObjectCreateType.Create1);
                         break;
                     }
                     case "CreateObject2": // Might != CreateObject1 on Cata
                     {
-                        var guid = packet.ReadPackedGuid("GUID", i);
+                        var guid = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("GUID", i) : packet.ReadGuid("GUID", i);
                         ReadCreateObjectBlock(packet, guid, map, i, ObjectCreateType.Create2);
                         break;
                     }
@@ -235,7 +241,7 @@ namespace WowPacketParser.Parsing.Parsers
             var objCount = packet.ReadInt32("Object Count", index);
             for (var j = 0; j < objCount; j++)
             {
-                WowGuid guid = packet.ReadPackedGuid("Object GUID", index, j);
+                WowGuid guid = ClientVersion.AddedInVersion(1, 9, 0) ? packet.ReadPackedGuid("Object GUID", index, j) : packet.ReadGuid("Object GUID", index, j);
                 Storage.StoreObjectDestroyTime(guid, packet.Time);
             }
         }
@@ -4239,6 +4245,140 @@ namespace WowPacketParser.Parsing.Parsers
             return moveInfo;
         }
 
+        private static MovementInfo ReadMovementUpdateBlock180(Packet packet, WowGuid guid, object index)
+        {
+            var moveInfo = MovementHandler.ReadMovementInfo(packet, guid, index);
+            var moveFlags = moveInfo.Flags;
+
+            var speeds = 6;
+            for (var i = 0; i < speeds; ++i)
+            {
+                var speedType = (SpeedType)i;
+                var speed = packet.ReadSingle(speedType + " Speed", index);
+
+                switch (speedType)
+                {
+                    case SpeedType.Walk:
+                    {
+                        moveInfo.WalkSpeed = speed;
+                        break;
+                    }
+                    case SpeedType.Run:
+                    {
+                        moveInfo.RunSpeed = speed;
+                        break;
+                    }
+                    case SpeedType.RunBack:
+                    {
+                        moveInfo.RunBackSpeed = speed;
+                        break;
+                    }
+                    case SpeedType.Swim:
+                    {
+                        moveInfo.SwimSpeed = speed;
+                        break;
+                    }
+                    case SpeedType.SwimBack:
+                    {
+                        moveInfo.SwimBackSpeed = speed;
+                        break;
+                    }
+                    case SpeedType.Turn:
+                    {
+                        moveInfo.TurnRate = speed;
+                        break;
+                    }
+                    case SpeedType.Fly:
+                    {
+                        moveInfo.FlightSpeed = speed;
+                        break;
+                    }
+                    case SpeedType.FlyBack:
+                    {
+                        moveInfo.FlightBackSpeed = speed;
+                        break;
+                    }
+                    case SpeedType.Pitch:
+                    {
+                        moveInfo.PitchRate = speed;
+                        break;
+                    }
+                }
+            }
+
+            if (moveFlags.HasAnyFlag(Enums.v3.MovementFlag.SplineEnabled) || moveInfo.HasSplineData)
+            {
+                ServerSideMovement monsterMove = new ServerSideMovement();
+
+                if (moveInfo.TransportGuid != null)
+                    monsterMove.TransportGuid = moveInfo.TransportGuid;
+                monsterMove.TransportSeat = moveInfo.TransportSeat;
+
+                float orientation = 100;
+
+                var splineFlags = packet.ReadInt32E<SplineFlagVanilla>("Spline Flags", index);
+                monsterMove.SplineFlags = (uint)splineFlags;
+
+                if (splineFlags.HasAnyFlag(SplineFlagVanilla.FinalTarget))
+                    packet.ReadGuid("Final Spline Target GUID", index);
+                else if (splineFlags.HasAnyFlag(SplineFlagVanilla.FinalOrientation))
+                    orientation = packet.ReadSingle("Final Spline Orientation", index);
+                else if (splineFlags.HasAnyFlag(SplineFlagVanilla.FinalPoint))
+                {
+                    var faceSpot = packet.ReadVector3("Final Spline Coords", index);
+                    orientation = Utilities.GetAngle(moveInfo.Position.X, moveInfo.Position.Y, faceSpot.X, faceSpot.Y);
+                }
+
+                monsterMove.Orientation = orientation;
+
+                packet.ReadInt32("Spline Time", index);
+                monsterMove.MoveTime = (uint)packet.ReadInt32("Spline Full Time", index);
+
+                if (ClientVersion.AddedInVersion(ClientVersionBuild.V1_8_0_4714))
+                    packet.ReadInt32("Spline ID", index);
+
+                var splineCount = packet.ReadInt32("Waypoints Count", index);
+                monsterMove.SplineCount = (uint)splineCount + 1;
+                monsterMove.SplinePoints = new List<Vector3>();
+
+                for (var i = 0; i < splineCount; i++)
+                {
+                    Vector3 vec = packet.ReadVector3("Spline Waypoint", index, i);
+                    monsterMove.SplinePoints.Add(vec);
+                }
+
+                Vector3 endPos = packet.ReadVector3("Spline Endpoint", index);
+                monsterMove.SplinePoints.Add(endPos);
+
+                if (guid == Storage.CurrentActivePlayer)
+                    Storage.CurrentMoveSplineExpireTime = packet.UnixTimeMs + (long)monsterMove.MoveTime;
+
+                if ((Settings.SaveTransports || moveInfo.TransportGuid == null || moveInfo.TransportGuid.IsEmpty()) &&
+                    Storage.Objects.ContainsKey(guid))
+                {
+                    Unit unit = Storage.Objects[guid].Item1 as Unit;
+                    unit.AddWaypoint(monsterMove, moveInfo.Position, packet.Time);
+                }
+            }
+
+            UpdateFlag flags = packet.ReadUInt32E<UpdateFlag>("Update Flags", index);
+
+            if (flags.HasAnyFlag(UpdateFlag.Self))
+                Storage.SetCurrentActivePlayer(guid, packet.Time);
+
+            packet.ReadUInt32("AttackCycle", index);
+            packet.ReadUInt32("TimerId", index);
+
+            WowGuid victimGuid = packet.ReadGuid("Target GUID", index);
+            if (!victimGuid.IsEmpty())
+                Storage.StoreUnitAttackToggle(guid, victimGuid, packet.Time, true);
+
+            if (flags.HasAnyFlag(UpdateFlag.Transport))
+                moveInfo.TransportPathTimer = packet.ReadUInt32("Transport Path Timer", index);
+
+            return moveInfo;
+        }
+
         private static MovementInfo ReadMovementUpdateBlock(Packet packet, WowGuid guid, object index)
         {
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V5_1_0_16309))
@@ -4255,6 +4395,9 @@ namespace WowPacketParser.Parsing.Parsers
 
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V4_3_0_15005))
                 return ReadMovementUpdateBlock430(packet, guid, index);
+
+            if (ClientVersion.RemovedInVersion(1, 9, 0))
+                return ReadMovementUpdateBlock180(packet, guid, index);
 
             var moveInfo = new MovementInfo();
 

@@ -152,7 +152,11 @@ namespace WowPacketParser.Parsing.Parsers
 
         private static void ReadSpellLogExecuteVanilla(Packet packet, object index = null)
         {
-            packet.ReadPackedGuid("Caster GUID", index);
+            if (ClientVersion.AddedInVersion(1, 9, 0))
+                packet.ReadPackedGuid("Caster GUID", index);
+            else
+                packet.ReadGuid("Caster GUID", index);
+
             packet.ReadInt32<SpellId>("Spell ID", index);
             var count = packet.ReadInt32("Count", index);
 
@@ -166,7 +170,7 @@ namespace WowPacketParser.Parsing.Parsers
                     {
                         case SpellEffect.PowerDrain:
                         {
-                            packet.ReadPackedGuid("Target GUID", index, i, j);
+                            packet.ReadGuid("Target GUID", index, i, j);
                             packet.ReadInt32("Power taken", index, i, j);
                             packet.ReadInt32("Power type", index, i, j);
                             packet.ReadSingle("Multiplier", index, i, j);
@@ -175,21 +179,21 @@ namespace WowPacketParser.Parsing.Parsers
                         case SpellEffect.Heal:
                         case SpellEffect.HealMaxHealth:
                         {
-                            packet.ReadPackedGuid("Target GUID", index, i, j);
+                            packet.ReadGuid("Target GUID", index, i, j);
                             packet.ReadUInt32("Amount", index, i, j);
                             packet.ReadBool("Critical", index, i, j);
                             break;
                         }
                         case SpellEffect.Energize:
                         {
-                            packet.ReadPackedGuid("Target GUID", index, i, j);
+                            packet.ReadGuid("Target GUID", index, i, j);
                             packet.ReadInt32("Amount", index, i, j);
                             packet.ReadInt32("Power type", index, i, j);
                             break;
                         }
                         case SpellEffect.AddExtraAttacks:
                         {
-                            packet.ReadPackedGuid("Target GUID", index, i, j);
+                            packet.ReadGuid("Target GUID", index, i, j);
                             packet.ReadInt32("Amount", index, i, j);
                             break;
                         }
@@ -202,13 +206,13 @@ namespace WowPacketParser.Parsing.Parsers
                         }
                         case SpellEffect.InterruptCast:
                         {
-                            packet.ReadPackedGuid("Target GUID", index, i, j);
+                            packet.ReadGuid("Target GUID", index, i, j);
                             packet.ReadInt32<SpellId>("Interrupted Spell ID", index, i, j);
                             break;
                         }
                         case SpellEffect.DurabilityDamage:
                         {
-                            packet.ReadPackedGuid("Target GUID", index, i, j);
+                            packet.ReadGuid("Target GUID", index, i, j);
                             packet.ReadInt32<ItemId>("Item", index, i, j);
                             packet.ReadInt32("Slot", index, i, j);
                             break;
@@ -365,8 +369,16 @@ namespace WowPacketParser.Parsing.Parsers
 
         private static void ReadPeriodicAuraLog(Packet packet, object index = null)
         {
-            packet.ReadPackedGuid("Target GUID", index);
-            packet.ReadPackedGuid("Caster GUID", index);
+            if (ClientVersion.AddedInVersion(1, 9, 0))
+            {
+                packet.ReadPackedGuid("Target GUID", index);
+                packet.ReadPackedGuid("Caster GUID", index);
+            }
+            else
+            {
+                packet.ReadGuid("Target GUID", index);
+                packet.ReadGuid("Caster GUID", index);
+            }
             packet.ReadInt32<SpellId>("Spell ID", index);
             var count = packet.ReadInt32("Count", index);
 
@@ -429,8 +441,16 @@ namespace WowPacketParser.Parsing.Parsers
 
         private static void ReadSpellNonMeleeDamageLog(Packet packet, object index = null)
         {
-            packet.ReadPackedGuid("Target GUID", index);
-            packet.ReadPackedGuid("Caster GUID", index);
+            if (ClientVersion.AddedInVersion(1, 9, 0))
+            {
+                packet.ReadPackedGuid("Target GUID", index);
+                packet.ReadPackedGuid("Caster GUID", index);
+            }
+            else
+            {
+                packet.ReadGuid("Target GUID", index);
+                packet.ReadGuid("Caster GUID", index);
+            }
             packet.ReadUInt32<SpellId>("Spell ID", index);
             packet.ReadUInt32("Damage", index);
 

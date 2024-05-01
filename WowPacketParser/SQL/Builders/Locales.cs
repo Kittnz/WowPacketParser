@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using WowPacketParser.Enums;
 using WowPacketParser.Misc;
 using WowPacketParser.Store;
@@ -250,10 +251,15 @@ namespace WowPacketParser.SQL.Builders
 
             if (Settings.TargetedDbType == TargetedDbType.VMANGOS)
             {
+                HashSet<string> alreadyExported = new HashSet<string>();
                 string result = "SET NAMES 'utf8';" + Environment.NewLine;
                 foreach (var locale in Storage.LocalesPointsOfInterest)
                 {
+                    if (alreadyExported.Contains(locale.Item1.ID))
+                        continue;
+
                     result += "UPDATE `locales_points_of_interest` SET `icon_name_loc" + ClientLocale.GetLocaleIndexFromLocaleName(locale.Item1.Locale) + "`='" + SQLUtil.EscapeString(locale.Item1.Name) + "' WHERE `entry`=" + locale.Item1.ID + ";" + Environment.NewLine;
+                    alreadyExported.Add(locale.Item1.ID);
                 }
                 return result;
             }

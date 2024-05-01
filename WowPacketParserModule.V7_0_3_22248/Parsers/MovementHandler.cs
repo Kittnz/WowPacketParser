@@ -744,6 +744,7 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
                 player.Movement.Orientation = pos.O;
             }
 
+            Storage.AddObservationTimeBeforeCleanup(packet.Time);
             Storage.ClearDataOnMapChange();
             packet.AddSniffData(StoreNameType.Map, (int)WowPacketParser.Parsing.Parsers.MovementHandler.CurrentMapId, "NEW_WORLD");
         }

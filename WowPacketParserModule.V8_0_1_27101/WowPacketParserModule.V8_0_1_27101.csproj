@@ -326,6 +326,7 @@
     <Compile Include="Hotfix\WorldMapOverlayEntry.cs" />
     <Compile Include="Hotfix\WorldSafeLocsEntry.cs" />
     <Compile Include="Hotfix\WorldStateExpressionEntry.cs" />
+    <Compile Include="Parsers\AddonHandler.cs" />
     <Compile Include="Parsers\BattlePetHandler.cs" />
     <Compile Include="Parsers\IslandHandler.cs" />
     <Compile Include="Parsers\AccountDataHandler.cs" />

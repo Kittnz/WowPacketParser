@@ -32,6 +32,7 @@ namespace WowPacketParser.Misc
             { HighGuidTypeLegacy.Item, HighGuidType.Item },
             { HighGuidTypeLegacy.DynObject, HighGuidType.DynamicObject },
             { HighGuidTypeLegacy.GameObject, HighGuidType.GameObject },
+            { HighGuidTypeLegacy.Transport2, HighGuidType.Transport },
             { HighGuidTypeLegacy.Transport, HighGuidType.Transport },
             { HighGuidTypeLegacy.Unit, HighGuidType.Creature },
             { HighGuidTypeLegacy.Pet, HighGuidType.Pet },

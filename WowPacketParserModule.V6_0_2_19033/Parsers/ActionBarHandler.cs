@@ -14,7 +14,7 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
         [Parser(Opcode.SMSG_UPDATE_ACTION_BUTTONS)]
         public static void HandleActionButtons(Packet packet)
         {
-            const int buttonCount = 132;
+            var buttonCount = ClientVersion.AddedInVersion(10, 0, 0, 1, 15, 0, 3, 4, 1) ? 180 : 132;
 
             for (int i = 0; i < buttonCount; ++i)
             {

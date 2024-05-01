@@ -973,7 +973,7 @@ namespace WowPacketParser.Enums.Version.V4_3_4_15595
             {Opcode.SMSG_QUERY_PLAYER_NAME_RESPONSE, 0x6E04},
             {Opcode.SMSG_NEW_TAXI_PATH, 0x4B35},
             {Opcode.SMSG_NEW_WORLD, 0x79B1},
-            {Opcode.SMSG_NEW_WORLD_ABORT, 0x14B7},
+            {Opcode.SMSG_ABORT_NEW_WORLD, 0x14B7},
             {Opcode.SMSG_PRINT_NOTIFICATION, 0x14A0},
             {Opcode.SMSG_NOTIFICATION_2, 0x0724},
             {Opcode.SMSG_NOTIFY_DANCE, 0x4904},

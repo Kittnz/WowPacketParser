@@ -66,6 +66,7 @@ namespace WowPacketParserModule.V9_0_1_36216.Parsers
             packet.ReadBit("IsBoostSpell", idx);
         }
 
+        [Parser(Opcode.CMSG_REQUEST_COVENANT_CALLINGS)]
         [Parser(Opcode.SMSG_CLEAR_TREASURE_PICKER_CACHE)]
         public static void HandleEmpty(Packet packet)
         {
@@ -388,11 +389,11 @@ namespace WowPacketParserModule.V9_0_1_36216.Parsers
             var emotesCount = packet.ReadUInt32("EmotesCount");
 
             // QuestDescEmote
-            questOfferReward.Emote = new uint?[] { 0, 0, 0, 0 };
+            questOfferReward.Emote = new int?[] { 0, 0, 0, 0 };
             questOfferReward.EmoteDelay = new uint?[] { 0, 0, 0, 0 };
             for (var i = 0; i < emotesCount; i++)
             {
-                questOfferReward.Emote[i] = (uint)packet.ReadInt32("Type");
+                questOfferReward.Emote[i] = (int)packet.ReadInt32("Type");
                 questOfferReward.EmoteDelay[i] = packet.ReadUInt32("Delay");
             }
 

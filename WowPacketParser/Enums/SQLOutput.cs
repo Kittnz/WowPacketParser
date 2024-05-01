@@ -135,6 +135,7 @@
         creature_unique_equipment,
         creature_unique_faction,
         creature_unique_gossip,
+        creature_unique_spell_hit,
         creature_unique_text,
         creature_visibility_distance,
         gameobject_addon,
