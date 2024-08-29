@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections;
 using WowPacketParser.Enums.Version;
 using WowPacketParser.SQL;
+using WowPacketParser.Store.Objects.UpdateFields;
 
 namespace WowPacketParser.Store
 {
@@ -133,6 +134,15 @@ namespace WowPacketParser.Store
                     }
                 }
             }
+            /*else if (obj.Type == ObjectType.Item)
+            {
+                if (guid.GetHighType() == HighGuidType.Item && Settings.SqlTables.character_inventory)
+                {
+                    UpdateFields item = obj.UpdateFields;
+
+                    Console.WriteLine(obj.UpdateFields);
+                }
+            }*/
         }
         public static string GetObjectDbGuid(WowGuid guid)
         {

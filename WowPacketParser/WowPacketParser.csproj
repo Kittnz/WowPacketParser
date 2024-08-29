@@ -91,6 +91,9 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="DB2FileReaderLib">
       <HintPath>..\packages\DB2FileReaderLib.1.0.0.0\lib\DB2FileReaderLib.dll</HintPath>
     </Reference>
@@ -667,6 +670,7 @@
     <Compile Include="SQL\SQLFile.cs" />
     <Compile Include="SQL\SQLUtil.cs" />
     <Compile Include="SQL\SSHTunnel.cs" />
+    <Compile Include="SRP6\SRP6.cs" />
     <Compile Include="Store\Objects\AreaTriggerCreateProperties.cs" />
     <Compile Include="Store\Objects\AreaTriggerCreatePropertiesOrbit.cs" />
     <Compile Include="Store\Objects\AreaTriggerCreatePropertiesPolygonVertex.cs" />

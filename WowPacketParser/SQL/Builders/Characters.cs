@@ -11,6 +11,13 @@ using WowPacketParser.Store.Objects.UpdateFields;
 using System.Security.Cryptography;
 using System.Numerics;
 using System.Globalization;
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Agreement.Srp;
+using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Utilities.Encoders;
+using static Tamir.SharpSsh.jsch.ChannelSftp;
 
 namespace WowPacketParser.SQL.Builders
 {
@@ -2551,7 +2558,7 @@ namespace WowPacketParser.SQL.Builders
             uint itemGuidCounter = 0;
             var characterRows = new RowList<CharacterTemplate>();
             var characterInventoryRows = new RowList<CharacterInventory>();
-            var characterItemInstaceRows = new RowList<CharacterItemInstance>();
+            var characterItemInstanceRows = new RowList<CharacterItemInstance>();
             var characterReputationRows = new RowList<CharacterReputation>();
             var characterSkillRows = new RowList<CharacterSkill>();
             var characterSpellRows = new RowList<CharacterSpell>();
@@ -2578,6 +2585,7 @@ namespace WowPacketParser.SQL.Builders
             var playerServerMovementSplineRows = new RowList<ServerSideMovementSpline>();
             var playerMinimapPingRows = new RowList<PlayerMinimapPing>();
             Dictionary<WowGuid, uint> accountIdDictionary = new Dictionary<WowGuid, uint>();
+
             foreach (var objPair in Storage.Objects)
             {
                 if (objPair.Key.GetObjectType() != ObjectType.Player)
@@ -2586,6 +2594,9 @@ namespace WowPacketParser.SQL.Builders
                 Player player = objPair.Value.Item1 as Player;
                 if (player == null)
                     continue;
+
+                //Entry = (uint)Storage.Objects[guid].Item1.ObjectData.EntryID,
+//                player.ObjectData.EntryID;
 
                 if (!player.IsActivePlayer && Settings.SkipOtherPlayers)
                     continue;
@@ -2644,6 +2655,11 @@ namespace WowPacketParser.SQL.Builders
                 row.Data.Health = (uint)player.UnitDataOriginal.MaxHealth;
                 row.Data.Power1 = (uint)player.UnitDataOriginal.MaxMana;
 
+                /*foreach (WowGuid128 guid in player.ActivePlayerData.InvSlots)
+                {
+                    Console.WriteLine("found it");
+                }*/
+
                 Store.Objects.UpdateFields.IVisibleItem[] visibleItems = player.PlayerDataOriginal.VisibleItems;
 
                 for (int i = 0; i < 19; i++)
@@ -2670,7 +2686,7 @@ namespace WowPacketParser.SQL.Builders
                     itemInstanceRow.Data.OwnerGuid = row.Data.Guid;
 
                     if (itemId != 0)
-                        characterItemInstaceRows.Add(itemInstanceRow);
+                        characterItemInstanceRows.Add(itemInstanceRow);
 
                     itemGuidCounter++;
 
@@ -3092,7 +3108,9 @@ namespace WowPacketParser.SQL.Builders
                     {
                         if (text.Item1.SenderGUID == objPair.Key)
                         {
-                            text.Item1.Guid = "@PGUID+" + player.DbGuid;
+                            //text.Item1.Guid = "@PGUID+" + player.DbGuid;
+                            //string GUID = objPair.Key.Low.ToString();
+                            text.Item1.Guid = row.Data.Guid;
                             text.Item1.SenderName = row.Data.Name;
                         }
                     }
@@ -3269,7 +3287,6 @@ namespace WowPacketParser.SQL.Builders
 
                 if (Settings.SqlTables.character_spell)
                 {
-                    int classid = player.UnitDataOriginal.ClassId;
                     string GUID = objPair.Key.Low.ToString();
                     result.Append("REPLACE INTO `character_spell` (`guid`, `spell`, `active`, `disabled`) VALUES ( " + GUID + ", 20219, 1, 0);\n"); // 20219 Gnomish Engineer
                     result.Append("REPLACE INTO `character_spell` (`guid`, `spell`, `active`, `disabled`) VALUES ( " + GUID + ", 20222, 1, 0);\n"); // 20222 Goblin Engineer
@@ -3433,7 +3450,7 @@ namespace WowPacketParser.SQL.Builders
             if (Settings.SqlTables.character_inventory && characterInventoryRows.Count != 0)
             {
                 string lastOwnerGuid = "";
-                foreach (var characterItemInstace in characterItemInstaceRows)
+                foreach (var characterItemInstace in characterItemInstanceRows)
                 {
                     if (characterItemInstace.Data.OwnerGuid == lastOwnerGuid)
                         continue;
@@ -3446,7 +3463,7 @@ namespace WowPacketParser.SQL.Builders
                 var inventorySql = new SQLInsert<CharacterInventory>(characterInventoryRows, false, false);
                 result.Append(inventorySql.Build());
 
-                var itemInstanceSql = new SQLInsert<CharacterItemInstance>(characterItemInstaceRows, false, false);
+                var itemInstanceSql = new SQLInsert<CharacterItemInstance>(characterItemInstanceRows, false, false);
                 result.Append(itemInstanceSql.Build());
                 result.AppendLine();
             }
@@ -3955,6 +3972,5 @@ namespace WowPacketParser.SQL.Builders
             string str4 = str3.TrimEnd();
             return str4;
         }
-
     }
 }
