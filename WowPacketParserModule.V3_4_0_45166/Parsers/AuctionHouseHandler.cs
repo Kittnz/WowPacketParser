@@ -48,6 +48,17 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                     V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
                 }
             }
+            else if (packet.CanRead())
+            {
+                // 3.4.0 sniffs: addon info right after the bit byte; the name/version strings are NUL terminated (the shared reader leaves the two terminators)
+                var hasAddonInfo = packet.ReadBit("HasAddonInfo");
+                packet.ResetBitReader();
+                if (hasAddonInfo)
+                {
+                    V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
+                    packet.ReadUInt16("AddonStringTerminators");
+                }
+            }
         }
 
         [Parser(Opcode.CMSG_AUCTION_LIST_ITEMS)]
@@ -123,6 +134,8 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
 
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
                 packet.ReadUInt16("Unknown");
+            else if (hasAddonInfo)
+                packet.ReadUInt16("AddonStringTerminators"); // 3.4.0 sniffs: NUL terminators of the addon name/version strings
 
             for (var i = 0; i < count; ++i)
             {

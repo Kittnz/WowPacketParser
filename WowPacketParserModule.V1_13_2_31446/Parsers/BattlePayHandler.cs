@@ -9,7 +9,7 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
         // 2.5.2+ and 3.4.1 (sniff-verified on 3.4.1.47612) use the extended battle pay layouts
         private static bool IsExtendedLayout()
         {
-            return ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) || (ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build) && ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47014));
+            return ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) || ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build);
         }
 
         private static void ReadBattlepayDisplayInfo(Packet packet, params object[] idx)

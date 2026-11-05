@@ -1361,9 +1361,15 @@ namespace WowPacketParser.Misc
             return AddedInVersion(build1) && RemovedInVersion(build2);
         }
 
+        // 3.4.0.47168 is a 3.4.0 hotfix build released after the 3.4.1 PTR (47014) was branched, so it must not see 3.4.1+ layout gates.
+        private static bool IsBefore341Branch(ClientVersionBuild build)
+        {
+            return Build == ClientVersionBuild.V3_4_0_47168 && build >= ClientVersionBuild.V3_4_1_47014 && IsWrathOfTheLichKingClassicClientVersionBuild(build);
+        }
+
         public static bool AddedInVersion(ClientVersionBuild build)
         {
-            return Build >= build;
+            return Build >= build && !IsBefore341Branch(build);
         }
 
         public static bool AddedInVersion(ClientType expansion)
@@ -1373,7 +1379,7 @@ namespace WowPacketParser.Misc
 
         public static bool RemovedInVersion(ClientVersionBuild build)
         {
-            return Build < build;
+            return Build < build || IsBefore341Branch(build);
         }
 
         public static bool RemovedInVersion(ClientType expansion)
