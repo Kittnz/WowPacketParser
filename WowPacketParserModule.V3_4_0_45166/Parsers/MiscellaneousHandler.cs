@@ -594,7 +594,16 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                 packet.ReadBit("HasFanfare", i);
         }
 
-        [Parser(Opcode.SMSG_ACCOUNT_TRANSMOG_UPDATE, ClientVersionBuild.V3_4_0_44463, ClientVersionBuild.V3_4_0_45166)]
+        [Parser(Opcode.SMSG_WAIT_QUEUE_UPDATE, ClientVersionBuild.V3_4_0_44463)]
+        public static void HandleWaitQueueUpdate(Packet packet)
+        {
+            packet.ReadInt32("WaitCount");
+            if (packet.Length - packet.Position > 1) // 3.4.0 sniffs: 9 byte packets (count, wait time, FCM bit)
+                packet.ReadInt32("WaitTime");
+            packet.ReadBit("HasFCM");
+        }
+
+        [Parser(Opcode.SMSG_ACCOUNT_TRANSMOG_UPDATE, ClientVersionBuild.V3_4_0_44463, ClientVersionBuild.V3_4_1_47014)]
         public static void HandleAccountTransmogUpdate(Packet packet)
         {
             packet.ReadBit("IsFullUpdate");

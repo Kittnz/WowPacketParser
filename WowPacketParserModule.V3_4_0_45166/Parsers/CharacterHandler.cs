@@ -136,7 +136,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         [Parser(Opcode.SMSG_ENUM_CHARACTERS_RESULT, ClientVersionBuild.V3_4_0_44463, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleEnumCharactersResultEarly(Packet packet)
         {
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_0_45166))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_0_45327))
             {
                 V9_0_1_36216.Parsers.CharacterHandler.HandleEnumCharactersResult(packet);
                 return;
@@ -311,6 +311,46 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                 packet.ReadInt32("ChrSpecializationID", "TraitInspectData");
                 packet.ResetBitReader();
                 ReadTraitConfig(packet, "TraitInspectData", "Traits");
+            }
+        }
+
+        // 3.4.0 sniffs (46158): PVP bracket entries carry two more ints before the Disqualified bit (50 bytes per entry)
+        [Parser(Opcode.SMSG_INSPECT_PVP, ClientVersionBuild.V3_4_0_44463)]
+        public static void HandleInspectPVP(Packet packet)
+        {
+            packet.ReadPackedGuid128("ClientGUID");
+            var bracketCount = packet.ReadBits("BracketDataCount", 3);
+            var arenaTeamsCount = packet.ReadBits("ArenaTeamCount", 2);
+            packet.ResetBitReader();
+
+            for (var i = 0; i < bracketCount; i++)
+            {
+                packet.ReadByte("Bracket", i, "PVPBracketData");
+                packet.ReadInt32("Rating", i, "PVPBracketData");
+                packet.ReadInt32("Rank", i, "PVPBracketData");
+                packet.ReadInt32("WeeklyPlayed", i, "PVPBracketData");
+                packet.ReadInt32("WeeklyWon", i, "PVPBracketData");
+                packet.ReadInt32("SeasonPlayed", i, "PVPBracketData");
+                packet.ReadInt32("SeasonWon", i, "PVPBracketData");
+                packet.ReadInt32("WeeklyBestRating", i, "PVPBracketData");
+                packet.ReadInt32("SeasonBestRating", i, "PVPBracketData");
+                packet.ReadInt32("PvpTierID", i, "PVPBracketData");
+                packet.ReadInt32("WeeklyBestWinPvpTierID", i, "PVPBracketData");
+                packet.ReadInt32("Unk1", i, "PVPBracketData");
+                packet.ReadInt32("Unk2", i, "PVPBracketData");
+                packet.ResetBitReader();
+                packet.ReadBit("Disqualified", i, "PVPBracketData");
+                packet.ResetBitReader();
+            }
+
+            for (var i = 0; i < arenaTeamsCount; i++)
+            {
+                packet.ReadPackedGuid128("TeamGuid", i, "ArenaTeamData");
+                packet.ReadInt32("TeamRating", i, "ArenaTeamData");
+                packet.ReadInt32("TeamGamesPlayed", i, "ArenaTeamData");
+                packet.ReadInt32("TeamGamesWon", i, "ArenaTeamData");
+                packet.ReadInt32("PersonalGamesPlayed", i, "ArenaTeamData");
+                packet.ReadInt32("PersonalRating", i, "ArenaTeamData");
             }
         }
     }
