@@ -265,7 +265,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.AddSniffData(StoreNameType.Gossip, menuId, guid.GetEntry().ToString(CultureInfo.InvariantCulture));
         }
 
-        [Parser(Opcode.SMSG_VENDOR_INVENTORY, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_VENDOR_INVENTORY, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleVendorInventory(Packet packet)
         {
             uint entry = packet.ReadPackedGuid128("VendorGUID").GetEntry();

@@ -12,7 +12,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
     {
         public const int FactionCount = 443;
 
-        [Parser(Opcode.SMSG_INITIALIZE_FACTIONS, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_INITIALIZE_FACTIONS, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleInitializeFactions(Packet packet)
         {
             for (var i = 0; i < FactionCount; i++)
@@ -29,7 +29,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         public static void HandleSetFactionStanding(Packet packet)
         {
             float rafBonus = 0;
-            if (ClientVersion.RemovedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (ClientVersion.RemovedInVersion(ClientVersionBuild.V3_4_1_47612))
                 rafBonus =packet.ReadSingle("ReferAFriendBonus");
 
             float achievementBonus = packet.ReadSingle("BonusFromAchievementSystem");

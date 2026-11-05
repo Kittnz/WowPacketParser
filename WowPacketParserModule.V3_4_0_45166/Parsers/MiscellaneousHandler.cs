@@ -1,4 +1,4 @@
-using WowPacketParser.Enums;
+﻿using WowPacketParser.Enums;
 using WowPacketParser.Misc;
 using WowPacketParser.Parsing;
 using CoreParsers = WowPacketParser.Parsing.Parsers;
@@ -13,7 +13,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.ReadInt32("Value", indexes);
         }
 
-        [Parser(Opcode.SMSG_FEATURE_SYSTEM_STATUS_GLUE_SCREEN, ClientVersionBuild.V3_4_0_44832, ClientVersionBuild.V3_4_3_51505)]
+        [Parser(Opcode.SMSG_FEATURE_SYSTEM_STATUS_GLUE_SCREEN, ClientVersionBuild.V3_4_0_44832, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleFeatureSystemStatusGlueScreen(Packet packet)
         {
             packet.ReadBit("BpayStoreEnabled");
@@ -64,7 +64,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.ReadInt16("MaxPlayerNameQueriesPerPacket");
             packet.ReadInt16("PlayerNameQueryTelemetryInterval");
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
                 packet.ReadUInt32("PlayerNameQueryInterval");
 
             if (launchETA)
@@ -77,7 +77,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                 ReadGameRuleValuePair(packet, "GameRuleValues");
         }
 
-        [Parser(Opcode.SMSG_FEATURE_SYSTEM_STATUS_GLUE_SCREEN, ClientVersionBuild.V3_4_3_51505)]
+        [Parser(Opcode.SMSG_FEATURE_SYSTEM_STATUS_GLUE_SCREEN, ClientVersionBuild.V3_4_1_47612)] // bit layout sniff-verified on 3.4.1.47612-48xxx; debug time events fields only from 3.4.3
         public static void HandleFeatureSystemStatusGlueScreen343(Packet packet)
         {
             packet.ReadBit("BpayStoreEnabled");
@@ -138,8 +138,12 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.ReadInt16("PlayerNameQueryTelemetryInterval");
 
             packet.ReadInt32("PlayerNameQueryInterval");
-            var debugTimeEventsCount = packet.ReadInt32("DebugTimeEventsSize");
-            packet.ReadInt32("Unused1007");
+            var debugTimeEventsCount = 0;
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_3_51505))
+            {
+                debugTimeEventsCount = packet.ReadInt32("DebugTimeEventsSize");
+                packet.ReadInt32("Unused1007");
+            }
 
             if (launchETA)
                 packet.ReadPackedTime("LaunchETA");
@@ -194,7 +198,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.ReadInt16("MaxPlayerNameQueriesPerPacket");
             packet.ReadInt16("PlayerNameQueryTelemetryInterval");
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
                 packet.ReadUInt32("PlayerNameQueryInterval");
 
             for (var i = 0; i < gameRuleValuesCount; ++i)
@@ -242,7 +246,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.ReadBit("ChatDisabledByPlayer");
             packet.ReadBit("LFGListCustomRequiresAuthenticator");
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
                 packet.ReadBit("AddonsDisabled");
             packet.ReadBit("WarGamesEnabled");
             var unknown = packet.ReadBit("Unk340");
@@ -455,7 +459,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.ReadInt32("Asset", args);
         }
 
-        [Parser(Opcode.SMSG_SET_CURRENCY, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_SET_CURRENCY, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleSetCurrency(Packet packet)
         {
             packet.ReadInt32("Type");

@@ -37,7 +37,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             packet.ReadInt32("Unused3", idx);
             packet.ReadInt32("Unused4", idx);
             packet.ReadInt32("Unused5", idx);
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
             {
                 packet.ReadInt32("Unused6", idx);
                 packet.ReadInt32("Unused7", idx);
@@ -98,7 +98,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         [Parser(Opcode.SMSG_RATED_PVP_INFO, ClientVersionBuild.V3_4_0_44832, ClientVersionBuild.V3_4_3_51505)]
         public static void HandleRatedBattlefieldInfo(Packet packet)
         {
-            int count = ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720) ? 7 : 6;
+            int count = ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612) ? 7 : 6;
             for (int i = 0; i < count; i++)
                 ReadRatedPvpBracketInfo(packet, i);
         }

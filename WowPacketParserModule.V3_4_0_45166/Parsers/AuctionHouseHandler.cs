@@ -59,7 +59,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
 
             packet.ResetBitReader();
 
-            if (hasAddonInfo && ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (hasAddonInfo && ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
             {
                 packet.ReadByte("Unknown");
                 V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
@@ -102,7 +102,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             if (hasAddonInfo)
                 V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
                 packet.ReadUInt16("Unknown");
 
             for (var i = 0; i < count; ++i)

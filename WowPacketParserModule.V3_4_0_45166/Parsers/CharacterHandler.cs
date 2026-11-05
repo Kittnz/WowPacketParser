@@ -169,7 +169,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                 ReadRaceUnlockData(packet, i, "RaceUnlockData");
         }
 
-        [Parser(Opcode.SMSG_ENUM_CHARACTERS_RESULT, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_ENUM_CHARACTERS_RESULT, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleEnumCharactersResult(Packet packet)
         {
             packet.ReadBit("Success");
@@ -292,7 +292,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             var hasGuildData = packet.ReadBit("HasGuildData");
             var hasAzeriteLevel = packet.ReadBit("HasAzeriteLevel");
 
-            int count = ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720) ? 7 : 6;
+            int count = ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612) ? 7 : 6;
             for (int i = 0; i < count; i++)
                 WowPacketParserModule.V9_0_1_36216.Parsers.CharacterHandler.ReadPVPBracketData(packet, i, "PVPBracketData");
 
@@ -305,7 +305,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             if (hasAzeriteLevel)
                 packet.ReadInt32("AzeriteLevel");
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
             {
                 packet.ReadInt32("Level", "TraitInspectData");
                 packet.ReadInt32("ChrSpecializationID", "TraitInspectData");

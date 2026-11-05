@@ -43,7 +43,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             }
         }
 
-        [Parser(Opcode.SMSG_ACCOUNT_DATA_TIMES, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_ACCOUNT_DATA_TIMES, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleAccountDataTimes(Packet packet)
         {
             packet.ReadPackedGuid128("Guid");

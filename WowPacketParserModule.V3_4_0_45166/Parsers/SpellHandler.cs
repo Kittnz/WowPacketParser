@@ -283,7 +283,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                 packet.ReadInt32("TraitDefinitionID", indexes);
         }
 
-        [Parser(Opcode.SMSG_LEARNED_SPELLS, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_LEARNED_SPELLS, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleLearnedSpells(Packet packet)
         {
             var spellCount = packet.ReadUInt32();

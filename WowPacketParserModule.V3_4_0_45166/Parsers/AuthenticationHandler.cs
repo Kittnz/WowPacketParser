@@ -36,7 +36,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                         packet.ReadByteE<Class>("ClassID", "AvailableClasses", i, "Classes", j);
                         packet.ReadByteE<ClientType>("ActiveExpansionLevel", "AvailableClasses", i, "Classes", j);
                         packet.ReadByteE<ClientType>("AccountExpansionLevel", "AvailableClasses", i, "Classes", j);
-                        if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720)) // assumption
+                        if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612)) // assumption
                             packet.ReadByte("MinActiveExpansionLevel", "AvailableClasses", i, "Classes", j);
                     }
                 }
@@ -48,7 +48,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                 var alliance = packet.ReadBit(); // NumPlayersAlliance
                 var trialExpiration = packet.ReadBit(); // ExpansionTrialExpiration
                 var hasNewBuildKeys = false;
-                if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47720)) // assumption
+                if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612)) // assumption
                     hasNewBuildKeys = packet.ReadBit();
 
                 packet.ResetBitReader();

@@ -69,7 +69,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         }
 
         [HasSniffData]
-        [Parser(Opcode.SMSG_QUERY_QUEST_INFO_RESPONSE, ClientVersionBuild.V3_4_0_44832, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_QUERY_QUEST_INFO_RESPONSE, ClientVersionBuild.V3_4_0_44832, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleQuestQueryResponse(Packet packet)
         {
             packet.ReadInt32("Entry");
@@ -307,7 +307,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         }
 
         [HasSniffData]
-        [Parser(Opcode.SMSG_QUERY_QUEST_INFO_RESPONSE, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_QUERY_QUEST_INFO_RESPONSE, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleQuestQueryResponse343(Packet packet)
         {
             packet.ReadInt32("Entry");
@@ -550,7 +550,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             Storage.QuestTemplates.Add(quest, packet.TimeSpan);
         }
 
-        [Parser(Opcode.SMSG_QUEST_GIVER_QUEST_DETAILS, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_QUEST_GIVER_QUEST_DETAILS, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleQuestGiverQuestDetails(Packet packet)
         {
             var guid = packet.ReadPackedGuid128("QuestGiverGUID");
@@ -634,7 +634,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             Storage.QuestDetails.Add(questDetails, packet.TimeSpan);
         }
 
-        [Parser(Opcode.SMSG_QUEST_GIVER_REQUEST_ITEMS, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_QUEST_GIVER_REQUEST_ITEMS, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleQuestGiverRequestItems(Packet packet)
         {
             var guid = packet.ReadPackedGuid128("QuestGiverGUID");
@@ -768,7 +768,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             return questOfferReward;
         }
 
-        [Parser(Opcode.SMSG_QUEST_GIVER_OFFER_REWARD_MESSAGE, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_QUEST_GIVER_OFFER_REWARD_MESSAGE, ClientVersionBuild.V3_4_1_47612)]
         public static void QuestGiverOfferReward(Packet packet)
         {
             var questOfferReward = ReadQuestGiverOfferRewardData(packet, "QuestGiverOfferRewardData");
