@@ -27,6 +27,54 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
         }
 
 
+        [Parser(Opcode.SMSG_GUILD_BANK_QUERY_RESULTS)]
+        public static void HandleGuildBankQueryResults(Packet packet)
+        {
+            if (ClientVersion.RemovedInVersion(ClientVersionBuild.V2_5_3_41402))
+            {
+                WowPacketParserModule.V8_0_1_27101.Parsers.GuildHandler.HandleGuildBankQueryResults(packet);
+                return;
+            }
+
+            // 2.5.3 (sniff-verified on 41812): FullUpdate bit moved in front of the tab list and the SocketEnchant count is gone
+            packet.ReadUInt64("Money");
+            packet.ReadInt32("Tab");
+            packet.ReadInt32("WithdrawalsRemaining");
+
+            var tabInfoCount = packet.ReadInt32("TabInfoCount");
+            var itemInfoCount = packet.ReadInt32("ItemInfoCount");
+
+            packet.ResetBitReader();
+            packet.ReadBit("FullUpdate");
+
+            for (int i = 0; i < tabInfoCount; i++)
+            {
+                packet.ReadInt32("TabIndex", i);
+
+                packet.ResetBitReader();
+                var nameLen = packet.ReadBits(7);
+                var iconLen = packet.ReadBits(9);
+
+                packet.ReadWoWString("Name", nameLen, i);
+                packet.ReadWoWString("Icon", iconLen, i);
+            }
+
+            for (int i = 0; i < itemInfoCount; i++)
+            {
+                packet.ReadInt32("Slot", i);
+                packet.ReadInt32("Count", i);
+                packet.ReadInt32("EnchantmentID", i);
+                packet.ReadInt32("Charges", i);
+                packet.ReadInt32("OnUseEnchantmentID", i);
+                packet.ReadInt32("Flags", i);
+
+                Substructures.ItemHandler.ReadItemInstance(packet, i, "ItemInstance");
+
+                packet.ResetBitReader();
+                packet.ReadBit("Locked", i);
+            }
+        }
+
         [Parser(Opcode.CMSG_PETITION_BUY)]
         public static void HandlePetitionBuy(Packet packet)
         {

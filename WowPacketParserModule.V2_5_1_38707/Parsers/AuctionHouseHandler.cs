@@ -51,7 +51,8 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
                     hasBidder = packet.ReadBit("HasBidder", idx);
                     hasBidAmount = packet.ReadBit("HasBidAmount", idx);
                 }
-                packet.ReadBits("UnkBits2", 7, idx);
+                // padding up to the byte boundary: 7 bits, or 1 bit when the bidder/bid amount bits are absent (censored bid info), sniff-verified on 2.5.3.41812
+                packet.ReadBits("UnkBits2", censorBidInfo ? 1 : 7, idx);
             }
 
             if (hasItemInstance)
