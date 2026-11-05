@@ -1461,6 +1461,7 @@ namespace WowPacketParser.Enums.Version.V2_5_3_41750
             {Opcode.SMSG_BLACK_MARKET_WON, 0x2623},
             {Opcode.SMSG_BONUS_ROLL_EMPTY, 0x263E},
             {Opcode.SMSG_BOSS_KILL, 0x294F},
+            {Opcode.SMSG_BREAK_CROWD_CONTROL_ROLL_INFO, 0x2C3D}, // not named by the exe tables; sniff payload (2.5.3/2.5.4) fits the 2.5.2 BREAK_CROWD_CONTROL_ROLL_INFO layout exactly (2 packed guid128, int, 2 floats, int, byte)
             {Opcode.SMSG_BREAK_TARGET, 0x293A},
             {Opcode.SMSG_BROADCAST_ACHIEVEMENT, 0x2BBC},
             {Opcode.SMSG_BROADCAST_SUMMON_CAST, 0x2856},
@@ -2294,6 +2295,8 @@ namespace WowPacketParser.Enums.Version.V2_5_3_41750
             {Opcode.SMSG_UI_MAP_QUEST_LINES_RESPONSE, 0x2AA2},
             {Opcode.SMSG_UNDELETE_CHARACTER_RESPONSE, 0x27C6},
             {Opcode.SMSG_UNDELETE_COOLDOWN_STATUS_RESPONSE, 0x27C7},
+            {Opcode.SMSG_UNKNOWN_9650, 0x25B2}, // unidentified. 9 bytes c0 00.. in 41812 sniff, same shape as SMSG_ACCOUNT_TRANSMOG_UPDATE (2 bits + 2 empty u32 counts); sent once at login
+            {Opcode.SMSG_UNKNOWN_10102, 0x2776}, // unidentified battle pay block packet (after COLLECTION_ITEM_DELIVERED): u32 product-like id (0x24D/0x265), u32, zeros, then string e.g. "Dark Portal Pass"; 48/64 bytes, sent at login
             {Opcode.SMSG_UNLEARNED_SPELLS, 0x2C4E},
             {Opcode.SMSG_UNLOAD_CHILD_MAP, 0x257A},
             {Opcode.SMSG_UPDATE_AADC_STATUS_RESPONSE, 0x2895},

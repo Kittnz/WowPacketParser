@@ -506,7 +506,7 @@ namespace WowPacketParser.Enums.Version.V2_5_4_42581
             // {Opcode.UNNAMED, 0x32E5},
             // {Opcode.UNNAMED, 0x32E6},
             // {Opcode.UNNAMED, 0x32E7},
-            // {Opcode.UNNAMED, 0x32E8},
+            {Opcode.CMSG_UNKNOWN_13032, 0x32E8}, // unidentified. 30 bytes: u32 0x333, 18 zero bytes, 2-bit/flag byte c0 00, then 6 chars "Healer" (seen once in 42940 sniff)
             // {Opcode.UNNAMED, 0x32E9},
             // {Opcode.UNNAMED, 0x32EA},
             // {Opcode.UNNAMED, 0x32EB},
@@ -1464,6 +1464,7 @@ namespace WowPacketParser.Enums.Version.V2_5_4_42581
             {Opcode.SMSG_BLACK_MARKET_WON, 0x2625},
             {Opcode.SMSG_BONUS_ROLL_EMPTY, 0x2640},
             {Opcode.SMSG_BOSS_KILL, 0x2950},
+            {Opcode.SMSG_BREAK_CROWD_CONTROL_ROLL_INFO, 0x2C3D}, // not named by the exe tables; sniff payload (2.5.3/2.5.4) fits the 2.5.2 BREAK_CROWD_CONTROL_ROLL_INFO layout exactly (2 packed guid128, int, 2 floats, int, byte)
             {Opcode.SMSG_BREAK_TARGET, 0x293B},
             {Opcode.SMSG_BROADCAST_ACHIEVEMENT, 0x2BBC},
             {Opcode.SMSG_BROADCAST_SUMMON_CAST, 0x2858},
@@ -2297,6 +2298,9 @@ namespace WowPacketParser.Enums.Version.V2_5_4_42581
             {Opcode.SMSG_UI_MAP_QUEST_LINES_RESPONSE, 0x2AA2},
             {Opcode.SMSG_UNDELETE_CHARACTER_RESPONSE, 0x27C8},
             {Opcode.SMSG_UNDELETE_COOLDOWN_STATUS_RESPONSE, 0x27C9},
+            {Opcode.SMSG_UNKNOWN_9650, 0x25B2}, // unidentified. 9 bytes c0 00.. , same shape as SMSG_ACCOUNT_TRANSMOG_UPDATE (2 bits + 2 empty u32 counts); sent once at login
+            {Opcode.SMSG_UNKNOWN_9712, 0x25F0}, // unidentified. u32 A, u32 B, then A packed guid128, then B packed guid128 (B always 0 in sniffs, A up to 13); same layout as 3.4.0 SMSG_UNKNOWN_9714
+            {Opcode.SMSG_UNKNOWN_10104, 0x2778}, // unidentified battle pay block packet (after COLLECTION_ITEM_DELIVERED): u32 product-like id (0x24D/0x265), u32, zeros, then string e.g. "Dark Portal Pass"; 48/64 bytes, sent at login
             {Opcode.SMSG_UNLEARNED_SPELLS, 0x2C4E},
             {Opcode.SMSG_UNLOAD_CHILD_MAP, 0x257A},
             {Opcode.SMSG_UPDATE_AADC_STATUS_RESPONSE, 0x2897},
