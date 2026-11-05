@@ -972,6 +972,8 @@ namespace WowPacketParser.Parsing.Parsers
             packet.ReadUInt32("Seasonal Games");
             packet.ReadUInt32("Seasonal Wins");
             packet.ReadUInt32("Rank");
+            if (packet.CanRead())
+                packet.ReadUInt32("Unk"); // 2.5.1.38921 sniff: eight ints
         }
 
         [Parser(Opcode.CMSG_BF_MGR_QUEUE_REQUEST, ClientVersionBuild.Zero, ClientVersionBuild.V4_3_4_15595)]

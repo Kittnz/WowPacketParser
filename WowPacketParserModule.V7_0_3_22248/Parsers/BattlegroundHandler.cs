@@ -221,7 +221,7 @@ namespace WowPacketParserModule.V7_0_3_22248.Parsers
                     packet.ReadInt32("Unused3", idx);
                     packet.ReadInt32("WeeklyBestWinPvpTierID", idx);
                 }
-                if (ClientVersion.AddedInVersion(ClientVersionBuild.V9_1_5_40772))
+                if (ClientVersion.AddedInVersion(ClientVersionBuild.V9_1_5_40772) || ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build)) // 2.5.2.39926 sniff: 57 bytes per bracket
                 {
                     packet.ReadInt32("Unused4", idx);
                     packet.ReadInt32("Rank", idx);

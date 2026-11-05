@@ -30,9 +30,14 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                     packet.ReadInt32("Unk", idx, i);
                 var isWrath = ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build);
                 // 2.5.1-2.5.2.41510 (3115 byte product lists): no creature int even with the bit set; 2.5.3+ and 3.4.1.47612 sniffs: present
-                if (hasCreature && (isWrath || ClientVersion.Build >= ClientVersionBuild.V2_5_3_41750))
-                    packet.ReadInt32("CreatureDisplayInfoID", idx);
-                if (hasFileData) // sniffs: FileDataID int follows the creature int
+                if (isWrath || ClientVersion.Build >= ClientVersionBuild.V2_5_3_41750)
+                {
+                    if (hasCreature)
+                        packet.ReadInt32("CreatureDisplayInfoID", idx);
+                    if (hasFileData) // sniffs: FileDataID int follows the creature int
+                        packet.ReadInt32("FileDataID", idx);
+                }
+                else if (hasCreature) // 2.5.1.38921 sniff: a single FileDataID like int, present only when the first bit is set (also with the second bit clear/set)
                     packet.ReadInt32("FileDataID", idx);
                 packet.ReadInt32("Unk", idx, 4);
                 packet.ReadWoWString("Name1", l1, idx);
