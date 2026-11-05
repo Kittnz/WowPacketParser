@@ -133,7 +133,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         }
 
         // 3.4.0.44930 / 3.4.0.45043: no RaceLimitDisables, 23 visual items per character
-        [Parser(Opcode.SMSG_ENUM_CHARACTERS_RESULT, ClientVersionBuild.V3_4_0_44463)]
+        [Parser(Opcode.SMSG_ENUM_CHARACTERS_RESULT, ClientVersionBuild.V3_4_0_44463, ClientVersionBuild.V3_4_1_47612)]
         public static void HandleEnumCharactersResultEarly(Packet packet)
         {
             if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_0_45166))

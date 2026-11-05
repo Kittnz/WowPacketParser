@@ -177,6 +177,13 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
             ReadSpellCastRequest(packet, "Cast");
         }
 
+        [Parser(Opcode.CMSG_PET_CAST_SPELL)]
+        public static void HandlePetCastSpell(Packet packet)
+        {
+            packet.ReadPackedGuid128("PetGUID");
+            ReadSpellCastRequest(packet, "Cast");
+        }
+
         [Parser(Opcode.SMSG_CAST_FAILED)]
         public static void HandleCastFailed(Packet packet)
         {

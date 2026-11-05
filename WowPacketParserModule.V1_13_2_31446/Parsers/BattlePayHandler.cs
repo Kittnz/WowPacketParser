@@ -6,13 +6,19 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
 {
     public static class BattlePayHandler
     {
+        // 2.5.2+ and 3.4.1 (sniff-verified on 3.4.1.47612) use the extended battle pay layouts
+        private static bool IsExtendedLayout()
+        {
+            return ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) || (ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build) && ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47014));
+        }
+
         private static void ReadBattlepayDisplayInfo(Packet packet, params object[] idx)
         {
-            if (ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build))
+            if (IsExtendedLayout())
             {
                 // 2.5.2.40260 sniffs: 62 bits (two further 13 bit string lengths (Name4/Name5)), flush, then up to six ints and the strings
                 var hasCreature = packet.ReadBit("HasCreatureDisplayInfoID", idx);
-                packet.ReadBit("HasFileDataID", idx);
+                var hasFile = packet.ReadBit("HasFileDataID", idx);
                 var l1 = packet.ReadBits(10);
                 var l2 = packet.ReadBits(10);
                 var l3 = packet.ReadBits(13);
@@ -22,8 +28,11 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                 packet.ResetBitReader();
                 for (var i = 0; i < 4; ++i)
                     packet.ReadInt32("Unk", idx, i);
+                var isWrath = ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build);
                 if (hasCreature) // sniffs: this int (looks like a FileDataID) is absent when the creature bit is clear
                     packet.ReadInt32("UnkWithCreatureBit", idx);
+                if (isWrath && hasFile) // 3.4.1.47612 sniffs: FileDataID int present, followed by one more int
+                    packet.ReadInt32("FileDataID", idx);
                 packet.ReadInt32("Unk", idx, 4);
                 packet.ReadWoWString("Name1", l1, idx);
                 packet.ReadWoWString("Name2", l2, idx);
@@ -70,7 +79,7 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
             var count = packet.ReadInt32("ProductIDsCount", idx);
             packet.ReadInt32("Unk1", idx);
             packet.ReadInt32("Unk2", idx);
-            if (ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build))
+            if (IsExtendedLayout())
             {
                 // 2.5.x sniffs: two more ints before the product id list
                 packet.ReadInt32("Unk3", idx);
@@ -91,7 +100,7 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
         {
             packet.ReadInt32("ProductID", idx);
             packet.ReadInt32("Unk1", idx);
-            if (ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build))
+            if (IsExtendedLayout())
             {
                 // 2.5.2.40260 sniffs: nine ints and a byte, then an 8 bit name length plus 16 more bits and the name
                 for (var i = 0; i < 9; ++i)
@@ -138,7 +147,7 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                 var descBits = packet.ReadBits("UnkBits", 23, "Group", i);
                 packet.ReadBit("UnkBit", "Group", i);
                 packet.ReadWoWString("Name", nameLen, "Group", i);
-                if (descBits != 0 && ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build))
+                if (descBits != 0 && IsExtendedLayout())
                 {
                     // 2.5.2.40260 sniffs: the 23 bits are half the length of a trailing description (60 chars + NUL for value 30); only one sample
                     packet.ReadWoWString("Description", (int)descBits * 2, "Group", i);
@@ -174,7 +183,7 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                 packet.ReadInt32("Status", i);
                 packet.ReadInt32("ResultCode", i);
                 packet.ReadInt32("ProductID", i);
-                if (ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) && ClientVersion.AddedInVersion(ClientVersionBuild.V2_5_2_39570))
+                if (IsExtendedLayout() && ClientVersion.AddedInVersion(ClientVersionBuild.V2_5_2_39570))
                 {
                     // 2.5.2.40260 sniffs: four ints then a unix time precede the wallet name bits
                     packet.ReadInt32("Unk1", i);
@@ -182,6 +191,8 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                     packet.ReadInt32("Unk3", i);
                     packet.ReadInt32("Unk4", i);
                     packet.ReadTime("Time", i);
+                    if (ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build))
+                        packet.ReadInt32("Unk5", i); // 3.4.1.47612 sniffs: 5 bytes between the time and the next entry
                 }
                 packet.ResetBitReader();
                 var len = packet.ReadBits(8);
