@@ -31,6 +31,25 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                 V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
         }
 
+        [Parser(Opcode.CMSG_AUCTION_PLACE_BID)]
+        public static void HandleAuctionPlaceBid(Packet packet)
+        {
+            packet.ReadPackedGuid128("Auctioneer");
+            packet.ReadInt32("AuctionItemID");
+            packet.ReadInt64("BidAmount");
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
+            {
+                // 3.4.1.47720/49936 sniffs: addon info block (bit, unknown byte, addon info) as in the item list request
+                var hasAddonInfo = packet.ReadBit("HasAddonInfo");
+                packet.ResetBitReader();
+                if (hasAddonInfo)
+                {
+                    packet.ReadByte("Unknown");
+                    V8_0_1_27101.Parsers.AddonHandler.ReadAddOnInfo(packet);
+                }
+            }
+        }
+
         [Parser(Opcode.CMSG_AUCTION_LIST_ITEMS)]
         public static void HandleAuctionListItems(Packet packet)
         {
