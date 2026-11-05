@@ -699,6 +699,7 @@ namespace WowPacketParser.Enums.Version.V2_5_1_38835
             {Opcode.CMSG_WHO_IS, 0x3682},
             {Opcode.CMSG_WORLD_PORT_RESPONSE, 0x35FA},
             {Opcode.CMSG_WRAP_ITEM, 0x3994},
+            {Opcode.CMSG_UNKNOWN_14007, 0x36B7}, // unidentified (39 packets in 2.5.1.38921-39640 bcc sniffs)
         };
 
         private static readonly BiDictionary<Opcode, int> ServerOpcodes = new BiDictionary<Opcode, int>
@@ -1613,6 +1614,14 @@ namespace WowPacketParser.Enums.Version.V2_5_1_38835
             {Opcode.SMSG_CONNECT_TO, 0x304D},
             {Opcode.SMSG_PONG, 0x304E},
             {Opcode.SMSG_RESET_COMPRESSION_CONTEXT, 0x304F},
+            {Opcode.SMSG_SEASON_INFO, 0x25BE}, // name from the 2.5.1.38921 exe table; 21 byte payload in sniffs
+            {Opcode.SMSG_ARENA_TEAM_STATS, 0x2759}, // 32 byte payload in sniffs (8 ints, no member list); the 38921 exe table names it ARENA_TEAM_ROSTER but the roster parser needs a member count
+            {Opcode.SMSG_BATTLE_PAY_GET_DISTRIBUTION_LIST_RESPONSE, 0x2770}, // 6 byte payload in sniffs: result + empty distribution list (matches the parser)
+            {Opcode.SMSG_UNKNOWN_10104, 0x2778}, // unidentified battle pay block packet (u32 product-like id, u32, zeros, string); not named by the exe tables
+            {Opcode.SMSG_BROADCAST_SUMMON_CAST, 0x2856}, // name from the 2.5.1.38921 exe table
+            {Opcode.SMSG_BROADCAST_SUMMON_RESPONSE, 0x2857}, // name from the 2.5.1.38921 exe table
+            {Opcode.SMSG_GUILD_SEND_RANK_CHANGE, 0x29B9}, // name from the 2.5.1.38921 exe table; 4 byte payload in sniffs
+            {Opcode.SMSG_BREAK_CROWD_CONTROL_ROLL_INFO, 0x2C3D}, // not named by the exe tables; same id/payload shape as in 2.5.3 (packed guids, int, floats)
         };
 
         private static readonly BiDictionary<Opcode, int> MiscOpcodes = new BiDictionary<Opcode, int>();

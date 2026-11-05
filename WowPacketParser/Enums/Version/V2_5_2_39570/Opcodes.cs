@@ -1661,6 +1661,10 @@ namespace WowPacketParser.Enums.Version.V2_5_2_39570
             {Opcode.SMSG_XP_GAIN_ENABLED, 0x27A4},
             {Opcode.SMSG_ZONE_UNDER_ATTACK, 0x2BB5},
             {Opcode.SMSG_BREAK_CROWD_CONTROL_ROLL_INFO, 0x2C3D},
+            {Opcode.SMSG_UNKNOWN_9650, 0x25B2}, // unidentified, see 2.5.3 table
+            {Opcode.SMSG_UNKNOWN_10100, 0x2774}, // unidentified (not named by the 2.5.2.40260 exe table); seen in 2.5.2.40011-40617 sniffs
+            {Opcode.SMSG_BROADCAST_SUMMON_CAST, 0x2855}, // name from the 2.5.2.40260 exe table
+            {Opcode.SMSG_BROADCAST_SUMMON_RESPONSE, 0x2856}, // name from the 2.5.2.40260 exe table
         };
 
         private static readonly BiDictionary<Opcode, int> MiscOpcodes = new BiDictionary<Opcode, int>();
