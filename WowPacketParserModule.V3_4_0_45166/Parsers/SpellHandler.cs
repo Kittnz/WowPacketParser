@@ -344,7 +344,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         {
             packet.ReadPackedGuid128("UnitGUID");
             packet.ReadInt32("DisplayID");
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47014))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_2_50129))
                 packet.ReadInt32("SpellVisualKitID");
 
             packet.ReadByte("RaceID");

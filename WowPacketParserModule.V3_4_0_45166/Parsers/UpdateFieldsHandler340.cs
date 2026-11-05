@@ -1573,6 +1573,8 @@ namespace WowPacketParserModule.V3_4_0_45166.UpdateFields.V3_4_0_45166
                 if (maskMask[i])
                     rawChangesMask[i] = (int)packet.ReadBits(32);
             var changesMask = new BitArray(rawChangesMask);
+            if (changesMask[1] || changesMask[2])
+                packet.ReadBit(); // sniff-verified 3.4.0.45327-46158: one bit before the dynamic field update masks
 
             if (changesMask[0])
             {
