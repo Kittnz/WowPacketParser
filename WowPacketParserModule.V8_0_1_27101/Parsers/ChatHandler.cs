@@ -83,7 +83,8 @@ namespace WowPacketParserModule.V8_0_1_27101.Parsers
         {
             var targetLen = packet.ReadBits(9);
             ReadChatAddonMessageParams(packet, "Params");
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V9_1_0_39185))
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V9_1_0_39185) &&
+                !(ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) && ClientVersion.Build <= ClientVersionBuild.V2_5_1_39640))
                 packet.ReadPackedGuid128("ChannelGUID");
             packet.ReadWoWString("Target", targetLen);
         }

@@ -207,10 +207,12 @@ namespace WowPacketParserModule.V6_0_2_19033.Parsers
         [Parser(Opcode.SMSG_ENCOUNTER_END)]
         public static void HandleEncounterStop(Packet packet)
         {
+            var isTbc251 = ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) && ClientVersion.Build <= ClientVersionBuild.V2_5_1_39640;
+            // 2.5.1.39603 sniffs (13 byte packets): no extra field; the extra int below exists in 2.5.2.40260+
             packet.ReadInt32("EncounterID");
             packet.ReadInt32<DifficultyId>("DifficultyID");
             packet.ReadInt32("GroupSize");
-            if (ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) && ClientVersion.AddedInVersion(ClientVersionBuild.V2_5_2_39570))
+            if (ClientVersion.IsBurningCrusadeClassicClientVersionBuild(ClientVersion.Build) && !isTbc251 && ClientVersion.AddedInVersion(ClientVersionBuild.V2_5_2_39570))
                 packet.ReadUInt32("Unknown"); // 2.5.2.40260 sniffs: 4 bytes of non-constant data before the Success bit
             packet.ReadBit("Success");
         }

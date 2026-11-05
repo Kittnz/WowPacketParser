@@ -18,7 +18,7 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
             {
                 // 2.5.2.40260 sniffs: 62 bits (two further 13 bit string lengths (Name4/Name5)), flush, then up to six ints and the strings
                 var hasCreature = packet.ReadBit("HasCreatureDisplayInfoID", idx);
-                var hasFile = packet.ReadBit("HasFileDataID", idx);
+                var hasFileData = packet.ReadBit("HasFileDataID", idx);
                 var l1 = packet.ReadBits(10);
                 var l2 = packet.ReadBits(10);
                 var l3 = packet.ReadBits(13);
@@ -29,9 +29,10 @@ namespace WowPacketParserModule.V1_13_2_31446.Parsers
                 for (var i = 0; i < 4; ++i)
                     packet.ReadInt32("Unk", idx, i);
                 var isWrath = ClientVersion.IsWrathOfTheLichKingClassicClientVersionBuild(ClientVersion.Build);
-                if (hasCreature) // sniffs: this int (looks like a FileDataID) is absent when the creature bit is clear
-                    packet.ReadInt32("UnkWithCreatureBit", idx);
-                if (isWrath && hasFile) // 3.4.1.47612 sniffs: FileDataID int present, followed by one more int
+                // 2.5.1-2.5.2.41510 (3115 byte product lists): no creature int even with the bit set; 2.5.3+ and 3.4.1.47612 sniffs: present
+                if (hasCreature && (isWrath || ClientVersion.Build >= ClientVersionBuild.V2_5_3_41750))
+                    packet.ReadInt32("CreatureDisplayInfoID", idx);
+                if (hasFileData) // sniffs: FileDataID int follows the creature int
                     packet.ReadInt32("FileDataID", idx);
                 packet.ReadInt32("Unk", idx, 4);
                 packet.ReadWoWString("Name1", l1, idx);

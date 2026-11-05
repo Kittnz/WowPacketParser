@@ -159,11 +159,43 @@ namespace WowPacketParserModule.V2_5_1_38835.Parsers
         }
 
         [HasSniffData]
-        [Parser(Opcode.SMSG_HOTFIX_MESSAGE, ClientVersionBuild.V2_5_1_38598, ClientVersionBuild.V2_5_2_39926)]
-        [Parser(Opcode.SMSG_HOTFIX_CONNECT, ClientVersionBuild.V2_5_1_38598, ClientVersionBuild.V2_5_2_39926)]
+        [Parser(Opcode.SMSG_HOTFIX_MESSAGE, ClientVersionBuild.V2_5_1_38598, ClientVersionBuild.V2_5_1_38921)]
+        [Parser(Opcode.SMSG_HOTFIX_CONNECT, ClientVersionBuild.V2_5_1_38598, ClientVersionBuild.V2_5_1_38921)]
         public static void HandleHotixData251(Packet packet)
         {
             V9_0_1_36216.Parsers.HotfixHandler.HandleHotixData815(packet);
+        }
+
+        [HasSniffData]
+        [Parser(Opcode.SMSG_HOTFIX_MESSAGE, ClientVersionBuild.V2_5_1_38921, ClientVersionBuild.V2_5_2_39926)]
+        [Parser(Opcode.SMSG_HOTFIX_CONNECT, ClientVersionBuild.V2_5_1_38921, ClientVersionBuild.V2_5_2_39926)]
+        public static void HandleHotixData2513(Packet packet)
+        {
+            // 2.5.1.38921-39640 (sniff verified): TableHash, RecordID, HotfixID (push id), size, then a 2 bit status (no UniqueID)
+            var hotfixRecords = new List<HotfixRecord>();
+            var hotfixCount = packet.ReadUInt32("HotfixCount");
+
+            for (var i = 0u; i < hotfixCount; ++i)
+            {
+                var hotfixRecord = new HotfixRecord();
+                packet.ResetBitReader();
+
+                hotfixRecord.Type = packet.ReadUInt32E<DB2Hash>();
+                hotfixRecord.RecordId = packet.ReadInt32();
+                hotfixRecord.HotfixId = packet.ReadUInt32();
+                hotfixRecord.UniqueId = (uint)hotfixRecord.RecordId;
+                hotfixRecord.HotfixDataSize = packet.ReadInt32();
+                packet.ResetBitReader();
+                hotfixRecord.Status = (HotfixStatus)packet.ReadBits(2);
+
+                hotfixRecords.Add(hotfixRecord);
+            }
+
+            var dataSize = packet.ReadInt32("HotfixDataSize");
+            var data = packet.ReadBytes(dataSize);
+            var hotfixData = new Packet(data, packet.Opcode, packet.Time, packet.Direction, packet.Number, packet.Writer, packet.FileName);
+
+            ReadHotfixData(hotfixData, hotfixRecords, "HotfixData");
         }
 
         [HasSniffData]
