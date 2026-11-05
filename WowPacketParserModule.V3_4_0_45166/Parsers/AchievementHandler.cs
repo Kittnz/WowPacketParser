@@ -73,7 +73,7 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
                         CoreParsers.AchievementHandler.FactionReputationStore[DBC.Criteria[criteriaId].Asset] = quantity;
         }
 
-        [Parser(Opcode.SMSG_RESPOND_INSPECT_ACHIEVEMENTS, ClientVersionBuild.V3_4_1_47720)]
+        [Parser(Opcode.SMSG_RESPOND_INSPECT_ACHIEVEMENTS, ClientVersionBuild.V3_4_0_45166)]
         public static void HandleRespondInspectAchievements(Packet packet)
         {
             packet.ReadPackedGuid128("Player");
