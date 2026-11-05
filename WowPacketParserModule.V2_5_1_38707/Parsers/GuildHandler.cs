@@ -30,13 +30,13 @@ namespace WowPacketParserModule.V2_5_1_38707.Parsers
         [Parser(Opcode.SMSG_GUILD_BANK_QUERY_RESULTS)]
         public static void HandleGuildBankQueryResults(Packet packet)
         {
-            if (ClientVersion.RemovedInVersion(ClientVersionBuild.V2_5_3_41402))
+            if (ClientVersion.RemovedInVersion(ClientVersionBuild.V2_5_2_39926))
             {
                 WowPacketParserModule.V8_0_1_27101.Parsers.GuildHandler.HandleGuildBankQueryResults(packet);
                 return;
             }
 
-            // 2.5.3 (sniff-verified on 41812): FullUpdate bit moved in front of the tab list and the SocketEnchant count is gone
+            // 2.5.2.40011+ (sniff-verified on 40011 and 41812): FullUpdate bit moved in front of the tab list and the SocketEnchant count is gone
             packet.ReadUInt64("Money");
             packet.ReadInt32("Tab");
             packet.ReadInt32("WithdrawalsRemaining");
