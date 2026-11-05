@@ -10,12 +10,18 @@ namespace WowPacketParserModule.V3_4_0_45166.Parsers
         [Parser(Opcode.SMSG_REQUEST_PVP_REWARDS_RESPONSE, ClientVersionBuild.V3_4_0_44463)]
         public static void HandleRequestPVPRewardsResponse(Packet packet)
         {
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_0_45166))
+            // 3.4.1.47612+ (132/108 byte packets): four reward blocks without HasWon bits. Order assumed
+            // RandomBG, RatedBG, ArenaSkirmish, Arena (blocks 1 and 3 identical, 2 and 4 empty in sniffs).
+            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_4_1_47612))
             {
-                V7_0_3_22248.Parsers.BattlegroundHandler.HandleRequestPVPRewardsResponse(packet);
+                V6_0_2_19033.Parsers.LfgHandler.ReadLfgPlayerQuestReward(packet, "RandomBGRewards");
+                V6_0_2_19033.Parsers.LfgHandler.ReadLfgPlayerQuestReward(packet, "RatedBGRewards");
+                V6_0_2_19033.Parsers.LfgHandler.ReadLfgPlayerQuestReward(packet, "ArenaSkirmishRewards");
+                V6_0_2_19033.Parsers.LfgHandler.ReadLfgPlayerQuestReward(packet, "ArenaRewards");
                 return;
             }
 
+            // 3.4.0.44930 .. 3.4.0.46779 sniffs (50/66 byte packets): only two reward blocks, no "HasWon" bits
             V6_0_2_19033.Parsers.LfgHandler.ReadLfgPlayerQuestReward(packet, "RandomBGRewards");
             V6_0_2_19033.Parsers.LfgHandler.ReadLfgPlayerQuestReward(packet, "ArenaRewards");
         }
