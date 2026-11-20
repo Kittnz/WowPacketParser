@@ -1682,7 +1682,6 @@ namespace WowPacketParser.Enums.Version.V1_13_4_33598
             {Opcode.SMSG_UNLEARNED_SPELLS, 0x2C4E},
             {Opcode.SMSG_UPDATE_ACCOUNT_DATA, 0x274C},
             {Opcode.SMSG_UPDATE_BNET_SESSION_KEY, 0x286A},
-            {Opcode.SMSG_UPDATE_CELESTIAL_BODY, 0x2866},
             {Opcode.SMSG_UPDATE_CHARACTER_FLAGS, 0x2808},
             {Opcode.SMSG_UPDATE_CHARGE_CATEGORY_COOLDOWN, 0x27AE},
             {Opcode.SMSG_UPDATE_COOLDOWN, 0x27AD},
@@ -1707,8 +1706,6 @@ namespace WowPacketParser.Enums.Version.V1_13_4_33598
             {Opcode.SMSG_VAS_PURCHASE_STATE_UPDATE, 0x2832},
             {Opcode.SMSG_VENDOR_INVENTORY, 0x25CA},
             {Opcode.SMSG_VIGNETTE_UPDATE, 0x27B7},
-            {Opcode.SMSG_VOICE_CHANNEL_INFO_RESPONSE, 0x2868},
-            {Opcode.SMSG_VOICE_LOGIN_RESPONSE, 0x2867},
             {Opcode.SMSG_VOID_ITEM_SWAP_RESPONSE, 0x25DF},
             {Opcode.SMSG_VOID_STORAGE_CONTENTS, 0x25DC},
             {Opcode.SMSG_VOID_STORAGE_FAILED, 0x25DB},
@@ -1716,7 +1713,9 @@ namespace WowPacketParser.Enums.Version.V1_13_4_33598
             {Opcode.SMSG_VOID_TRANSFER_RESULT, 0x25DE},
             {Opcode.SMSG_WAIT_QUEUE_FINISH, 0x256E},
             {Opcode.SMSG_WAIT_QUEUE_UPDATE, 0x256D},
-            {Opcode.SMSG_WARDEN_DATA, 0x2576},
+            {Opcode.SMSG_WARDEN3_DATA, 0x2576},
+            {Opcode.SMSG_WARDEN3_ENABLED, 0x2866}, // sniff-verified 1.13.4.33920 (4 byte token, once per session)
+            {Opcode.SMSG_WARDEN3_DISABLED, 0x2867}, // not seen in sniffs, follows ENABLED
             {Opcode.SMSG_WARFRONT_COMPLETE, 0x27A7},
             {Opcode.SMSG_WARGAME_REQUEST_SUCCESSFULLY_SENT_TO_OPPONENT, 0x25B4},
             {Opcode.SMSG_WEATHER, 0x26D4},

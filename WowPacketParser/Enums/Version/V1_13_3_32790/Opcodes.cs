@@ -1703,7 +1703,7 @@ namespace WowPacketParser.Enums.Version.V1_13_3_32790
             {Opcode.SMSG_WAIT_QUEUE_UPDATE, 0x256D},
             {Opcode.SMSG_WARDEN3_DISABLED, 0x2868},
             {Opcode.SMSG_WARDEN3_ENABLED, 0x2867},
-            {Opcode.SMSG_WARDEN_DATA, 0x2576},
+            {Opcode.SMSG_WARDEN3_DATA, 0x2576},
             {Opcode.SMSG_WARFRONT_COMPLETE, 0x27A7},
             {Opcode.SMSG_WARGAME_REQUEST_SUCCESSFULLY_SENT_TO_OPPONENT, 0x25B4},
             {Opcode.SMSG_WEATHER, 0x26D4},
