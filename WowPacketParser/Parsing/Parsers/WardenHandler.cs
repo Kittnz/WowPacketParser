@@ -116,8 +116,8 @@ namespace WowPacketParser.Parsing.Parsers
             {
                 var hash = BitConverter.ToUInt32(data, 4);
                 packet.AddValue("PacketKind", "Scan request");
-                packet.AddValue("Nonce", $"0x{BitConverter.ToUInt32(data, 0):X8}");
-                packet.AddValue("Hash", $"0x{hash:X8} (FNV-1a32 of nonce, {(Fnv1a32(data, 0, 4) == hash ? "valid" : "INVALID")})");
+                packet.AddValue("RequestNonce", $"0x{BitConverter.ToUInt32(data, 0):X8}");
+                packet.AddValue("RequestHash", $"0x{hash:X8} (FNV-1a32 of nonce, {(Fnv1a32(data, 0, 4) == hash ? "valid" : "INVALID")})");
                 return;
             }
 
@@ -136,7 +136,7 @@ namespace WowPacketParser.Parsing.Parsers
 
         public static void ReadWarden3ClientData(Packet packet)
         {
-            packet.ReadUInt32("Token");
+            packet.ReadUInt32("SessionToken");
             var len = packet.ReadInt32("Length");
             if (len < 0 || len > packet.Length - packet.Position)
                 len = (int)(packet.Length - packet.Position);
@@ -158,13 +158,24 @@ namespace WowPacketParser.Parsing.Parsers
                 var plen = BitConverter.ToUInt16(d, 0x16);
                 if (0x18 + plen <= d.Length && Fnv1a32(d, 0x14, 4 + plen) == ck)
                 {
-                    packet.AddValue("Report", $"type {type}, category 0x{category:X2}, payload {plen} bytes (RC5 sealed, checksum ok)");
                     ReadWarden3ReportPayload(packet, type, category, Slice(d, 0x18, plen));
                     return;
                 }
             }
 
             AddEncrypted(packet, data);
+        }
+
+        // Report categories of the sealed client reports (client docs: warden-checks-reference.md, warden-scan-values.md)
+        private static string Warden3Category(byte category)
+        {
+            switch (category)
+            {
+                case 0x01: return "ScanReport (category 0x01)";
+                case 0x21: return "ModuleIntegrity (category 0x21)";
+                case 0x22: return "LoaderStatus (category 0x22)";
+                default: return $"Unknown (category 0x{category:X2})";
+            }
         }
 
         private static void ReadWarden3ReportPayload(Packet packet, byte type, byte category, byte[] payload)
@@ -229,19 +240,23 @@ namespace WowPacketParser.Parsing.Parsers
                     var dirMask = BitConverter.ToUInt16(d, 0xc);
                     var stamp = BitConverter.ToUInt32(d, 0xe);
                     var imageSize = BitConverter.ToUInt32(d, 0x12);
-                    packet.AddValue("ReportKind", "Loaded module integrity descriptor");
+                    packet.AddValue("ReportKind", $"{Warden3Category(category)}: loaded module integrity descriptor (type {type}, {payload.Length} bytes, sealed)");
                     packet.AddValue("Module", moduleName ?? "(name not found)");
+                    if (moduleName != null && moduleName.IndexOf("\\system32\\", StringComparison.OrdinalIgnoreCase) < 0 &&
+                        moduleName.IndexOf("\\syswow64\\", StringComparison.OrdinalIgnoreCase) < 0 &&
+                        moduleName.IndexOf("\\winsxs\\", StringComparison.OrdinalIgnoreCase) < 0)
+                        packet.AddValue("Note", "module is outside System32/SysWOW64/WinSxS (game, overlay or injected module)");
                     if (pdbName != null)
                         packet.AddValue("Pdb", pdbName + (pdbOnFixedDrive ? " (exists on a fixed drive)" : ""));
-                    packet.AddValue("TimeDateStamp", $"0x{stamp:X8}");
+                    packet.AddValue("PeTimeDateStamp", $"0x{stamp:X8}");
                     packet.AddValue("SizeOfImage", $"0x{imageSize:X} ({imageSize} bytes)");
-                    packet.AddValue("CheckSum", $"0x{BitConverter.ToUInt32(d, 0x16):X8}");
-                    packet.AddValue("Sections", d[0xa]);
-                    packet.AddValue("LinkerVersion", d[0xb]);
+                    packet.AddValue("PeCheckSum", $"0x{BitConverter.ToUInt32(d, 0x16):X8}");
+                    packet.AddValue("NumberOfSections", d[0xa]);
+                    packet.AddValue("MajorLinkerVersion", d[0xb]);
                     packet.AddValue("Authenticode", (dirMask & 0x10) != 0);
-                    packet.AddValue("DataDirectoryMask", $"0x{dirMask:X4}");
-                    packet.AddValue("LayoutHash", $"0x{BitConverter.ToUInt64(d, 0x1a):X16}");
-                    packet.AddValue("DescriptorVersion", d[5]);
+                    packet.AddValue("DataDirectoriesPresent", $"0x{dirMask:X4} (bit n = PE data directory n has a size)");
+                    packet.AddValue("SectionLayoutHash", $"0x{BitConverter.ToUInt64(d, 0x1a):X16}");
+                    packet.AddValue("DescriptorFormat", $"v{d[5]}");
                     return;
                 }
             }
@@ -252,7 +267,7 @@ namespace WowPacketParser.Parsing.Parsers
                 var js = Array.IndexOf(payload, (byte)'{');
                 if (js >= 10)
                 {
-                    packet.AddValue("ReportKind", "Scan report (FNV-1a32 hashes of machine/OS/CPU values)");
+                    packet.AddValue("ReportKind", $"{Warden3Category(category)}: FNV-1a32 hashes of machine/OS/CPU values (type {type}, {payload.Length} bytes, sealed)");
                     packet.AddValue("ScanRequestHash", $"0x{BitConverter.ToUInt32(payload, 6):X8}");
                     var json = Encoding.ASCII.GetString(payload, js, payload.Length - js).TrimEnd('\0');
                     foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(json, "\"(\\w+)\"\\s*:\\s*(\\d+)"))
@@ -268,7 +283,7 @@ namespace WowPacketParser.Parsing.Parsers
                 }
             }
 
-            packet.AddValue("ReportKind", $"Unknown report (type {type}, category {category})");
+            packet.AddValue("ReportKind", $"{Warden3Category(category)}: unknown layout (type {type}, {payload.Length} bytes, sealed)");
             AddRaw(packet, "ReportPayload", payload);
         }
 
