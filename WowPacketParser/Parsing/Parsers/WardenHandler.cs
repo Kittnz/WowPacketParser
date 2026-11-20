@@ -115,25 +115,23 @@ namespace WowPacketParser.Parsing.Parsers
             if (len == 8)
             {
                 var hash = BitConverter.ToUInt32(data, 4);
-                packet.AddValue("ScanRequestNonce", BitConverter.ToUInt32(data, 0));
-                packet.AddValue("ScanRequestHash", hash);
-                packet.AddValue("ScanRequestHashValid", Fnv1a32(data, 0, 4) == hash);
+                packet.AddValue("PacketKind", "Scan request");
+                packet.AddValue("Nonce", $"0x{BitConverter.ToUInt32(data, 0):X8}");
+                packet.AddValue("Hash", $"0x{hash:X8} (FNV-1a32 of nonce, {(Fnv1a32(data, 0, 4) == hash ? "valid" : "INVALID")})");
                 return;
             }
 
-            if (len >= 8 + 12 + 256 && data[8] == (byte)'W' && data[9] == (byte)'M' && data[10] == (byte)'P' && data[11] == 0)
+            if (len >= 12 + 256 && data[0] == (byte)'W' && data[1] == (byte)'M' && data[2] == (byte)'P' && data[3] == 0)
             {
-                packet.AddValue("ModuleIndex", BitConverter.ToUInt32(data, 0));
-                packet.AddValue("ModuleLength", BitConverter.ToUInt32(data, 4));
-                packet.AddValue("ModuleMagic", Encoding.ASCII.GetString(data, 8, 3));
-                packet.AddValue("ModulePackedLength", BitConverter.ToUInt32(data, 12));
-                packet.AddValue("ModuleUnpackedLength", BitConverter.ToUInt32(data, 16));
-                packet.AddValue("ModuleSignature", Utilities.ByteArrayToHexString(Slice(data, 20, 256)));
-                packet.AddValue("ModuleImageSize", len - 20 - 256);
+                var packed = BitConverter.ToUInt32(data, 4);
+                packet.AddValue("PacketKind", "Warden module (WMP), RSA signed, zlib compressed");
+                packet.AddValue("PackedSize", $"{packed} bytes ({(packed == len - 268 ? "matches packet" : "MISMATCH with packet")})");
+                packet.AddValue("UnpackedSize", $"{BitConverter.ToUInt32(data, 8)} bytes");
+                packet.AddValue("Signature", Utilities.ByteArrayToHexString(Slice(data, 12, 16)) + " ... (256 bytes)");
                 return;
             }
 
-            AddRaw(packet, "WardenData", data);
+            AddEncrypted(packet, data);
         }
 
         public static void ReadWarden3ClientData(Packet packet)
@@ -160,16 +158,13 @@ namespace WowPacketParser.Parsing.Parsers
                 var plen = BitConverter.ToUInt16(d, 0x16);
                 if (0x18 + plen <= d.Length && Fnv1a32(d, 0x14, 4 + plen) == ck)
                 {
-                    packet.AddValue("ReportNonce", Utilities.ByteArrayToHexString(Slice(d, 0, 16)));
-                    packet.AddValue("ReportType", type);
-                    packet.AddValue("ReportCategory", category);
-                    packet.AddValue("ReportPayloadLength", plen);
+                    packet.AddValue("Report", $"type {type}, category 0x{category:X2}, payload {plen} bytes (RC5 sealed, checksum ok)");
                     ReadWarden3ReportPayload(packet, type, category, Slice(d, 0x18, plen));
                     return;
                 }
             }
 
-            AddRaw(packet, "WardenData", data);
+            AddEncrypted(packet, data);
         }
 
         private static void ReadWarden3ReportPayload(Packet packet, byte type, byte category, byte[] payload)
@@ -190,34 +185,27 @@ namespace WowPacketParser.Parsing.Parsers
 
                 if (d[4] == 1 && BitConverter.ToUInt32(d, 6) == d.Length - 10)
                 {
-                    packet.AddValue("ModuleDescriptorVersion", d[5]); // 2 on 1.13.x, 3 on 2.5.1
-                    packet.AddValue("ModuleDescriptorSeed", BitConverter.ToUInt32(payload, 0));
-                    packet.AddValue("ModuleDescriptorSize", BitConverter.ToUInt32(d, 6));
-                    packet.AddValue("NumberOfSections", d[0xa]);
-                    packet.AddValue("MajorLinkerVersion", d[0xb]);
-                    packet.AddValue("DataDirectoryMask", BitConverter.ToUInt16(d, 0xc));
-                    packet.AddValue("TimeDateStamp", BitConverter.ToUInt32(d, 0xe));
-                    packet.AddValue("SizeOfImage", BitConverter.ToUInt32(d, 0x12));
-                    packet.AddValue("CheckSum", BitConverter.ToUInt32(d, 0x16));
-                    packet.AddValue("LayoutHash", BitConverter.ToUInt64(d, 0x1a));
+                    string moduleName = null;
+                    string pdbName = null;
+                    var pdbOnFixedDrive = false;
                     if (d[5] < 3)
                     {
-                        packet.AddValue("PdbOnFixedDrive", d[0x2a]);
+                        pdbOnFixedDrive = d[0x2a] != 0;
                         var nameBytes = BitConverter.ToUInt32(d, 0x22);
                         var pdbLen = BitConverter.ToUInt32(d, 0x26);
                         if (nameBytes >= 2 && 0x2b + nameBytes - 2 <= d.Length)
                         {
                             var nameLen = (int)nameBytes - 2;
-                            packet.AddValue("ModuleName", Encoding.Unicode.GetString(d, 0x2b, nameLen));
+                            moduleName = Encoding.Unicode.GetString(d, 0x2b, nameLen);
                             var pdbOfs = 0x2b + nameLen + 2;
                             if (pdbLen > 1 && pdbOfs + pdbLen <= d.Length)
-                                packet.AddValue("PdbPath", Encoding.ASCII.GetString(d, pdbOfs, (int)pdbLen - 1));
+                                pdbName = Encoding.ASCII.GetString(d, pdbOfs, (int)pdbLen - 1);
                         }
                     }
                     else
                     {
-                        // version 3 (2.5.x): the fixed fields after +0x22 are followed by a copy of the PE header and the
-                        // section table; layout not decoded, so find the UTF-16 path ("X:") and the ASCII pdb name by scanning
+                        // version 3 (1.13.6+/2.5.x+): the fixed fields after +0x22 are followed by a copy of the PE header and the
+                        // section table; layout not decoded, so find the UTF-16 path ("X:\") and the ASCII pdb name by scanning
                         for (var i = 0x22; i + 6 < d.Length; i++)
                         {
                             if (d[i] < 0x41 || d[i] > 0x7a || d[i + 1] != 0 || d[i + 2] != (byte)':' || d[i + 3] != 0 || d[i + 4] != (byte)'\\')
@@ -225,7 +213,7 @@ namespace WowPacketParser.Parsing.Parsers
                             var e = i;
                             while (e + 1 < d.Length && (d[e] != 0 || d[e + 1] != 0))
                                 e += 2;
-                            packet.AddValue("ModuleName", Encoding.Unicode.GetString(d, i, e - i));
+                            moduleName = Encoding.Unicode.GetString(d, i, e - i);
                             var ps = e + 2;
                             while (ps < d.Length && d[ps] == 0)
                                 ps++;
@@ -233,33 +221,82 @@ namespace WowPacketParser.Parsing.Parsers
                             while (pe < d.Length && d[pe] != 0)
                                 pe++;
                             if (pe > ps)
-                                packet.AddValue("PdbName", Encoding.ASCII.GetString(d, ps, pe - ps));
+                                pdbName = Encoding.ASCII.GetString(d, ps, pe - ps);
                             break;
                         }
                     }
+
+                    var dirMask = BitConverter.ToUInt16(d, 0xc);
+                    var stamp = BitConverter.ToUInt32(d, 0xe);
+                    var imageSize = BitConverter.ToUInt32(d, 0x12);
+                    packet.AddValue("ReportKind", "Loaded module integrity descriptor");
+                    packet.AddValue("Module", moduleName ?? "(name not found)");
+                    if (pdbName != null)
+                        packet.AddValue("Pdb", pdbName + (pdbOnFixedDrive ? " (exists on a fixed drive)" : ""));
+                    packet.AddValue("TimeDateStamp", $"0x{stamp:X8}");
+                    packet.AddValue("SizeOfImage", $"0x{imageSize:X} ({imageSize} bytes)");
+                    packet.AddValue("CheckSum", $"0x{BitConverter.ToUInt32(d, 0x16):X8}");
+                    packet.AddValue("Sections", d[0xa]);
+                    packet.AddValue("LinkerVersion", d[0xb]);
+                    packet.AddValue("Authenticode", (dirMask & 0x10) != 0);
+                    packet.AddValue("DataDirectoryMask", $"0x{dirMask:X4}");
+                    packet.AddValue("LayoutHash", $"0x{BitConverter.ToUInt64(d, 0x1a):X16}");
+                    packet.AddValue("DescriptorVersion", d[5]);
                     return;
                 }
             }
 
             if (category == 1 && payload.Length >= 10)
             {
-                // scan report (type 2 on 1.13.x, 3 on 2.5.1): FNV-1a32 of the 8 request bytes at +6, then the hashed machine values
-                packet.AddValue("ScanRequestHash", BitConverter.ToUInt32(payload, 6));
+                // scan report (type 2 on 1.13.x, 3 on 2.5.1+): FNV-1a32 of the 8 request bytes at +6, then the hashed machine values
                 var js = Array.IndexOf(payload, (byte)'{');
                 if (js >= 10)
                 {
-                    packet.AddValue("ScanReportJson", Encoding.ASCII.GetString(payload, js, payload.Length - js).TrimEnd('\0'));
+                    packet.AddValue("ReportKind", "Scan report (FNV-1a32 hashes of machine/OS/CPU values)");
+                    packet.AddValue("ScanRequestHash", $"0x{BitConverter.ToUInt32(payload, 6):X8}");
+                    var json = Encoding.ASCII.GetString(payload, js, payload.Length - js).TrimEnd('\0');
+                    foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(json, "\"(\\w+)\"\\s*:\\s*(\\d+)"))
+                    {
+                        var key = m.Groups[1].Value;
+                        string desc;
+                        if (!Warden3ScanKeys.TryGetValue(key, out desc))
+                            desc = "?";
+                        packet.AddValue(key, $"0x{uint.Parse(m.Groups[2].Value):X8}  ({desc})");
+                    }
+
                     return;
                 }
             }
 
+            packet.AddValue("ReportKind", $"Unknown report (type {type}, category {category})");
             AddRaw(packet, "ReportPayload", payload);
+        }
+
+        private static readonly System.Collections.Generic.Dictionary<string, string> Warden3ScanKeys = new System.Collections.Generic.Dictionary<string, string>
+        {
+            { "RGKY", "Battle.net identity registry key" }, { "CPGE", "ANSI code page" }, { "ULNG", "user language id" },
+            { "SLNG", "system language id" }, { "CNME", "computer name" }, { "UNME", "user name" },
+            { "UTCO", "UTC offset minutes" }, { "CARC", "CPU architecture" }, { "CLVL", "CPU level" },
+            { "CREV", "CPU revision" }, { "PMEM", "physical memory MB" }, { "PSZE", "page file MB" },
+            { "OVER", "OS version" }, { "CVRA", "CPUID(1) EAX" }, { "CFTC", "CPUID(1) ECX" },
+            { "CFTD", "CPUID(1) EDX" }, { "CEFC", "CPUID(0x80000001) ECX" }, { "CEFD", "CPUID(0x80000001) EDX" },
+            { "CBRD", "CPU brand string" }, { "CVEN", "CPU vendor" }, { "ANME", "network adapter name" },
+            { "ADSC", "network adapter description" }, { "MAC", "MAC address" },
+        };
+
+        // Sub module traffic (check requests/replies, module acks): encrypted by a block cipher that lives inside the module image delivered by
+        // the server, so it cannot be decoded here. Only size and the start are shown.
+        private static void AddEncrypted(Packet packet, byte[] data)
+        {
+            packet.AddValue("PacketKind", "Encrypted module traffic (cipher is inside the downloaded Warden module, not decodable here)");
+            packet.AddValue("Size", $"{data.Length} bytes");
+            packet.AddValue("Start", Utilities.ByteArrayToHexString(Slice(data, 0, Math.Min(data.Length, 16))) + (data.Length > 16 ? " ..." : ""));
         }
 
         private static void AddRaw(Packet packet, string name, byte[] data)
         {
-            packet.AddValue(name + "Size", data.Length);
-            packet.AddValue(name, Utilities.ByteArrayToHexString(Slice(data, 0, Math.Min(data.Length, 512))) + (data.Length > 512 ? "..." : ""));
+            const int max = 48;
+            packet.AddValue(name, $"{data.Length} bytes: " + Utilities.ByteArrayToHexString(Slice(data, 0, Math.Min(data.Length, max))) + (data.Length > max ? " ..." : ""));
         }
 
         private static byte[] Slice(byte[] data, int offset, int count)
